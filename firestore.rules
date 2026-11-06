@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Dona Liz (painel): acesso total
+    function admin() {
+      return request.auth != null && request.auth.token.email == 'familia.figueiredo041117@gmail.com';
+    }
+    match /{document=**} {
+      allow read, write: if admin();
+    }
+
+    // Cardápio publicado pelo painel: qualquer pessoa lê (sem estoque real, sem dados internos)
+    match /publico/{doc} {
+      allow read: if true;
+    }
+
+    // Pedidos feitos pelo app do cliente
+    match /pedidos/{id} {
+      function hojeBR() { return request.time - duration.value(3, 'h'); }
+      function descontoValido(d) {
+        // 5% só para pedidos confirmados na segunda ou terça (com 1h de tolerância na virada)
+        return d.desconto == 0
+          || hojeBR().dayOfWeek() == 1 || hojeBR().dayOfWeek() == 2
+          || (hojeBR().dayOfWeek() == 3 && hojeBR().hours() < 1);
+      }
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'origem', 'status', 'pago', 'numero', 'cliente', 'telefone',
+             'dataPedido', 'dataEntrega', 'horaEntrega', 'periodo', 'tipoEntrega', 'endereco', 'bairro', 'taxaEntrega',
+             'taxaPendente', 'desconto', 'descontoMotivo', 'pagamento', 'obs', 'itens', 'criadoEm'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.origem == 'app'
+        && request.resource.data.status == 'novo'
+        && request.resource.data.pago == false
+        && request.resource.data.numero == 0
+        && request.resource.data.itens is list
+        && request.resource.data.itens.size() > 0 && request.resource.data.itens.size() <= 40
+        && request.resource.data.desconto is number && request.resource.data.desconto >= 0
+        && request.resource.data.taxaEntrega is number && request.resource.data.taxaEntrega >= 0
+        && request.resource.data.cliente is string && request.resource.data.cliente.size() <= 80
+        && request.resource.data.obs is string && request.resource.data.obs.size() <= 500
+        && request.resource.data.tipoEntrega in ['retirada', 'entrega']
+        && request.resource.data.pagamento in ['pix', 'dinheiro']
+        && descontoValido(request.resource.data)
+        && get(/databases/$(database)/documents/publico/loja).data.aberto == true;
+
+      // o cliente só vê os próprios pedidos
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+
+      // e só pode cancelar enquanto ainda não foi confirmado
+      allow update: if request.auth != null
+        && resource.data.uid == request.auth.uid
+        && resource.data.status == 'novo'
+        && request.resource.data.status == 'cancelado'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'canceladoEm', 'canceladoPor']);
+    }
+  }
+}
