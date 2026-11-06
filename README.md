@@ -3,7 +3,7 @@
 Página onde o cliente escolhe os cookies, monta o carrinho e envia o pedido.
 O pedido chega no app da Dona Liz (painel de estoque) na hora.
 
-**Link para os clientes:** https://otavio512.github.io/donaliz-pedidos/
+**Link para os clientes:** https://donalizcookies.github.io/
 
 - Cardápio, combos (a partir de quarta) e 5% de desconto nos sabores para pedidos de segunda e terça.
 - Retirada e entrega de quinta a sábado, com corte às 18h. Horários, períodos, datas fechadas,
