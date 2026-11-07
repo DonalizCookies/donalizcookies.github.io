@@ -725,6 +725,17 @@ main{padding-bottom:140px}
 #splash .credito b{font-family:var(--f-display);font-weight:700;color:#5a2814}
 #splash .credito svg{width:15px;height:15px;fill:none;stroke:#c46f12;stroke-width:1.8}
 @keyframes credIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* Pix com QR Code */
+.pix3{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.pix3 h3{display:flex;align-items:center;gap:8px;margin:0;font:800 16px var(--f-display)}
+.pix3 h3 svg{width:18px;height:18px;color:var(--gold)}
+.qr-wrap{align-self:center;width:min(240px,70vw);padding:12px;border-radius:20px;background:#fff;box-shadow:0 0 0 1.5px var(--line),0 12px 26px -16px rgba(58,28,16,.5);animation:pop .5s var(--ease-spring)}
+.qr3{display:block;width:100%;height:auto;border-radius:8px}
+.valor3{display:flex;justify-content:space-between;align-items:baseline;border-radius:14px;background:var(--surface-2);padding:10px 14px}
+.valor3 span{font-size:13px;font-weight:700;color:var(--muted)}.valor3 b{font:800 22px var(--f-display);letter-spacing:-.02em}
+.pago3{display:flex;gap:12px;align-items:center}.pago3 svg{width:40px;height:40px;padding:9px;border-radius:50%;background:var(--ok-soft);color:var(--ok);stroke-width:3;flex:none}
+.pago3 b{display:block;font:800 15px var(--f-display)}.pago3 span{font-size:13px;color:var(--muted)}
+.pixcode3{width:100%;min-height:120px;border-radius:12px;border:1.5px solid var(--line);padding:10px;font:600 12px/1.4 ui-monospace,monospace;background:var(--surface);color:var(--ink);word-break:break-all}
 
 </style>
 </head>
@@ -773,6 +784,73 @@ const FB_CONFIG = {
 };
 </script>
 <script>
+/* ---------- Pix copia e cola (BR Code estático do Banco Central) + QR Code ---------- */
+const semAcento = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\x20-\x7E]/g, '').replace(/\s+/g, ' ').trim();
+// encurta "GUSTAVO DE QUEIROZ FIGUEIREDO" -> "GUSTAVO DE Q FIGUEIREDO" até caber
+function encurtar(txt, max, abreviaPrimeira) {
+  let w = semAcento(txt).toUpperCase().split(' ').filter(Boolean); const part = ['DE', 'DA', 'DO', 'DOS', 'DAS', 'E'];
+  const len = () => w.join(' ').length;
+  for (let i = w.length - 2; i >= (abreviaPrimeira ? 0 : 1) && len() > max; i--) if (!part.includes(w[i]) && w[i].length > 1) w[i] = w[i][0];
+  if (len() > max) w = w.filter((x, i) => i === 0 || i === w.length - 1 || !part.includes(x));
+  return w.join(' ').slice(0, max).trim();
+}
+const emv = (id, v) => id + String(v.length).padStart(2, '0') + v;
+function crc16(s) { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) c = (c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1) & 0xFFFF; } return c.toString(16).toUpperCase().padStart(4, '0'); }
+function pixPayload({ chave, nome, cidade, valor, txid }) {
+  const k = semAcento(chave); const tx = (semAcento(txid).replace(/[^A-Za-z0-9]/g, '').slice(0, 25)) || '***';
+  let p = emv('00', '01') + emv('26', emv('00', 'br.gov.bcb.pix') + emv('01', k)) + emv('52', '0000') + emv('53', '986')
+    + (valor > 0 ? emv('54', (Math.round(valor * 100) / 100).toFixed(2)) : '') + emv('58', 'BR') + emv('59', encurtar(nome, 25)) + emv('60', encurtar(cidade, 15, true)) + emv('62', emv('05', tx)) + '6304';
+  return p + crc16(p);
+}
+/* QR Code (modo byte, correção M, versões 1–10) */
+const QR = (() => {
+  const ECC = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26], BLK = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5];
+  const raw = v => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; } return r; };
+  const dataCw = v => Math.floor(raw(v) / 8) - ECC[v] * BLK[v];
+  const mul = (x, y) => { let z = 0; for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; } return z & 0xFF; };
+  const divisor = d => { const r = new Array(d).fill(0); r[d - 1] = 1; let root = 1; for (let i = 0; i < d; i++) { for (let j = 0; j < d; j++) { r[j] = mul(r[j], root); if (j + 1 < d) r[j] ^= r[j + 1]; } root = mul(root, 2); } return r; };
+  const resto = (data, dv) => { const r = new Array(dv.length).fill(0); for (const b of data) { const f = b ^ r.shift(); r.push(0); dv.forEach((c, i) => { r[i] ^= mul(c, f); }); } return r; };
+  function encode(text) {
+    const bytes = [...new TextEncoder().encode(text)];
+    let v = 1; for (; v <= 10; v++) if (4 + (v <= 9 ? 8 : 16) + bytes.length * 8 <= dataCw(v) * 8) break;
+    if (v > 10) throw new Error('texto grande demais para o QR');
+    const bits = []; const put = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+    put(4, 4); put(bytes.length, v <= 9 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    const cap = dataCw(v) * 8; put(0, Math.min(4, cap - bits.length)); put(0, (8 - bits.length % 8) % 8);
+    for (let pad = 0xEC; bits.length < cap; pad ^= 0xEC ^ 0x11) put(pad, 8);
+    const data = []; for (let i = 0; i < bits.length; i += 8) data.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+    // blocos + correção de erros, intercalados
+    const nb = BLK[v], el = ECC[v], rc = Math.floor(raw(v) / 8), nShort = nb - rc % nb, shortLen = Math.floor(rc / nb), dv = divisor(el);
+    const blocks = []; for (let i = 0, k = 0; i < nb; i++) { const d = data.slice(k, k + shortLen - el + (i < nShort ? 0 : 1)); k += d.length; const e = resto(d, dv); if (i < nShort) d.push(0); blocks.push(d.concat(e)); }
+    const cw = []; for (let i = 0; i < blocks[0].length; i++) blocks.forEach((b, j) => { if (i !== shortLen - el || j >= nShort) cw.push(b[i]); });
+    const n = v * 4 + 17; const M = Array.from({ length: n }, () => new Array(n).fill(false)); const F = Array.from({ length: n }, () => new Array(n).fill(false));
+    const set = (x, y, d) => { M[y][x] = d; F[y][x] = true; };
+    for (let i = 0; i < n; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    const finder = (x, y) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.max(Math.abs(dx), Math.abs(dy)), xx = x + dx, yy = y + dy; if (xx >= 0 && xx < n && yy >= 0 && yy < n) set(xx, yy, d !== 2 && d !== 4); } };
+    finder(3, 3); finder(n - 4, 3); finder(3, n - 4);
+    if (v >= 2) { const na = Math.floor(v / 7) + 2, step = Math.ceil((v * 4 + 4) / (na * 2 - 2)) * 2, pos = [6]; for (let p = n - 7; pos.length < na; p -= step) pos.splice(1, 0, p);
+      pos.forEach((a, i) => pos.forEach((b, j) => { if ((i === 0 && j === 0) || (i === 0 && j === na - 1) || (i === na - 1 && j === 0)) return; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(a + dx, b + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1); })); }
+    const formato = mask => { const d = (0 << 3) | mask; let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537); const b = ((d << 10) | r) ^ 0x5412; const g = i => ((b >>> i) & 1) === 1;
+      for (let i = 0; i <= 5; i++) set(8, i, g(i)); set(8, 7, g(6)); set(8, 8, g(7)); set(7, 8, g(8)); for (let i = 9; i < 15; i++) set(14 - i, 8, g(i));
+      for (let i = 0; i < 8; i++) set(n - 1 - i, 8, g(i)); for (let i = 8; i < 15; i++) set(8, n - 15 + i, g(i)); set(8, n - 8, true); };
+    formato(0);
+    if (v >= 7) { let r = v; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25); const b = (v << 12) | r; for (let i = 0; i < 18; i++) { const bit = ((b >>> i) & 1) === 1, a = n - 11 + i % 3, c = Math.floor(i / 3); set(a, c, bit); set(c, a, bit); } }
+    let i = 0; for (let right = n - 1; right >= 1; right -= 2) { if (right === 6) right = 5; for (let vert = 0; vert < n; vert++) for (let j = 0; j < 2; j++) { const x = right - j, up = ((right + 1) & 2) === 0, y = up ? n - 1 - vert : vert; if (!F[y][x] && i < cw.length * 8) { M[y][x] = ((cw[i >>> 3] >>> (7 - (i & 7))) & 1) === 1; i++; } } }
+    const regra = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, x => x % 3 === 0, (x, y) => (x + y) % 3 === 0, (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0, (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+    const aplica = m => { for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (!F[y][x] && regra[m](x, y)) M[y][x] = !M[y][x]; };
+    const penal = () => { let p = 0, dark = 0;
+      for (let y = 0; y < n; y++) for (const lin of [0, 1]) { let run = 0, cor = null; for (let x = 0; x < n; x++) { const c = lin ? M[x][y] : M[y][x]; if (c === cor) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else { cor = c; run = 1; } } }
+      for (let y = 0; y < n - 1; y++) for (let x = 0; x < n - 1; x++) { const c = M[y][x]; if (c === M[y][x + 1] && c === M[y + 1][x] && c === M[y + 1][x + 1]) p += 3; }
+      M.forEach(r => r.forEach(c => { if (c) dark++; })); p += Math.floor(Math.abs(dark * 20 - n * n * 10) / (n * n)) * 10; return p; };
+    let best = 0, bp = Infinity; for (let m = 0; m < 8; m++) { aplica(m); formato(m); const p = penal(); if (p < bp) { bp = p; best = m; } aplica(m); }
+    aplica(best); formato(best); return M;
+  }
+  function svg(text, cor = '#140a05') { const M = encode(text), n = M.length, q = 4; let d = '';
+    M.forEach((r, y) => r.forEach((c, x) => { if (c) d += `M${x + q} ${y + q}h1v1h-1z`; }));
+    return `<svg class="qr3" viewBox="0 0 ${n + q * 2} ${n + q * 2}" shape-rendering="crispEdges" role="img" aria-label="QR Code do Pix"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="${cor}"/></svg>`; }
+  return { encode, svg };
+})();
+
 /* =========================================================
    Dona Liz · App de pedidos do cliente
    Lê o cardápio publicado pelo painel (publico/loja) e envia o
@@ -1140,11 +1218,29 @@ function tEnviado() {
   const L = C.loja; const { total } = { total: valorPedido(p) };
   return `<section class="ok3"><div class="glow" aria-hidden="true"></div><img class="hero-ck" src="${BRAND.hero}" alt="" aria-hidden="true"><div class="ok-ico">${ic('check')}</div><h1>${p.numero ? 'Pedido #' + pad(p.numero) : 'Pedido enviado'}<br>${p.status === 'novo' ? 'enviado!' : p.status === 'cancelado' ? 'cancelado' : 'confirmado!'}</h1><p>${p.status === 'novo' ? 'A Dona Liz já recebeu e vai confirmar em instantes.' : p.status === 'cancelado' ? 'Fale com a gente no WhatsApp se precisar.' : 'Seus cookies estão reservados.'}</p></section>
   ${pedidoCard(p, true)}
-  ${p.pagamento === 'pix' && L.pix && L.pix.chave ? `<section class="fs pix"><h3>Pague com Pix</h3><p class="hint">Valor: <b>${fmt(total)}</b>${p.taxaPendente ? ' + taxa de entrega a confirmar' : ''}</p>
-    <div class="pix-chave"><span>${esc(L.pix.chave)}</span><button class="btn sm primary" data-act="copiar-pix">${ic('copy')} Copiar</button></div>
-    <p class="hint">${[L.pix.titular, L.pix.instituicao].filter(Boolean).map(esc).join(' · ')}</p><p class="hint">Depois de pagar, mande o comprovante no WhatsApp.</p></section>` : ''}
+  ${blocoPix(p)}
   <div class="row" style="justify-content:center">${L.whatsapp ? `<a class="btn" href="${waLink(p)}" target="_blank" rel="noopener">${ic('wa')} Falar no WhatsApp</a>` : ''}<button class="btn" data-act="ir" data-t="pedidos">${ic('list')} Meus pedidos</button></div>
   <button class="btn ghost" data-act="ir" data-t="cardapio" style="align-self:center">${ic('bag')} Voltar ao cardápio</button>`;
+}
+/* Pix: o QR só aparece com o pedido confirmado e o valor fechado */
+const PIX_CIDADE = 'Bom Jesus dos Perdões';
+function pixDoPedido(p) {
+  const L = C.loja; if (!p || p.pagamento !== 'pix' || !L || !L.pix || !L.pix.chave || p.pago || p.taxaPendente || ['novo', 'cancelado'].includes(p.status)) return '';
+  const v = valorPedido(p); if (!(v > 0)) return '';
+  return pixPayload({ chave: L.pix.chave, nome: L.pix.titular || 'Dona Liz Cookies', cidade: L.pix.cidade || PIX_CIDADE, valor: v, txid: p.numero ? 'DL' + pad(p.numero) : 'DL' + String(p.id || '').slice(0, 12) });
+}
+function blocoPix(p) {
+  const L = C.loja; if (!p || p.pagamento !== 'pix' || !L || !L.pix || !L.pix.chave) return '';
+  if (p.pago) return `<section class="fs pix3 ok"><div class="pago3">${ic('check')}<div><b>Pagamento recebido</b><span>Obrigado! Seu Pix já foi confirmado.</span></div></div></section>`;
+  if (p.status === 'cancelado') return '';
+  const code = pixDoPedido(p);
+  if (!code) return `<section class="fs pix3"><h3>${ic('pix')} Pagamento por Pix</h3><p class="hint" style="margin:0">Assim que a Dona Liz confirmar o pedido${p.taxaPendente ? ' e a taxa de entrega' : ''}, o QR Code do Pix aparece aqui com o valor certinho. Não precisa recarregar a página.</p></section>`;
+  return `<section class="fs pix3"><h3>${ic('pix')} Pague com Pix</h3>
+    <div class="qr-wrap">${QR.svg(code)}</div>
+    <div class="valor3"><span>Valor</span><b>${fmt(valorPedido(p))}</b></div>
+    <button class="btn primary" data-act="copiar-pixcode" data-id="${esc(p.id || '')}">${ic('copy')} Copiar código Pix</button>
+    <p class="hint" style="margin:0;text-align:center">No app do banco, escolha <b>Pix › Ler QR Code</b> ou <b>Pix Copia e Cola</b>. O valor e o nome de quem recebe já vêm preenchidos${L.pix.titular ? ` (<b>${esc(L.pix.titular)}</b>)` : ''}.</p>
+    <p class="hint" style="margin:0;text-align:center">Depois de pagar, se puder, mande o comprovante no WhatsApp.</p></section>`;
 }
 const valorPedido = p => Math.max(0, (p.itens || []).reduce((s, i) => s + i.qtd * i.precoUnit, 0) - (+p.desconto || 0) + (p.tipoEntrega === 'entrega' ? (+p.taxaEntrega || 0) : 0));
 function waLink(p, motivo) {
@@ -1159,6 +1255,7 @@ function pedidoCard(p, aberto) {
     ${p.status !== 'cancelado' ? `<div class="passos">${['Recebido', 'Confirmado', p.tipoEntrega === 'entrega' ? 'Entregue' : 'Retirado'].map((n, i) => `<div class="passo ${i <= at ? 'on' : ''}"><i></i><span>${n}</span></div>`).join('')}</div>` : ''}
     <div class="s">${(p.itens || []).map(i => `${i.qtd}× ${esc(i.nome)}`).join(' · ')}</div>
     <div class="row"><b class="money" style="flex:1">${fmt(valorPedido(p))}${p.taxaPendente ? ' + taxa' : ''}</b><span class="pill ${p.pago ? 'ok' : 'warn'}">${p.pago ? 'Pago' : 'Pagamento pendente'} · ${p.pagamento === 'pix' ? 'Pix' : 'Dinheiro'}</span></div>
+    ${!aberto && pixDoPedido(p) ? `<button class="btn primary sm" data-act="pix-qr" data-id="${esc(p.id || '')}" style="align-self:flex-start">${ic('pix')} Pagar com Pix · ${fmt(valorPedido(p))}</button>` : ''}
     ${!aberto && p.status !== 'cancelado' && p.status !== 'entregue' ? `<div class="row">${C.loja && C.loja.whatsapp ? `<a class="btn sm" href="${waLink(p, 'Quero alterar o meu pedido')}" target="_blank" rel="noopener">${ic('wa')} Alterar pelo WhatsApp</a>` : ''}${p.status === 'novo' ? `<button class="btn sm ghost danger" data-act="cancelar" data-id="${p.id}">Cancelar pedido</button>` : ''}</div>` : ''}
   </article>`;
 }
@@ -1224,6 +1321,8 @@ document.addEventListener('click', async e => {
     case 'faixa': ck.faixa = b.dataset.v; render(); break;
     case 'pag': ck.pagamento = b.dataset.v; render(); break;
     case 'enviar': enviar(); break;
+    case 'copiar-pixcode': { const p = C.pedidos[id] || (C.ultimo && C.ultimo.id === id ? C.ultimo : null); const code = pixDoPedido(p); if (!code) break; try { await navigator.clipboard.writeText(code); toast('Código Pix copiado. Cole no app do banco em Pix Copia e Cola.'); } catch (er) { abrirSheet(`<header class="sh-head"><h2>Código Pix</h2><button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></header><div class="sh-body"><p class="hint">Toque e segure para copiar:</p><textarea readonly class="pixcode3" onfocus="this.select()">${esc(code)}</textarea></div>`); } break; }
+    case 'pix-qr': { const p = C.pedidos[id]; if (!p) break; abrirSheet(`<header class="sh-head"><h2>${p.numero ? 'Pedido #' + pad(p.numero) : 'Seu pedido'}</h2><button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></header><div class="sh-body">${blocoPix(p)}</div>`); break; }
     case 'copiar-pix': try { await navigator.clipboard.writeText(C.loja.pix.chave); toast('Chave Pix copiada.'); } catch (er) { toast('Copie a chave: ' + C.loja.pix.chave); } break;
     case 'cancelar': { if (!await ask('Cancelar este pedido?', 'A Dona Liz é avisada na hora. Se já estiver confirmado, fale pelo WhatsApp.', 'Cancelar pedido', true)) break; try { await db.collection('pedidos').doc(id).update({ status: 'cancelado', canceladoEm: Date.now(), canceladoPor: 'cliente' }); toast('Pedido cancelado.'); } catch (er) { toast('Não deu para cancelar. Ele pode já ter sido confirmado: fale pelo WhatsApp.'); } break; }
   }
