@@ -793,10 +793,19 @@ function salvar() { try { localStorage.setItem(LS, JSON.stringify({ cart, dados 
 const hojeDow = () => new Date().getDay();
 const temDesconto = () => [1, 2].includes(hojeDow());          // segunda e terça: 5% nos produtos
 const combosLiberados = () => ![1, 2].includes(hojeDow());      // combos a partir de quarta
+/* retirada no mesmo dia: vale enquanto a faixa de hoje ainda não acabou (com 30 min de folga) */
+const MARGEM_HOJE = 0.5;
+const fimFaixa = f => { const m = String(f || '').match(/(\d{1,2})(?:h|:)?(\d{2})?\s*(?:–|—|-|às|a|até)\s*(\d{1,2})(?:h|:)?(\d{2})?/i); return m ? +m[3] + (+(m[4] || 0)) / 60 : null; };
+const horaAgora = () => { const a = new Date(); return a.getHours() + a.getMinutes() / 60; };
+const faixaAbertaHoje = f => { const fim = fimFaixa(f); return fim !== null && horaAgora() <= fim - MARGEM_HOJE; };
+const ehHoje = d => d === todayISO();
+function faixasBrutas(d) { return d ? ((ck.tipo === 'retirada' ? C.loja.retirada : C.loja.entrega) || {})[dow(d)] || [] : []; }
 function datasDisponiveis() {
   const L = C.loja; if (!L) return [];
   const agora = new Date(); const corte = agora.getHours() < 18 || (agora.getHours() === 18 && agora.getMinutes() === 0);
-  let d = addDays(todayISO(), corte ? 1 : 2); const out = [];
+  const out = []; const hoje = todayISO();
+  if (ck.tipo === 'retirada' && [4, 5, 6].includes(dow(hoje)) && !(L.fechadas || []).includes(hoje) && ((L.retirada || {})[dow(hoje)] || []).some(faixaAbertaHoje)) out.push(hoje);
+  let d = addDays(hoje, corte ? 1 : 2);
   for (let i = 0; i < 21 && out.length < 6; i++, d = addDays(d, 1)) {
     const k = dow(d); if (![4, 5, 6].includes(k) || (L.fechadas || []).includes(d)) continue;
     const ret = (L.retirada || {})[k] || [], ent = (L.entrega || {})[k] || [];
@@ -804,7 +813,7 @@ function datasDisponiveis() {
   }
   return out;
 }
-const faixasDe = d => d ? ((ck.tipo === 'retirada' ? C.loja.retirada : C.loja.entrega) || {})[dow(d)] || [] : [];
+const faixasDe = d => { const fx = faixasBrutas(d); return ehHoje(d) && ck.tipo === 'retirada' ? fx.filter(faixaAbertaHoje) : fx; };
 
 /* ---------- carrinho ---------- */
 const sabPub = id => (C.loja && C.loja.sabores || []).find(s => s.id === id);
@@ -985,7 +994,7 @@ function tCarrinho() {
     <div class="opcoes2"><button class="opt ${ck.tipo === 'retirada' ? 'on' : ''}" data-act="tipo" data-v="retirada">${ic('store')}<b>Retirar</b><span>sem taxa</span></button><button class="opt ${ck.tipo === 'entrega' ? 'on' : ''}" data-act="tipo" data-v="entrega">${ic('truck')}<b>Entrega</b><span>taxa por bairro</span></button></div>
     ${ck.tipo === 'retirada' && L.enderecoRetirada ? `<p class="hint">Retirada em: <b>${esc(L.enderecoRetirada)}</b></p>` : ''}
     <div class="fld"><span>Dia</span></div>
-    ${datas.length ? `<div class="dias3">${datas.map(d => `<button class="dia3" data-act="data" data-v="${d}" aria-pressed="${ck.data === d}"><small>${wdShort(d)}</small><b>${d.slice(8)}</b><span>${new Date(d + 'T12:00').toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</span></button>`).join('')}</div>` : `<p class="hint">Sem datas de ${ck.tipo} disponíveis agora. Fale com a gente no WhatsApp.</p>`}
+    ${datas.length ? `<div class="dias3">${datas.map(d => `<button class="dia3" data-act="data" data-v="${d}" aria-pressed="${ck.data === d}"><small>${ehHoje(d) ? 'hoje' : wdShort(d)}</small><b>${d.slice(8)}</b><span>${new Date(d + 'T12:00').toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</span></button>`).join('')}</div>` : `<p class="hint">Sem datas de ${ck.tipo} disponíveis agora. Fale com a gente no WhatsApp.</p>`}
     ${ck.data && fx.length ? `<div class="fld"><span>${ck.tipo === 'retirada' ? 'Horário de retirada' : 'Período da entrega'}</span></div><div class="chips wrap-chips">${fx.map(f => `<button data-act="faixa" data-v="${esc(f)}" aria-pressed="${ck.faixa === f}">${esc(f)}</button>`).join('')}</div>` : ''}
     ${ck.tipo === 'entrega' ? `<label class="fld"><span>Bairro</span><select id="d-bairro"><option value="">Escolha o bairro</option>${bairros.map(b => `<option value="${esc(b.bairro)}" ${!ck.bairroOutro && norm(b.bairro) === norm(dados.bairro) ? 'selected' : ''}>${esc(b.bairro)} · ${fmt(b.valor)}</option>`).join('')}<option value="__outro" ${ck.bairroOutro ? 'selected' : ''}>Meu bairro não está na lista</option></select></label>
       ${ck.bairroOutro ? `<label class="fld"><span>Qual bairro?</span><input id="d-bairro-outro" value="${esc(dados.bairro)}" placeholder="Nome do bairro"></label><p class="hint">A Dona Liz confirma a taxa com você pelo WhatsApp.</p>` : ''}
