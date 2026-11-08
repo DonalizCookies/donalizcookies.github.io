@@ -736,6 +736,11 @@ main{padding-bottom:140px}
 .pago3{display:flex;gap:12px;align-items:center}.pago3 svg{width:40px;height:40px;padding:9px;border-radius:50%;background:var(--ok-soft);color:var(--ok);stroke-width:3;flex:none}
 .pago3 b{display:block;font:800 15px var(--f-display)}.pago3 span{font-size:13px;color:var(--muted)}
 .pixcode3{width:100%;min-height:120px;border-radius:12px;border:1.5px solid var(--line);padding:10px;font:600 12px/1.4 ui-monospace,monospace;background:var(--surface);color:var(--ink);word-break:break-all}
+/* quantidade disponível */
+.disp3{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ok);margin-top:2px}
+.disp3:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.disp3.low{color:var(--warn)}.disp3.zero{color:var(--muted)}.disp3.cheio{color:var(--gold)}
+.ficha3 .disp3{font-size:13px;padding:6px 10px;border-radius:10px;background:var(--surface-2);margin:0}
 
 </style>
 </head>
@@ -938,10 +943,27 @@ function usoPorSabor() {
 }
 function limparCarrinho() {
   // remove o que saiu do cardápio ou passou do disponível
-  if (!C.loja) return; let mudou = false;
-  for (const id of Object.keys(cart.s)) { const s = sabPub(id); if (!s || !cart.s[id]) { delete cart.s[id]; mudou = true; } else if (cart.s[id] > s.max) { cart.s[id] = s.max; mudou = true; if (!s.max) delete cart.s[id]; } }
+  if (!C.loja) return; let mudou = false; let ajustou = false;
+  for (const id of Object.keys(cart.s)) { const s = sabPub(id); if (!s || !cart.s[id]) { delete cart.s[id]; mudou = true; } else if (cart.s[id] > s.max) { cart.s[id] = s.max; mudou = true; ajustou = true; if (!s.max) delete cart.s[id]; } }
   const antes = cart.c.length; cart.c = cart.c.filter(l => { const c = comboPub(l.comboId); return c && combosLiberados(); }); if (cart.c.length !== antes) mudou = true;
+  // somando avulsos + combos, nada pode passar do estoque: tira primeiro dos avulsos, depois dos combos
+  for (let volta = 0; volta < 50; volta++) {
+    const uso = usoPorSabor(); const id = Object.keys(uso).find(k => uso[k] > ((sabPub(k) || {}).max || 0)); if (!id) break;
+    ajustou = true; mudou = true;
+    if (cart.s[id]) { cart.s[id] = Math.max(0, cart.s[id] - (uso[id] - sabPub(id).max)); if (!cart.s[id]) delete cart.s[id]; continue; }
+    const i = cart.c.findIndex(l => { const c = comboPub(l.comboId); return c && (c.tipo === 'livre' ? (l.escolha || {})[id] : (c.itens || []).some(x => x.saborId === id)); });
+    if (i < 0) break; const l = cart.c[i]; if (l.qtd > 1) l.qtd--; else cart.c.splice(i, 1);
+  }
   if (mudou) salvar();
+  if (ajustou) toast('Alguns cookies acabaram e ajustamos seu carrinho ao estoque.');
+}
+const TETO_PUB = 30;
+const qtdTxt = n => n >= TETO_PUB ? `${TETO_PUB}+` : String(n);
+function dispHtml(s, resta, noCarrinho) {
+  if (s.max <= 0) return '<span class="disp3 zero">Esgotado</span>';
+  if (resta <= 0) return '<span class="disp3 cheio">Todos no seu carrinho</span>';
+  const n = noCarrinho ? resta : s.max;
+  return `<span class="disp3 ${n <= 3 ? 'low' : ''}">${noCarrinho ? `Restam ${qtdTxt(n)}` : `${qtdTxt(n)} disponíve${n === 1 ? 'l' : 'is'}`}</span>`;
 }
 const sobra = id => { const s = sabPub(id); return s ? s.max - (usoPorSabor()[id] || 0) : 0; };
 function maxCombo(c) { if (c.tipo === 'livre') return Math.floor(c.itens ? 99 : 99); return Math.min(...c.itens.map(i => Math.floor(Math.max(0, sobra(i.saborId)) / i.qtd))); }
@@ -1049,7 +1071,7 @@ function sheetSabor(id) {
   const foto = fotoSab(s.nome); const ficha = fichaSab(s);
   const html = `<div class="ficha3-img${foto ? ' foto' : ''}">${foto ? `<img src="${foto}" alt="Cookie ${esc(s.nome)}">` : imgSab(s.nome)}<button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></div>
   <div class="sh-body ficha3"><h2>${esc(s.nome)}</h2>
-    <div class="row" style="justify-content:space-between;align-items:center;gap:10px"><span class="pc3">${desc ? `<s>${fmt(s.preco)}</s> ` : ''}${fmt(desc ? round2(s.preco * .95) : s.preco)}</span>${esg ? '<span class="selo-in">Esgotado esta semana</span>' : resta <= 3 ? `<span class="selo-in low">${resta <= 0 ? 'Todos no seu carrinho' : resta === 1 ? 'Último disponível' : 'Últimos ' + resta}</span>` : ''}</div>
+    <div class="row" style="justify-content:space-between;align-items:center;gap:10px"><span class="pc3">${desc ? `<s>${fmt(s.preco)}</s> ` : ''}${fmt(desc ? round2(s.preco * .95) : s.preco)}</span>${dispHtml(s, resta, q > 0)}</div>
     ${ficha ? `<h3>Ingredientes</h3><p>${esc(ficha)}</p>` : ''}
   </div>
   <footer class="sh-foot">${esg ? '<button class="btn" data-act="fechar">Voltar ao cardápio</button>' : `<div class="btns" style="width:100%">${q ? `<div class="step3 big"><button data-act="sq" data-id="${id}" data-d="-1" data-ficha="1" aria-label="Tirar um">${ic('minus')}</button><b>${q}</b><button data-act="sq" data-id="${id}" data-d="1" data-ficha="1" aria-label="Mais um" ${resta <= 0 || !L.aberto ? 'disabled' : ''}>${ic('plus')}</button></div><button class="btn primary" data-act="fechar" style="flex:1">Continuar escolhendo</button>`
@@ -1088,7 +1110,7 @@ function tCardapio() {
         : `<button class="add3" data-act="sq" data-id="${s.id}" data-d="1" ${resta <= 0 || !L.aberto ? 'disabled' : ''} aria-label="Adicionar ${esc(s.nome)}">${ic('plus')}</button>`;
       return `<article class="sab3${q ? ' tem' : ''}${esg ? ' esg' : ''}" data-sab="${s.id}">${fotoSab(s.nome) ? `<div class="ph foto" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}<img class="foto3" src="${fotoSab(s.nome)}" alt="Cookie ${esc(s.nome)}" loading="lazy" decoding="async"></div>` : `<div class="ph" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}${imgSab(s.nome)}</div>`}
         <button class="nm" data-act="ficha" data-id="${s.id}">${esc(s.nome)}</button>${fichaSab(s) ? `<button class="ds" data-act="ficha" data-id="${s.id}">${esc(fichaSab(s))}</button><button class="mais3" data-act="ficha" data-id="${s.id}">Ver ingredientes</button>` : ''}
-        <div class="rw"><span class="pc">${desc ? `<s>${fmt(s.preco)}</s>${fmt(round2(s.preco * .95))}` : fmt(s.preco)}</span>${ctl}</div></article>`;
+        ${dispHtml(s, resta, q > 0)}<div class="rw"><span class="pc">${desc ? `<s>${fmt(s.preco)}</s>${fmt(round2(s.preco * .95))}` : fmt(s.preco)}</span>${ctl}</div></article>`;
     }).join('')}</div>`;
   return `${heroHtml()}
   <div class="perks3"><span>${ic('cal')}${datas.length ? `Próxima: ${wdShort(datas[0])} ${ddmm(datas[0])}` : 'Sem datas agora'}</span><span class="${desc ? 'on' : ''}">${ic('tag')}5% off seg e ter</span><span>${ic('clock')}Pedidos até 18h</span></div>
@@ -1114,7 +1136,7 @@ function sheetCombo() {
   ${c.qtdLivre <= 8 ? `<div class="vagas3" style="--n:${c.qtdLivre}">${Array.from({ length: c.qtdLivre }, (_, i) => vagas[i] !== undefined ? `<span class="vg"><img src="${srcSab(vagas[i])}" alt=""></span>` : `<span class="vg livre">${i + 1}</span>`).join('')}</div>` : ''}
   <div class="prog3"><i style="width:${Math.round(tot / c.qtdLivre * 100)}%"></i></div>
   <div class="row" style="justify-content:space-between;font-size:13px;font-weight:700"><span class="muted">${tot} de ${c.qtdLivre} escolhidos</span>${falta ? `<span style="color:var(--gold)">${falta === 1 ? 'falta 1' : 'faltam ' + falta}</span>` : '<span style="color:var(--ok)">caixa completa!</span>'}</div>
-  <div class="fs" style="gap:0">${C.loja.sabores.filter(s => s.max > 0).map(s => { const q = PK.escolha[s.id] || 0; const pode = s.max - (uso[s.id] || 0) - q > 0; return `<div class="cat-row"><div class="sab-ico sm">${imgSab(s.nome, 'sm')}</div><div class="main"><div class="t">${esc(s.nome)}</div>${s.descricao ? `<div class="s">${esc(s.descricao)}</div>` : ''}</div>
+  <div class="fs" style="gap:0">${C.loja.sabores.filter(s => s.max > 0).map(s => { const q = PK.escolha[s.id] || 0; const pode = s.max - (uso[s.id] || 0) - q > 0; return `<div class="cat-row"><div class="sab-ico sm">${imgSab(s.nome, 'sm')}</div><div class="main"><div class="t">${esc(s.nome)}</div><div class="s">${(() => { const r = s.max - (uso[s.id] || 0) - q; return r <= 0 ? 'Sem mais disponíveis' : r <= 3 ? `<b style="color:var(--warn)">Só mais ${r}</b>` : `${qtdTxt(r)} disponíveis`; })()}</div></div>
     <div class="stepper ${q ? 'on' : 'zero'}"><button data-act="pk" data-id="${s.id}" data-d="-1" aria-label="Menos ${esc(s.nome)}" ${q ? '' : 'disabled'}>${ic('minus')}</button><input readonly tabindex="-1" value="${q}"><button data-act="pk" data-id="${s.id}" data-d="1" aria-label="Mais ${esc(s.nome)}" ${tot >= c.qtdLivre || !pode ? 'disabled' : ''}>${ic('plus')}</button></div></div>`; }).join('')}
   </div></div><footer class="sh-foot"><div class="sh-total"><span>${esc(c.nome)}</span><strong>${fmt(c.preco)}</strong></div><div class="btns"><button class="btn primary" data-act="pk-ok" ${tot === c.qtdLivre ? '' : 'disabled'}>${falta ? `Escolha mais ${plural(falta, 'cookie')}` : 'Colocar no carrinho'}</button></div></footer>`);
   if (sheetEl && sheetEl._combo === PK.comboId) { const b = $('.sh-body', sheetEl); const y = b ? b.scrollTop : 0; $('.sheet', sheetEl).innerHTML = html; const nb = $('.sh-body', sheetEl); if (nb) nb.scrollTop = y; }
