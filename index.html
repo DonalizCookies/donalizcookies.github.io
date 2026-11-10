@@ -512,6 +512,16 @@ nav.tabs{grid-area:nav;box-shadow:0 -6px 20px rgba(58,28,16,.06)}
 .stock-card .head .sab-img{width:36px;height:36px}
 .check-row>.sab-img{width:36px;height:36px;align-self:center}
 .check-row.done>.sab-img{opacity:.55}
+/* foto do sabor (painel) */
+.foto-sab{display:flex;gap:14px;align-items:center;padding:12px;border:1px dashed var(--line);border-radius:14px;background:var(--surface-2)}
+.foto-sab-prev{width:76px;height:76px;border-radius:14px;overflow:hidden;flex:none;background:var(--sand);display:grid;place-items:center}
+.foto-sab-prev img{width:62px;height:62px;object-fit:contain}
+.foto-sab-prev.tem img{width:100%;height:100%;object-fit:cover}
+.foto-sab-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.foto-sab-txt b{font-size:14px}
+.foto-sab-txt .row{margin-top:4px;flex-wrap:wrap;gap:8px}
+.link-btn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer}
+.sab-img{object-fit:cover}
 
 /* ===== App do cliente ===== */
 #app{display:flex;flex-direction:column;height:100%}
@@ -716,7 +726,7 @@ main{padding-bottom:140px}
 .ficha3 h2{font:800 24px var(--f-display);letter-spacing:-.02em;margin:0 0 6px}
 .ficha3 .pc3{font:800 20px var(--f-display);color:var(--gold)}.ficha3 .pc3 s{font-size:13px;color:var(--muted);font-weight:600}
 .ficha3 h3{font:800 12px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
-.ficha3 p{margin:0;font-size:15px;line-height:1.55;color:var(--ink)}
+.ficha3 p{margin:0;font-size:15px;line-height:1.55;color:var(--ink);white-space:pre-line}
 .selo-in{font:800 11px var(--f-display);padding:5px 10px;border-radius:10px;background:var(--surface-2);color:var(--muted)}
 .selo-in.low{background:var(--warn-soft);color:var(--warn)}
 .step3.big{height:48px;border-radius:14px}.step3.big button{width:42px;height:48px}.step3.big b{font-size:16px;min-width:22px}
@@ -901,7 +911,7 @@ const ic = (n, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidde
 
 /* ---------- estado ---------- */
 const LS = 'donaliz-cliente-v1';
-const C = { secao: 'sabores', loja: null, carregou: false, uid: null, pedidos: {}, tela: 'cardapio', envioId: null, enviando: false, ultimo: null, erroLoja: '' };
+const C = { secao: 'sabores', fotos: {}, loja: null, carregou: false, uid: null, pedidos: {}, tela: 'cardapio', envioId: null, enviando: false, ultimo: null, erroLoja: '' };
 let cart = { s: {}, c: [] }, dados = { nome: '', telefone: '', endereco: '', bairro: '' };
 let ck = { tipo: 'retirada', data: null, faixa: null, pagamento: 'pix', obs: '', bairroOutro: false };
 try { const j = JSON.parse(localStorage.getItem(LS) || '{}'); if (j.cart) cart = j.cart; if (j.dados) dados = { ...dados, ...j.dados }; } catch (e) { }
@@ -981,6 +991,8 @@ function totais() {
 let db = null;
 function iniciar() {
   try { firebase.initializeApp(FB_CONFIG); db = firebase.firestore(); } catch (e) { C.erroLoja = 'Não foi possível abrir o cardápio agora.'; render(); return; }
+  try { C.fotos = JSON.parse(localStorage.getItem('dl_fotos') || '{}') || {}; } catch (e) { C.fotos = {}; }
+  db.doc('publico/fotos').onSnapshot(d => { C.fotos = d.exists ? d.data() || {} : {}; try { localStorage.setItem('dl_fotos', JSON.stringify(C.fotos)); } catch (e) { } if (C.loja) render(); }, () => { });
   db.doc('publico/loja').onSnapshot(d => { C.loja = d.exists ? d.data() : null; C.carregou = true; C.erroLoja = ''; limparCarrinho(); render(); }, e => { C.carregou = true; C.erroLoja = 'Não conseguimos carregar o cardápio. Confira sua internet e tente de novo.'; render(); });
   firebase.auth().onAuthStateChanged(u => {
     if (u) { C.uid = u.uid; assinarPedidos(); }
@@ -1039,8 +1051,19 @@ const SAB_FOTO = { 'tradicional': 'tradicional', 'ferrero rocher': 'ferrero', 'g
 const chaveFoto = nome => { const n = norm(nome).replace(/\s+/g, ' ').trim(); if (SAB_FOTO[n]) return SAB_FOTO[n];
   if (n.includes('ferrero')) return 'ferrero'; if (n.includes('galak')) return 'galak'; if (n.includes('laka')) return 'lakadark'; if (n.includes('ovomaltine')) return 'ovomaltine'; if (n.includes('tradicional')) return 'tradicional';
   if (n.includes('nutella') && !n.includes('ninho')) return 'nutella'; return ''; };
-const fotoSab = nome => { const k = chaveFoto(nome); return k ? `img/sabores/${k}.webp` : ''; };
-const srcSab = nome => { const k = chaveFoto(nome); return k ? `img/sabores/${k}-mini.webp` : (SAB_IMG[norm(nome).replace(/\s+/g, ' ').trim()] || BRAND.cookie); };
+/* foto enviada pelo app manda: mini vem em publico/fotos e a grande em publico/foto-<id>, carregada quando aparece */
+const idPorNome = nome => { const n = norm(nome).replace(/\s+/g, ' ').trim(); const x = ((C.loja && C.loja.sabores) || []).find(v => norm(v.nome).replace(/\s+/g, ' ').trim() === n); return x ? x.id : ''; };
+const fotoAppDe = nome => { const id = idPorNome(nome); const f = id && C.fotos[id]; return f && f.mini ? { id, ...f } : null; };
+const GR = {}; const GR_PED = {};
+function grandeApp(f) {
+  const g = GR[f.id]; if (g && g.v === f.v) return g.img;
+  if (db && GR_PED[f.id] !== f.v) { GR_PED[f.id] = f.v;
+    db.doc('publico/foto-' + f.id).get().then(d => { const x = d.exists ? d.data() : null; if (!x || !x.img) return; GR[f.id] = { v: x.v, img: x.img }; document.querySelectorAll(`img[data-fg="${f.id}"]`).forEach(i => { i.src = x.img; }); }).catch(() => { GR_PED[f.id] = 0; }); }
+  return '';
+}
+const fgAttr = nome => { const f = fotoAppDe(nome); return f ? ` data-fg="${f.id}"` : ''; };
+const fotoSab = nome => { const f = fotoAppDe(nome); if (f) return grandeApp(f) || f.mini; const k = chaveFoto(nome); return k ? `img/sabores/${k}.webp` : ''; };
+const srcSab = nome => { const f = fotoAppDe(nome); if (f) return f.mini; const k = chaveFoto(nome); return k ? `img/sabores/${k}-mini.webp` : (SAB_IMG[norm(nome).replace(/\s+/g, ' ').trim()] || BRAND.cookie); };
 const imgSab = (nome, cls = '') => `<img class="sab-img ${cls}" src="${srcSab(nome)}" alt="" aria-hidden="true">`;
 const imgsCombo = c => (c.tipo === 'livre' ? (C.loja.sabores || []).filter(s => s.max > 0).map(s => s.nome) : (c.itens || []).map(i => (sabPub(i.saborId) || i).nome)).slice(0, 3);
 /* fichas dos sabores (texto do portfólio). Ficam guardadas aqui: quando o sabor entrar no cardápio, a ficha aparece sozinha */
@@ -1065,11 +1088,11 @@ const FICHAS = [
   ['bala baiana', 'Massa com chocolate branco e coco ralado, recheada com um delicioso creme de leite condensado, leite em pó e coco em flocos. Uma releitura irresistível de um dos doces mais amados da confeitaria!'],
   ['cheesecake', 'Massa amanteigada com geleia de frutas vermelhas, recheada com cream cheese cremoso e mais geleia. O equilíbrio perfeito entre a delicadeza do cheesecake e a intensidade das frutas!']
 ];
-const fichaSab = s => { const n = norm(s.nome).replace(/\s+/g, ' '); const f = FICHAS.find(([k]) => n.includes(k)); return f ? f[1] : (s.descricao || ''); };
+const fichaSab = s => { if (String(s.descricao || '').trim()) return String(s.descricao).trim(); const n = norm(s.nome).replace(/\s+/g, ' '); const f = FICHAS.find(([k]) => n.includes(k)); return f ? f[1] : ''; };
 function sheetSabor(id) {
   const s = sabPub(id); if (!s) return; const L = C.loja; const uso = usoPorSabor(); const q = cart.s[id] || 0; const resta = s.max - (uso[id] || 0); const esg = s.max <= 0; const desc = temDesconto();
   const foto = fotoSab(s.nome); const ficha = fichaSab(s);
-  const html = `<div class="ficha3-img${foto ? ' foto' : ''}">${foto ? `<img src="${foto}" alt="Cookie ${esc(s.nome)}">` : imgSab(s.nome)}<button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></div>
+  const html = `<div class="ficha3-img${foto ? ' foto' : ''}">${foto ? `<img src="${foto}"${fgAttr(s.nome)} alt="Cookie ${esc(s.nome)}">` : imgSab(s.nome)}<button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></div>
   <div class="sh-body ficha3"><h2>${esc(s.nome)}</h2>
     <div class="row" style="justify-content:space-between;align-items:center;gap:10px"><span class="pc3">${desc ? `<s>${fmt(s.preco)}</s> ` : ''}${fmt(desc ? round2(s.preco * .95) : s.preco)}</span>${dispHtml(s, resta, q > 0)}</div>
     ${ficha ? `<h3>Ingredientes</h3><p>${esc(ficha)}</p>` : ''}
@@ -1108,7 +1131,7 @@ function tCardapio() {
       const selo = esg ? '<span class="selo">ESGOTADO</span>' : s.max <= 3 ? `<span class="selo low">${s.max === 1 ? 'ÚLTIMO' : 'ÚLTIMOS ' + s.max}</span>` : '';
       const ctl = esg ? '' : q ? `<div class="step3"><button data-act="sq" data-id="${s.id}" data-d="-1" aria-label="Tirar um ${esc(s.nome)}">${ic('minus')}</button><b aria-label="Quantidade">${q}</b><button data-act="sq" data-id="${s.id}" data-d="1" aria-label="Mais um ${esc(s.nome)}" ${resta <= 0 || !L.aberto ? 'disabled' : ''}>${ic('plus')}</button></div>`
         : `<button class="add3" data-act="sq" data-id="${s.id}" data-d="1" ${resta <= 0 || !L.aberto ? 'disabled' : ''} aria-label="Adicionar ${esc(s.nome)}">${ic('plus')}</button>`;
-      return `<article class="sab3${q ? ' tem' : ''}${esg ? ' esg' : ''}" data-sab="${s.id}">${fotoSab(s.nome) ? `<div class="ph foto" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}<img class="foto3" src="${fotoSab(s.nome)}" alt="Cookie ${esc(s.nome)}" loading="lazy" decoding="async"></div>` : `<div class="ph" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}${imgSab(s.nome)}</div>`}
+      return `<article class="sab3${q ? ' tem' : ''}${esg ? ' esg' : ''}" data-sab="${s.id}">${fotoSab(s.nome) ? `<div class="ph foto" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}<img class="foto3" src="${fotoSab(s.nome)}"${fgAttr(s.nome)} alt="Cookie ${esc(s.nome)}" loading="lazy" decoding="async"></div>` : `<div class="ph" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}${imgSab(s.nome)}</div>`}
         <button class="nm" data-act="ficha" data-id="${s.id}">${esc(s.nome)}</button>${fichaSab(s) ? `<button class="ds" data-act="ficha" data-id="${s.id}">${esc(fichaSab(s))}</button><button class="mais3" data-act="ficha" data-id="${s.id}">Ver ingredientes</button>` : ''}
         ${dispHtml(s, resta, q > 0)}<div class="rw"><span class="pc">${desc ? `<s>${fmt(s.preco)}</s>${fmt(round2(s.preco * .95))}` : fmt(s.preco)}</span>${ctl}</div></article>`;
     }).join('')}</div>`;
