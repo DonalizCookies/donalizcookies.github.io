@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dona Liz · Site de Natal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@600;700;800&family=Mulish:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4ece1;--card:#fffaf3;--sand:#eadccb;--line:#e3d4c1;--ink:#3a1c10;--price:#5a2814;--mocha:#7a4a32;--muted:#8a6a58;
+  --hero:#3a1c10;--onhero:#fffaf3;--pri:#3a1c10;--onpri:#fffaf3;--car:#c46f12;--mel:#e59a45;--butter:#f6d9a8;
+  --ok:#2f7d4f;--okbg:#e3f1e6;--warn:#b5560f;--warnbg:#fbe9d6;--bad:#a3302a;
+  --sh:0 1px 0 rgba(58,28,16,.04),0 10px 30px -12px rgba(58,28,16,.22);
+  --page:#d9cbb8;
+}
+[data-theme=dark]{
+  --bg:#17100b;--card:#241912;--sand:#33241a;--line:#3a2a1f;--ink:#f6ebdd;--price:#f0c38d;--mocha:#d6bea6;--muted:#a48b77;
+  --hero:#2c1b11;--onhero:#f6ebdd;--pri:#e59a45;--onpri:#1a0f09;--car:#e59a45;--butter:#4a3220;
+  --ok:#6fd39a;--okbg:#1f3a2a;--warn:#f0a35e;--warnbg:#3d2614;--bad:#ff8a80;
+  --sh:0 10px 30px -12px rgba(0,0,0,.6);--page:#0f0a07;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--page);font-family:'Mulish',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .3s}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select{font:inherit;color:inherit}
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:40px;padding:24px}
+.side{width:260px;color:var(--ink)}
+.side h1{font:800 26px/1.1 'Montserrat';letter-spacing:-.02em}
+.side h1 span{font:700 30px 'Dancing Script';color:var(--car)}
+.side p{font:600 14px/1.5 'Mulish';color:var(--mocha);margin-top:10px}
+.ctl{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.ctl label{font:800 11px 'Montserrat';letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ctl select,.ctl button.tg{height:42px;border-radius:14px;background:var(--card);box-shadow:var(--sh);padding:0 12px;border:0;font:700 14px 'Mulish';color:var(--ink);text-align:left}
+.phone{position:relative;width:390px;height:844px;border-radius:44px;background:var(--bg);overflow:hidden;overflow:clip;box-shadow:0 40px 80px -30px rgba(30,14,8,.6),0 0 0 10px #1b0f09;transition:background .3s;display:flex;flex-direction:column}
+@media (max-width:760px){.side{display:none}.stage{padding:0}.phone{width:100%;height:100dvh;border-radius:0;box-shadow:none}}
+.sim{position:absolute;top:0;left:0;right:0;z-index:40;text-align:center;font:700 10px 'Mulish';letter-spacing:.06em;color:var(--muted);padding:6px 0 0;pointer-events:none}
+.top{display:flex;align-items:center;justify-content:space-between;padding:22px 20px 10px;flex:none}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:38px;height:38px;border-radius:50%;box-shadow:0 4px 10px -4px rgba(58,28,16,.5)}
+.brand b{font:800 19px 'Montserrat';letter-spacing:.02em}
+.brand b span{font:700 24px 'Dancing Script';color:var(--car);margin-left:3px}
+.ib{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--card);box-shadow:var(--sh);position:relative;transition:transform .15s}
+.ib:active{transform:scale(.92)}
+.badge{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--car);color:#fff;font:800 11px/20px 'Montserrat';text-align:center;border:2px solid var(--bg)}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.4)}100%{transform:scale(1)}}
+svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.view{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:170px;scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+.enter>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+.enter>*:nth-child(2){animation-delay:.04s}.enter>*:nth-child(3){animation-delay:.08s}.enter>*:nth-child(4){animation-delay:.12s}.enter>*:nth-child(5){animation-delay:.16s}.enter>*:nth-child(6){animation-delay:.2s}.enter>*:nth-child(n+7){animation-delay:.24s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pad{padding:0 20px}
+.hero{margin:4px 20px 0;height:200px;border-radius:28px;background:var(--hero);position:relative;overflow:hidden;color:var(--onhero);padding:22px}
+.hero .glow{position:absolute;right:-60px;top:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(229,154,69,.55),rgba(229,154,69,0) 65%)}
+.hero img{position:absolute;right:-74px;top:24px;width:200px;height:200px;filter:drop-shadow(0 18px 24px rgba(0,0,0,.45));animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.live{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;border-radius:14px;background:rgba(255,250,243,.14);font:700 12px 'Montserrat';color:#fff}
+.live:before{content:"";width:8px;height:8px;border-radius:50%;background:#7ee2a1;box-shadow:0 0 0 4px rgba(126,226,161,.22);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(126,226,161,.05)}}
+.hero h1{font:800 28px/1.04 'Montserrat';letter-spacing:-.03em;margin-top:14px;width:190px;position:relative}
+.hero h1 .s{display:block;white-space:nowrap;font:700 28px 'Dancing Script';color:var(--mel);margin-top:2px;letter-spacing:0}
+.hero p{font:600 13px 'Mulish';color:#e8d6c4;margin-top:8px;position:relative}
+.perks{display:flex;gap:8px;padding:12px 20px 0;overflow-x:auto;scrollbar-width:none}
+.perks span{white-space:nowrap;height:34px;padding:0 11px;border-radius:17px;background:var(--card);box-shadow:var(--sh);display:flex;align-items:center;gap:6px;font:700 12px 'Mulish';color:var(--mocha)}
+.perks svg{width:15px;height:15px;color:var(--car)}
+.perks .on{background:var(--okbg);color:var(--ok)}
+.sec{display:flex;align-items:baseline;justify-content:space-between;padding:22px 20px 12px}
+.sec h3{font:800 20px 'Montserrat';letter-spacing:-.02em}
+.sec small{font:700 13px 'Mulish';color:var(--car)}
+.combos{display:flex;gap:12px;padding:0 20px 4px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.combo{flex:0 0 236px;min-height:116px;border-radius:20px;background:linear-gradient(135deg,#f6d9a8,#eab673);position:relative;overflow:hidden;padding:14px 16px;text-align:left;scroll-snap-align:start;color:#3a1c10;transition:transform .2s;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.combo:active{transform:scale(.97)}
+.combo.alt{background:linear-gradient(135deg,#efe2d0,#e0c9ad)}
+.combo.alt2{background:linear-gradient(135deg,#f3d1c4,#e4a993)}
+[data-theme=dark] .combo{background:linear-gradient(135deg,#5a3418,#3b2213);color:#f6ebdd}
+[data-theme=dark] .combo.alt{background:linear-gradient(135deg,#3a2a20,#2a1d15)}
+[data-theme=dark] .combo.alt2{background:linear-gradient(135deg,#4a2420,#2e1714)}
+.combo .st{position:absolute;right:-22px;bottom:-26px;width:112px;height:112px;opacity:.95}
+.combo .st img{position:absolute;width:66px;height:66px;filter:drop-shadow(0 8px 10px rgba(58,28,16,.35))}
+.combo small{font:800 10px 'Montserrat';letter-spacing:.1em;text-transform:uppercase;opacity:.75;position:relative}
+.combo b{display:block;font:800 17px/1.15 'Montserrat';max-width:62%;position:relative;letter-spacing:-.01em}
+.combo .pr{margin-top:auto;position:relative;font:800 14px 'Montserrat';background:#3a1c10;color:#fffaf3;padding:5px 10px;border-radius:11px}
+[data-theme=dark] .combo .pr{background:#e59a45;color:#1a0f09}
+.lock{margin:0 20px;border-radius:20px;background:var(--card);box-shadow:var(--sh);padding:16px;display:flex;gap:12px;align-items:center;font:600 13px/1.4 'Mulish';color:var(--mocha)}
+.lock b{display:block;font:800 14px 'Montserrat';color:var(--ink)}
+.lock .ic{width:42px;height:42px;border-radius:14px;background:var(--butter);display:grid;place-items:center;color:var(--price);flex:none}
+.chips{display:flex;gap:8px;padding:0 20px 14px;overflow-x:auto;scrollbar-width:none}
+.chip{white-space:nowrap;flex-shrink:0;height:36px;padding:0 15px;border-radius:18px;background:var(--card);display:flex;align-items:center;justify-content:center;font:700 13px 'Mulish';color:var(--mocha);box-shadow:inset 0 0 0 1px var(--line);transition:background .2s,color .2s}
+.chip.on{background:var(--pri);color:var(--onpri);box-shadow:none}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px}
+.card{background:var(--card);border-radius:20px;padding:12px;box-shadow:var(--sh);position:relative;text-align:left;transition:box-shadow .2s,transform .2s}
+.card.sel{box-shadow:0 0 0 2px var(--car),var(--sh)}
+.card .ph{height:112px;border-radius:16px;background:var(--sand);display:grid;place-items:center;position:relative;overflow:hidden;width:100%}
+.card .ph img{width:104px;height:104px;filter:drop-shadow(0 10px 12px rgba(58,28,16,.28));transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.card:hover .ph img{transform:rotate(-8deg) scale(1.04)}
+.tag{position:absolute;left:8px;top:8px;height:22px;padding:0 8px;border-radius:11px;font:800 10px/22px 'Montserrat';letter-spacing:.04em;background:var(--card);color:var(--price);z-index:2}
+.tag.hot{background:var(--car);color:#fff}
+.tag.low{background:var(--warnbg);color:var(--warn)}
+.card b{display:block;font:800 14px/1.2 'Montserrat';margin-top:10px;letter-spacing:-.01em;min-height:2.4em}
+.row{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.row{gap:6px}.row>span{font:800 15px 'Montserrat';color:var(--price);white-space:nowrap}
+.add{width:34px;height:34px;border-radius:12px;background:var(--pri);color:var(--onpri);display:grid;place-items:center;transition:transform .15s}
+.add:active{transform:scale(.88)}
+.add svg{width:18px;height:18px;stroke-width:2.4}
+.step{display:flex;align-items:center;background:var(--pri);border-radius:12px;height:34px;color:var(--onpri);animation:pop .3s}
+.step button{width:28px;height:34px;display:grid;place-items:center;font:800 16px 'Montserrat';color:inherit}
+.step em{font:800 14px 'Montserrat';font-style:normal;min-width:14px;text-align:center}
+.card.out{opacity:.55}.card.out .ph img{filter:grayscale(.8)}
+.cartbar{position:absolute;left:16px;right:16px;bottom:96px;height:62px;visibility:hidden;border-radius:22px;background:var(--pri);color:var(--onpri);display:flex;align-items:center;padding:0 10px 0 16px;gap:12px;box-shadow:0 18px 30px -12px rgba(58,28,16,.7);z-index:20;transform:translateY(140px);transition:transform .4s cubic-bezier(.2,.9,.2,1)}
+.cartbar.show{transform:none;visibility:visible}
+.thumbs{display:flex}
+.thumbs img{width:34px;height:34px;border-radius:50%;border:2px solid var(--pri);margin-left:-10px}
+.thumbs img:first-child{margin-left:0}
+.cartbar .t{flex:1;min-width:0}
+.cartbar .t b{display:block;font:800 15px 'Montserrat'}
+.cartbar .t span{font:600 12px 'Mulish';opacity:.75;white-space:nowrap}
+.go{height:42px;padding:0 16px;border-radius:15px;background:var(--mel);color:#3a1c10;font:800 14px 'Montserrat';display:flex;align-items:center;gap:6px;white-space:nowrap}
+[data-theme=dark] .go{background:#1a0f09;color:#f6d9a8}
+[data-theme=dark] .thumbs img{border-color:#e59a45}
+.go svg{width:18px;height:18px;stroke-width:2.4}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:84px;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 12px 0;z-index:21}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 11px 'Mulish';color:var(--muted);width:90px;position:relative;white-space:nowrap}
+.tab .ic{width:52px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .25s}
+.tab.on{color:var(--ink)}.tab.on .ic{background:var(--butter)}
+.tab .n{position:absolute;top:-2px;right:12px;min-width:18px;height:18px;border-radius:9px;background:var(--car);color:#fff;font:800 10px/18px 'Montserrat';padding:0 4px}
+/* sheets */
+.scrim{position:absolute;inset:0;background:rgba(30,14,8,.55);z-index:30;opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;background:var(--card);border-radius:32px 32px 0 0;z-index:31;transform:translateY(105%);transition:transform .42s cubic-bezier(.2,.9,.2,1);display:flex;flex-direction:column}
+.sheet.show{transform:none}
+.sheet .in{padding:12px 20px 20px;overflow-y:auto}
+.grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 16px}
+.sheet h2{font:800 24px 'Montserrat';letter-spacing:-.02em}
+.sub{font:600 14px/1.4 'Mulish';color:var(--muted);margin-top:4px}
+.bigck{display:grid;place-items:center;height:200px;margin:6px -20px 10px;background:var(--sand);position:relative;overflow:hidden}
+.bigck img{width:180px;height:180px;filter:drop-shadow(0 18px 20px rgba(58,28,16,.35));animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
+.slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 6px;align-items:start}
+.slot{min-width:0;aspect-ratio:1/1;height:auto;border-radius:50%;display:grid;place-items:center;position:relative}
+.slot img{width:100%;height:100%;border-radius:50%;animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+.slot.vaga{box-shadow:inset 0 0 0 2px var(--car);background:repeating-linear-gradient(45deg,var(--warnbg) 0 6px,transparent 6px 12px)}
+.slot.vaga b{font:800 22px 'Montserrat';color:var(--car)}
+.prog{height:8px;border-radius:4px;background:var(--sand);margin:14px 0 4px;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--car),var(--mel));border-radius:4px;transition:width .35s}
+.progt{display:flex;justify-content:space-between;font:700 12px 'Mulish';color:var(--muted)}
+.progt b{color:var(--car)}
+.li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li img{width:46px;height:46px;border-radius:50%}
+.li .t{flex:1;min-width:0}
+.li .t b{display:block;font:800 15px 'Montserrat'}
+.li .t span{font:600 12px 'Mulish';color:var(--muted)}
+.mini{display:flex;align-items:center;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--line);height:36px}
+.mini button{width:34px;height:36px;font:800 17px 'Montserrat';color:var(--price)}
+.mini button:disabled{opacity:.3}
+.mini em{font:800 14px 'Montserrat';font-style:normal;width:18px;text-align:center}
+.mini.on{background:var(--pri);box-shadow:none;color:var(--onpri)}
+.mini.on button{color:var(--onpri)}
+.cta{width:100%;height:58px;border-radius:20px;background:var(--pri);color:var(--onpri);display:flex;align-items:center;justify-content:center;gap:10px;font:800 16px 'Montserrat';box-shadow:0 16px 26px -12px rgba(58,28,16,.7);transition:transform .15s,opacity .2s}
+.cta:active{transform:scale(.98)}
+.cta:disabled{background:var(--sand);color:var(--mocha);box-shadow:none;cursor:default}
+.cta.lite{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.foot{position:absolute;left:20px;right:20px;bottom:24px;display:flex;gap:12px;z-index:22}
+/* checkout */
+.hdr{display:flex;align-items:center;gap:12px;padding:22px 20px 8px;flex:none}
+.hdr h2{font:800 20px 'Montserrat';letter-spacing:-.02em;flex:1}
+.steps{display:flex;align-items:center;gap:8px;padding:6px 20px 16px}
+.steps .s{display:flex;align-items:center;gap:6px;font:700 12px 'Mulish';color:var(--muted)}
+.steps .s i{width:22px;height:22px;border-radius:50%;background:var(--sand);font:800 11px/22px 'Montserrat';text-align:center;font-style:normal;color:var(--mocha)}
+.steps .s.done i{background:var(--ok);color:#fff}.steps .s.on{color:var(--ink)}.steps .s.on i{background:var(--pri);color:var(--onpri)}
+.steps .ln{flex:1;height:2px;background:var(--line)}.steps .ln.done{background:var(--ok)}
+.box{margin:0 20px 12px;background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--sh)}
+.box h4{font:800 12px 'Montserrat';letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.seg{display:flex;background:var(--bg);border-radius:16px;padding:4px}
+.seg button{flex:1;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font:800 14px 'Montserrat';color:var(--mocha);transition:background .2s}
+.seg button svg{width:18px;height:18px}
+.seg .on{background:var(--card);color:var(--ink);box-shadow:0 4px 12px -6px rgba(58,28,16,.4)}
+.dates{display:flex;gap:8px}
+.date{flex:1;height:64px;border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .2s}
+.date small{font:700 11px 'Mulish';color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.date b{font:800 22px 'Montserrat';margin-top:2px}
+.date.on{background:var(--pri);box-shadow:none;color:var(--onpri)}.date.on small{color:var(--mel)}
+.slotsrow{display:flex;gap:8px;margin-top:10px}.slotsrow .chip{flex:1}
+.fld{display:block;margin-top:10px}
+.fld span{display:block;font:700 12px 'Mulish';color:var(--muted);margin:0 0 6px 2px}
+.fld input,.fld select{width:100%;height:50px;border-radius:14px;border:0;box-shadow:inset 0 0 0 1.5px var(--line);background:transparent;padding:0 14px;font:700 15px 'Mulish';outline:none;transition:box-shadow .2s;appearance:none}
+.fld select{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238a6a58' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 16px center}
+.fld input:focus,.fld select:focus{box-shadow:inset 0 0 0 2px var(--car)}
+.fld.err input{box-shadow:inset 0 0 0 2px var(--bad)}
+.fld select option{color:#3a1c10}
+.note{font:600 12px/1.4 'Mulish';color:var(--muted);margin-top:8px}
+.pay{display:flex;gap:8px}
+.pay button{flex:1;height:58px;border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--line);display:flex;align-items:center;gap:10px;padding:0 14px;font:800 14px 'Montserrat'}
+.pay .on{box-shadow:inset 0 0 0 2px var(--car);background:var(--warnbg)}
+.pay .r{width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line);transition:box-shadow .2s}
+.pay .on .r{box-shadow:inset 0 0 0 5px var(--car)}
+.sum .ln{display:flex;justify-content:space-between;font:600 14px 'Mulish';color:var(--mocha);padding:4px 0}
+.sum .ln.dc{color:var(--ok)}
+.sum .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1.5px dashed var(--line);margin-top:8px;padding-top:12px}
+.sum .tot b{font:800 15px 'Montserrat'}
+.sum .tot strong{font:800 24px 'Montserrat';letter-spacing:-.02em}
+/* cart */
+.cit{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.cit:last-child{border-bottom:0}
+.cit img{width:52px;height:52px;border-radius:50%}
+.cit .t{flex:1;min-width:0}
+.cit .t b{display:block;font:800 14px 'Montserrat'}
+.cit .t span{font:600 12px/1.35 'Mulish';color:var(--muted)}
+.cit .p{font:800 14px 'Montserrat';color:var(--price);margin-top:3px}
+.rm{font:700 12px 'Mulish';color:var(--bad);margin-top:4px}
+.empty{text-align:center;padding:60px 30px;color:var(--muted);font:600 14px/1.5 'Mulish'}
+.empty img{width:120px;height:120px;opacity:.85;margin-bottom:14px;filter:grayscale(.3)}
+.empty b{display:block;font:800 18px 'Montserrat';color:var(--ink);margin-bottom:4px}
+/* sucesso */
+.okhead{margin:4px 20px 0;border-radius:28px;background:var(--hero);color:var(--onhero);padding:22px;position:relative;overflow:hidden;height:176px}
+.okhead .glow{position:absolute;left:-60px;bottom:-120px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(126,226,161,.35),rgba(126,226,161,0) 65%)}
+.okc{width:50px;height:50px;border-radius:50%;background:#7ee2a1;color:#3a1c10;display:grid;place-items:center;animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+.okc svg{width:26px;height:26px;stroke-width:3}
+.okhead h2{font:800 25px/1.1 'Montserrat';letter-spacing:-.02em;margin-top:14px;position:relative}
+.okhead p{font:600 13px 'Mulish';color:#e0ccb8;margin-top:5px;position:relative}
+.okhead img{position:absolute;right:-30px;top:18px;width:140px;height:140px;transform:rotate(18deg);filter:drop-shadow(0 14px 18px rgba(0,0,0,.45))}
+.tl{position:relative;padding-left:34px}
+.tl .it{position:relative;padding:0 0 18px}
+.tl .it:last-child{padding-bottom:0}
+.tl .it:before{content:"";position:absolute;left:-25px;top:20px;bottom:-2px;width:2px;background:var(--line);transition:background .4s}
+.tl .it.done:before{background:var(--ok)}
+.tl .it:last-child:before{display:none}
+.tl .it i{position:absolute;left:-34px;top:0;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line);background:var(--card);transition:all .4s}
+.tl .it.done i{background:var(--ok);box-shadow:none}
+.tl .it.now i{box-shadow:inset 0 0 0 6px var(--car)}
+.tl b{display:block;font:800 14px 'Montserrat'}
+.tl span{font:600 12px 'Mulish';color:var(--muted)}
+.tl .it.wait b{color:var(--muted)}
+.pix{display:flex;align-items:center;gap:12px}
+.pix .q{width:46px;height:46px;border-radius:14px;background:var(--butter);display:grid;place-items:center;color:var(--price);flex:none}
+.pix .t{flex:1;min-width:0}
+.pix .t b{display:block;font:800 14px 'Montserrat'}
+.pix .t span{font:600 12px 'Mulish';color:var(--muted);word-break:break-all}
+.btn{height:40px;padding:0 14px;border-radius:13px;background:var(--pri);color:var(--onpri);font:800 13px 'Montserrat';display:flex;align-items:center;gap:6px;flex:none}
+.btn svg{width:16px;height:16px}
+.sq{width:58px;height:58px;border-radius:20px;background:var(--card);display:grid;place-items:center;box-shadow:var(--sh);color:var(--ok);flex:none}
+/* meus pedidos */
+.ord{background:var(--card);border-radius:20px;box-shadow:var(--sh);margin:0 20px 12px;padding:14px;display:flex;gap:12px;align-items:center;text-align:left;width:calc(100% - 40px)}
+.ord .thumbs img{border-color:var(--card)}
+.ord .t{flex:1;min-width:0}
+.ord .t b{display:block;font:800 15px 'Montserrat'}
+.ord .t span{font:600 12px 'Mulish';color:var(--muted)}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:11px;font:800 10px 'Montserrat';letter-spacing:.03em;margin-top:4px}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.wait{background:var(--warnbg);color:var(--warn)}.pill.no{background:var(--sand);color:var(--muted)}
+/* toast + confete */
+.toast{position:absolute;left:50%;top:70px;transform:translate(-50%,-30px);opacity:0;background:var(--ink);color:var(--bg);font:700 13px 'Mulish';padding:10px 16px;border-radius:14px;z-index:50;transition:all .35s;white-space:nowrap;pointer-events:none;max-width:90%}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.cf{position:absolute;top:-10px;width:8px;height:14px;border-radius:2px;z-index:45;pointer-events:none;animation:fall 1.6s cubic-bezier(.3,.6,.6,1) forwards}
+@keyframes fall{to{transform:translateY(900px) rotate(720deg);opacity:.2}}
+.fly{position:absolute;width:44px;height:44px;border-radius:50%;z-index:46;pointer-events:none;transition:all .6s cubic-bezier(.5,-0.3,.7,1)}
+
+/* ===== Natal ===== */
+:root{--nverde:#173a2b;--nverde2:#0f2a1e;--nred:#b3262c;--nouro:#e2b25a;--nonverde:#fbf3e4;--nmenta:#dcebdf}
+[data-theme=dark]{--nverde:#12301f;--nverde2:#0b2015;--nmenta:#1d3327}
+.brand{position:relative}
+.gorro{display:none;position:absolute;left:-7px;top:-14px;width:31px;transform:rotate(-16deg);filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));pointer-events:none}
+[data-natal] .gorro{display:block}
+.ib.sd{background:var(--nverde);color:var(--nouro)}
+.ib.sd.off{background:var(--card);color:var(--muted)}
+.luzes{flex:none;height:34px;margin:-4px 0 0;position:relative;z-index:3;pointer-events:none}
+.luzes.off{display:none}
+.luzes svg{display:block;width:100%;height:34px;overflow:visible}
+.luzes .b{animation:pisca 1.6s ease-in-out infinite alternate}
+.luzes .b ellipse{fill:currentColor;filter:drop-shadow(0 0 5px currentColor)}
+.luzes .c0{color:#e0393f}.luzes .c1{color:#f0bf4c}.luzes .c2{color:#3fa468}.luzes .c3{color:#fff3d6}
+@keyframes pisca{from{opacity:.35}to{opacity:1}}
+#fx{position:absolute;inset:0;width:100%;height:100%;z-index:48;pointer-events:none}
+.capa{position:absolute;left:0;right:0;top:-1px;height:20px;z-index:2;pointer-events:none}
+.capa svg{display:block;width:100%;height:100%}
+.capa path{fill:#fff;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+.hk{position:absolute;right:-74px;top:26px;width:200px;height:200px;animation:boia 5s ease-in-out infinite}
+.hero .hk img{position:static;width:200px;height:200px;animation:none;transform:rotate(-12deg)}
+.hk svg{position:absolute;left:14px;top:-22px;width:104px;transform:rotate(-30deg);filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
+@keyframes boia{50%{transform:translateY(-7px) rotate(2deg)}}
+.bolas{position:absolute;right:14px;top:0;display:flex;gap:12px;z-index:1}
+.bola{display:flex;flex-direction:column;align-items:center;transform-origin:50% 0;animation:balanca 3.4s ease-in-out infinite alternate}
+.bola:nth-child(2){animation-duration:2.7s;animation-delay:-1s}
+.bola:nth-child(3){animation-duration:3.9s;animation-delay:-2s}
+.bola u{display:block;width:1.5px;background:rgba(226,178,90,.7)}
+.bola b{display:block;width:22px;height:22px;border-radius:50%;position:relative;box-shadow:inset -5px -6px 10px rgba(0,0,0,.28),0 6px 10px -4px rgba(0,0,0,.5)}
+.bola b::before{content:"";position:absolute;left:7px;top:-5px;width:8px;height:6px;border-radius:2px;background:#e2b25a}
+.bola b::after{content:"";position:absolute;left:6px;top:5px;width:7px;height:5px;border-radius:50%;background:rgba(255,255,255,.65);transform:rotate(-30deg)}
+@keyframes balanca{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.estr{position:absolute;width:10px;height:10px;background:var(--nouro);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:brilha 2.2s ease-in-out infinite alternate;pointer-events:none}
+@keyframes brilha{from{opacity:.1;transform:scale(.5)}to{opacity:.9;transform:scale(1.1) rotate(20deg)}}
+.azev{display:inline-block;width:26px;height:20px;vertical-align:-4px;margin-right:6px}
+[data-natal] .cta:not(.lite):not(:disabled){background:linear-gradient(135deg,#c2343a,#93191f);color:#fff;box-shadow:0 16px 26px -12px rgba(147,25,31,.8);position:relative;overflow:hidden}
+[data-natal] .cta:not(.lite):not(:disabled)::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);animation:lustro 3.6s ease-in-out infinite}
+@keyframes lustro{0%,55%{left:-40%}100%{left:120%}}
+[data-natal] .prog i{background:repeating-linear-gradient(-45deg,#c2343a 0 8px,#fff 8px 16px);animation:bengala 1s linear infinite;background-size:22.6px 100%}
+@keyframes bengala{to{background-position:22.6px 0}}
+[data-natal] .tab.on .ic{position:relative}
+[data-natal] .tab.on .ic::after{content:"";position:absolute;right:-7px;top:-7px;width:11px;height:11px;background:var(--nouro);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:brilha 1.6s ease-in-out infinite alternate}
+[data-natal] .okhead{background:linear-gradient(160deg,var(--nverde),var(--nverde2))}
+[data-natal] .okhead .glow{background:radial-gradient(circle,rgba(226,178,90,.4),rgba(226,178,90,0) 65%)}
+.festas{margin:26px 20px 0;text-align:center;font:600 13px/1.5 'Mulish';color:var(--muted)}
+.festas b{display:block;font:700 28px/1.1 'Dancing Script';color:var(--nred)}
+.festas svg{width:44px;height:44px;margin-bottom:4px}
+.abre{position:absolute;inset:0;z-index:70;display:block;width:100%;height:100%;color:var(--nonverde);transition:visibility 0s 1s}
+.abre.fim{visibility:hidden;pointer-events:none}
+.abre .pt{position:absolute;top:0;bottom:0;width:50.5%;background:linear-gradient(170deg,var(--nverde),var(--nverde2));transition:transform .9s cubic-bezier(.6,0,.2,1)}
+.abre .pt.e{left:0;box-shadow:inset -1.5px 0 0 rgba(226,178,90,.55)}
+.abre .pt.d{right:0;box-shadow:inset 1.5px 0 0 rgba(226,178,90,.55)}
+.abre .pt::after{content:"";position:absolute;top:76%;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6dc9c,#c98f2f);box-shadow:0 3px 6px rgba(0,0,0,.4)}
+.abre .pt.e::after{right:12px}.abre .pt.d::after{left:12px}
+.abre.fim .pt.e{transform:translateX(-102%)}
+.abre.fim .pt.d{transform:translateX(102%)}
+.abre .cx{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .3s}
+.abre.fim .cx{opacity:0}
+.abre .lg{position:relative;width:96px;height:96px;animation:pop .7s cubic-bezier(.3,1.5,.5,1) both}
+.abre .lg img{width:96px;height:96px;border-radius:50%;box-shadow:0 14px 30px -10px rgba(0,0,0,.6)}
+.abre .lg svg{position:absolute;left:-16px;top:-34px;width:76px;transform:rotate(-16deg)}
+.abre .h2{display:block;font:700 44px/1 'Dancing Script';color:var(--nouro);margin-top:10px;animation:rise .7s .2s both}
+.abre .sub{display:block;font:700 12px 'Montserrat';letter-spacing:.16em;text-transform:uppercase;color:#cfe0d2;animation:rise .7s .35s both}
+.abre .barra{display:block;width:120px;height:4px;border-radius:2px;background:rgba(255,255,255,.14);margin-top:26px;overflow:hidden}
+.abre .barra i{display:block;height:100%;width:100%;border-radius:2px;background:var(--nouro);transform-origin:0 50%;animation:enche 2.3s .2s cubic-bezier(.4,0,.2,1) both}
+@keyframes enche{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.pulo{animation:pulo .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pulo{0%{transform:scale(.6) rotate(-14deg)}100%{transform:none}}
+[data-natal] .hero .glow{background:radial-gradient(circle,rgba(226,178,90,.6),rgba(226,178,90,0) 65%)}
+[data-natal] .hero h1{width:200px;font-size:26px}
+[data-natal] .hero h1 .s{font-size:23px}
+[data-natal] .hero p{max-width:185px;line-height:1.35}
+.nrow .card{color:var(--ink)}
+.cont{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:14px;background:var(--nred);font:800 12px 'Montserrat';color:#fff;margin-left:6px;position:relative}
+.natal{margin:18px 12px 0;padding:20px 0 20px;border-radius:30px;background:linear-gradient(170deg,var(--nverde),var(--nverde2));color:var(--nonverde);position:relative;overflow:hidden}
+.natal::before{content:"";position:absolute;right:-70px;top:-70px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(226,178,90,.28),rgba(226,178,90,0) 68%)}
+.natal .cab{padding:0 16px;position:relative}
+.natal .cab small{font:800 10px 'Montserrat';letter-spacing:.14em;text-transform:uppercase;color:var(--nouro)}
+.natal .cab h2{font:700 33px/1 'Dancing Script';color:var(--nouro);margin-top:4px}
+.natal .cab p{font:600 13px/1.45 'Mulish';color:#d5e3d6;margin-top:8px;max-width:235px}
+.natal .pl{display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none}
+.natal .pl span{white-space:nowrap;height:32px;padding:0 11px;border-radius:16px;background:rgba(255,255,255,.1);display:flex;align-items:center;gap:6px;font:700 12px 'Mulish';color:var(--nonverde)}
+.natal .pl svg{width:15px;height:15px;color:var(--nouro)}
+.natal h4{font:800 12px 'Montserrat';letter-spacing:.1em;text-transform:uppercase;color:#bcd3c0;padding:18px 16px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.natal h4 em{font:700 12px 'Mulish';font-style:normal;letter-spacing:0;text-transform:none;color:var(--nouro)}
+.nrow{display:flex;gap:10px;padding:0 16px 4px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.nrow .card{flex:0 0 150px;scroll-snap-align:start;box-shadow:0 12px 24px -14px rgba(0,0,0,.6)}
+.nrow .card .ph{background:var(--nmenta)}
+.nrow .card.sel{box-shadow:0 0 0 2px var(--nouro),0 12px 24px -14px rgba(0,0,0,.6)}
+.tag.nat{background:var(--nred);color:#fff}
+.fita{position:absolute;right:-26px;top:10px;width:92px;height:20px;background:var(--nred);color:#fff;font:800 9px/20px 'Montserrat';letter-spacing:.1em;text-align:center;transform:rotate(38deg);z-index:2;box-shadow:0 3px 6px -2px rgba(0,0,0,.4)}
+.kit{flex:0 0 228px;min-height:128px;border-radius:20px;position:relative;overflow:hidden;padding:14px 16px;text-align:left;scroll-snap-align:start;color:#fff;transition:transform .2s;display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:linear-gradient(135deg,#c2343a,#8e1c22)}
+.kit:active{transform:scale(.97)}
+.kit.k2{background:linear-gradient(135deg,#e9c06c,#c98f2f);color:#3a1c10}
+.kit.k3{background:linear-gradient(135deg,#fbf3e4,#ead9bd);color:#3a1c10}
+.kit::after{content:"";position:absolute;left:0;right:0;top:50%;height:10px;background:rgba(255,255,255,.16);transform:translateY(-50%)}
+.kit::before{content:"";position:absolute;top:0;bottom:0;right:62px;width:10px;background:rgba(255,255,255,.16)}
+.kit.k2::after,.kit.k2::before,.kit.k3::after,.kit.k3::before{background:rgba(179,38,44,.16)}
+.kit small{font:800 10px 'Montserrat';letter-spacing:.1em;text-transform:uppercase;opacity:.85;position:relative;z-index:1}
+.kit b{display:block;font:800 17px/1.15 'Montserrat';max-width:64%;position:relative;z-index:1;letter-spacing:-.01em}
+.kit .pr{margin-top:auto;position:relative;z-index:1;font:800 14px 'Montserrat';background:#fffaf3;color:#3a1c10;padding:5px 10px;border-radius:11px}
+.kit .st{position:absolute;right:-18px;bottom:-22px;width:112px;height:112px;z-index:1}
+.kit .st img{position:absolute;width:64px;height:64px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+.kit .laco{position:absolute;right:50px;top:50%;width:34px;height:34px;transform:translateY(-50%);z-index:1;color:#fff;opacity:.9}
+.kit.k2 .laco,.kit.k3 .laco{color:var(--nred)}
+.sw{display:flex;align-items:center;gap:12px;width:100%;text-align:left}
+.sw .t{flex:1}.sw .t b{display:block;font:800 15px 'Montserrat'}.sw .t span{font:600 12.5px 'Mulish';color:var(--muted)}
+.sw .k{width:50px;height:30px;border-radius:15px;background:var(--line);position:relative;transition:background .2s;flex:none}
+.sw .k::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
+.sw.on .k{background:var(--nred)}.sw.on .k::after{transform:translateX(20px)}
+.sw .gi{width:42px;height:42px;border-radius:14px;background:var(--nmenta);color:var(--nred);display:grid;place-items:center;flex:none}
+.fld textarea{width:100%;min-height:84px;border-radius:14px;border:0;box-shadow:inset 0 0 0 1.5px var(--line);background:transparent;padding:12px 14px;font:700 15px/1.4 'Mulish';color:inherit;outline:none;resize:none}
+.fld textarea:focus{box-shadow:inset 0 0 0 2px var(--nred)}
+.cartao{margin-top:10px;border-radius:14px;padding:12px 14px;background:var(--nmenta);font:600 13px/1.45 'Mulish';color:var(--ink);border-left:0}
+.cartao b{display:block;font:800 11px 'Montserrat';letter-spacing:.08em;text-transform:uppercase;color:var(--nred);margin-bottom:4px}
+.cartao i{font:700 17px/1.3 'Dancing Script';font-style:normal;display:block}
+@media (prefers-reduced-motion:reduce){.luzes .b,.hk,.bola,.estr,.cta::after,.prog i{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <aside class="side">
+    <h1>Dona <span>Liz</span><br>site de Natal</h1>
+    <p>Modelo de teste para dezembro: área de Natal, sabores e kits de exemplo e opção de presente. Nenhum pedido é enviado e nada muda no site real.</p>
+    <div class="ctl">
+      <label for="dia">Simular o dia</label>
+      <select id="dia">
+        <option value="">Hoje</option>
+        <option value="1">Segunda (5% de desconto)</option>
+        <option value="3">Quarta (combos liberados)</option>
+        <option value="5">Sexta</option>
+      </select>
+      <label>Som</label>
+      <button class="tg" id="somBt" type="button">Desligar os sons</button>
+      <label>Aparência</label>
+      <button class="tg" id="tema" type="button">Modo escuro</button>
+    </div>
+    <p style="font-size:12px">Sabores, kits, preços, datas e fotos de Natal são exemplos para trocar pelos seus.</p>
+  </aside>
+  <div class="phone" id="phone">
+    <div class="sim">SIMULAÇÃO DE NATAL · SABORES E PREÇOS DE EXEMPLO</div>
+    <header class="top" id="top"></header>
+    <div class="luzes" id="luzes"></div>
+    <main class="view" id="view"></main>
+    <div class="cartbar" id="cartbar"></div>
+    <nav class="tabbar" id="tabbar"></nav>
+    <div class="scrim" id="scrim" data-act="fechar"></div>
+    <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+    <div class="toast" id="toast"></div>
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <div class="abre" id="abre" role="status" aria-label="Abrindo a loja"><span class="pt e"></span><span class="pt d"></span><span class="cx"><span class="lg"><img src="img/marca.png" alt=""><svg viewBox="0 0 40 34" aria-hidden="true"><path d="M6 26C8 12 18 3 30 6c4 1 6 5 6 9l-5-3c-2 5-2 9-1 14Z" fill="#c22f33"/><path d="M12 22c2-8 8-13 16-13" fill="none" stroke="#e2585c" stroke-width="2" stroke-linecap="round" opacity=".6"/><rect x="3" y="24" width="29" height="8" rx="4" fill="#fffaf3"/><circle cx="36" cy="16" r="4" fill="#fffaf3"/></svg></span><span class="h2">Feliz Natal</span><span class="sub">Dona Liz Cookies Artesanais</span><span class="barra"><i></i></span></span></div>
+  </div>
+</div>
+<script>
+const IC = {
+  plus:'<path d="M12 5v14M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', bag:'<path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+  cookie:'<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1"/><circle cx="14.5" cy="9" r="1"/><circle cx="13" cy="14.5" r="1"/>',
+  list:'<rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 9h6M9 13h6M9 17h3"/>', cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+  pct:'<path d="M5 19 19 5"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>', pix:'<path d="M12 3 21 12 12 21 3 12Z"/><path d="m8.5 12 3.5 3.5L15.5 12 12 8.5Z"/>',
+  back:'<path d="M15 6l-6 6 6 6"/>', check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  truck:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>', store:'<path d="M4 10 12 4l8 6v10H4Z"/><path d="M10 20v-6h4v6"/>',
+  copy:'<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>', lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  som:'<path d="M4 10v4h3l4 4V6l-4 4H4Z"/><path d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/>', mudo:'<path d="M4 10v4h3l4 4V6l-4 4H4Z"/><path d="m15 9.5 5 5m0-5-5 5"/>',
+  tree:'<path d="M12 3 7.5 9H10l-4 5h3l-4 5h14l-4-5h3l-4-5h2.5Z"/><path d="M12 19v2.5"/>', bow:'<path d="M12 12c-2-4-6-6-8-4s0 6 8 4Zm0 0c2-4 6-6 8-4s0 6-8 4Zm0 0-3 8m3-8 3 8"/>', heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10Z"/>',
+  moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/>', sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', gift:'<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8S10 3 7.5 4.5 9 8 12 8Zm0 0s2-5 4.5-3.5S15 8 12 8Z"/>',
+  wa:'<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19.2Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.3-1.6-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2Z"/>', cash:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>'
+};
+const ic = (k, st = '') => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="${st}">${IC[k]}</svg>`;
+const SAB = [
+  ['dl01','Tradicional',10,'tradicional','Gotas de chocolate ao leite',12,['mais','classico']],
+  ['dl02','Caramelo salgado',12,'caramelo','Caramelo com pitada de flor de sal',9,['classico']],
+  ['dl03','Chocotriplo',13,'chocotriplo','Três chocolates numa massa só',10,['classico']],
+  ['dl04','Nutella',13,'nutella','Recheio cremoso de Nutella',8,['mais','recheado']],
+  ['dl05','Galak',12,'galak','Chocolate branco Galak',7,['recheado']],
+  ['dl06','Laka Dark',12,'lakadark','Massa escura com pedaços de Laka',6,['classico']],
+  ['dl07','Bala Baiana',12,'balabaiana','Recheio de bala baiana',6,['recheado']],
+  ['dl08','Red Velvet',12,'redvelvet','Massa aveludada e gotas brancas',3,['classico']],
+  ['dl09','Ferrero Rocher',15,'ferrero','Avelã crocante e chocolate',6,['mais','recheado']],
+  ['dl10','Ninho',12,'ninho','Recheio de leite Ninho',8,['recheado']],
+  ['dl11','Ninho com Nutella',14,'ninhonutella','Ninho e Nutella juntos',7,['mais','recheado']],
+  ['dl12','Ovomaltine',12,'ovomaltine','Crocante de Ovomaltine',0,['classico']],
+  ['nt01','Panetone',14,'tradicional','Frutas cristalizadas, raspas de laranja e gotas de chocolate',14,['natal']],
+  ['nt02','Chocotone Trufado',15,'chocotriplo','Massa de cacau com recheio de trufa',12,['natal']],
+  ['nt03','Gingerbread',13,'caramelo','Mel, canela, gengibre e especiarias de Natal',10,['natal']],
+  ['nt04','Rabanada',14,'ninho','Canela, açúcar e recheio de doce de leite',9,['natal']],
+  ['nt05','Red Velvet de Natal',14,'redvelvet','Massa vermelha com recheio de cream cheese',3,['natal']],
+  ['nt06','Nozes com Chocolate Branco',15,'galak','Nozes tostadas e chocolate branco',8,['natal']]
+].map(([id,nome,preco,img,desc,est,tags]) => ({ id, nome, preco, img:`img/ck_${img}.png`, desc, est, tags }));
+const SB = Object.fromEntries(SAB.map(s => [s.id, s]));
+const COMBOS = [
+  { id:'cb1', nome:'Caixa com 4', tag:'Monte a sua', preco:44, livre:4, cls:'', imgs:['dl04','dl08','dl10'] },
+  { id:'cb2', nome:'Dupla Nutella', tag:'Para dividir', preco:25, itens:{ dl04:1, dl11:1 }, cls:'alt', imgs:['dl04','dl11'] },
+  { id:'cb3', nome:'Caixa Degustação', tag:'6 sabores', preco:70, itens:{ dl01:1, dl02:1, dl03:1, dl04:1, dl08:1, dl09:1 }, cls:'alt2', imgs:['dl09','dl03','dl02'] }
+];
+COMBOS.push(
+  { id:'nk1', natal:1, nome:'Caixa Presente', tag:'Monte com 6', preco:84, livre:6, cls:'', imgs:['nt01','nt05','nt02'] },
+  { id:'nk2', natal:1, nome:'Lata Natalina', tag:'4 sabores de Natal', preco:58, itens:{ nt01:1, nt02:1, nt03:1, nt04:1 }, cls:'k2', imgs:['nt03','nt04','nt01'] },
+  { id:'nk3', natal:1, nome:'Amigo Secreto', tag:'2 cookies + cartão', preco:30, itens:{ nt05:1, nt06:1 }, cls:'k3', imgs:['nt05','nt06'] }
+);
+const NORMAIS = COMBOS.filter(c => !c.natal), KITS = COMBOS.filter(c => c.natal), SABN = SAB.filter(s => s.tags.includes('natal')), SABR = SAB.filter(s => !s.tags.includes('natal'));
+const CB = Object.fromEntries(COMBOS.map(c => [c.id, c]));
+const TAXAS = `Santa Martha=2;Santa Helena=2;Vila Operária=5;Cidade Nova=5;Jardim Conforto=5;Jardim Portugal=5;Lady Katita=5;Lamismar 1=5;Centro=5;Marfim 1 e 3=5;Bela Vista=5;Jardim Palmas=5;Parque Itaici=5;Cruzeiro e Vila São José=5;Lamismar 2=6;Parque Hortência=6;Kaikan=6;Jardim Santa Maria=6;Villa Nova Unipel=6;Estrada Cavalheira=7;Estrada Moage=7;Cemitério Iluminado=7;Alpes Bom Jesus=12;Santa Fé=12;Ballagro=12`.split(';').map(x => x.split('=')).map(([n,v]) => ({ n, v:+v }));
+const RET = { 2:['14h–18h'], 3:['14h–18h'], 4:['12h–16h'], 5:['14h–18h'], 6:['9h–12h'] }, ENT = { 2:['Após 18h'], 3:['Após 18h'], 4:['Após 18h'], 5:['Após 18h'], 6:['Manhã'] };
+const DIASL = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const R = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+const S = { tela:'cardapio', filtro:'todos', s:{}, c:[], ck:{ passo:1, modo:'entrega', data:null, per:0, bairro:'', end:'', nome:'', tel:'', pag:'pix', troco:'', presente:false, de:'', para:'', msg:'' }, pedidos:[], diaSim:'', numero:15, sheet:null, combo:null, erro:{} };
+const $ = id => document.getElementById(id);
+const hoje = () => { const d = new Date(); if (S.diaSim !== '') { const t = +S.diaSim; d.setDate(d.getDate() + ((t - d.getDay() + 7) % 7)); } d.setHours(10,0,0,0); return d; };
+const temDesconto = () => [1,2].includes(hoje().getDay());
+const combosLiberados = () => ![1,2].includes(hoje().getDay());
+const natalOn = () => true; // o tema de Natal é fixo durante a temporada
+const GORRO = '<svg viewBox="0 0 40 34" aria-hidden="true"><path d="M6 26C8 12 18 3 30 6c4 1 6 5 6 9l-5-3c-2 5-2 9-1 14Z" fill="#c22f33"/><path d="M12 22c2-8 8-13 16-13" fill="none" stroke="#e2585c" stroke-width="2" stroke-linecap="round" opacity=".6"/><rect x="3" y="24" width="29" height="8" rx="4" fill="#fffaf3"/><circle cx="36" cy="16" r="4" fill="#fffaf3"/></svg>';
+const anoNatal = () => { const d = new Date(); return d.getMonth() === 11 && d.getDate() > 25 ? d.getFullYear() + 1 : d.getFullYear(); };
+const diasNatal = () => Math.max(0, Math.ceil((new Date(anoNatal(), 11, 25) - new Date(new Date().toDateString())) / 864e5));
+/* no tema de Natal a simulação usa as datas especiais de entrega: 22, 23 e 24 de dezembro */
+const datasNatal = () => [22, 23, 24].map(d => new Date(anoNatal(), 11, d)).filter(d => [2,3,4,5,6].includes(d.getDay()));
+const datas = () => { if (natalOn() && datasNatal().length) return datasNatal(); const out = [], h = hoje(); for (let i = 1; out.length < 3 && i < 10; i++) { const d = new Date(h); d.setDate(h.getDate() + i); if ([4,5,6].includes(d.getDay())) out.push(d); } return out; };
+const usados = () => { const u = {}; for (const [id,q] of Object.entries(S.s)) u[id] = (u[id] || 0) + q; for (const c of S.c) for (const [id,q] of Object.entries(c.sab)) u[id] = (u[id] || 0) + q; return u; };
+const livre = id => SB[id].est - (usados()[id] || 0);
+const nItens = () => Object.values(S.s).reduce((a,b) => a + b, 0) + S.c.length;
+const nCookies = () => Object.values(usados()).reduce((a,b) => a + b, 0);
+const subtotal = () => Object.entries(S.s).reduce((a,[id,q]) => a + SB[id].preco * q, 0) + S.c.reduce((a,c) => a + CB[c.id].preco, 0);
+const taxa = () => S.ck.modo === 'entrega' ? ((TAXAS.find(t => t.n === S.ck.bairro) || {}).v || 0) : 0;
+const desconto = () => temDesconto() ? Math.round(subtotal() * 5) / 100 : 0;
+const total = () => subtotal() - desconto() + taxa();
+let toastT;
+const toast = m => { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); };
+
+function renderTop() {
+  $('luzes').classList.toggle('off', ['checkout','carrinho'].includes(S.tela));
+  if (['checkout','carrinho'].includes(S.tela)) { $('top').style.display = 'none'; return; }
+  $('top').style.display = '';
+  const n = nItens();
+  $('top').innerHTML = `<div class="brand"><img src="img/marca.png" alt="">${GORRO.replace('<svg ', '<svg class="gorro" ')}<b>DONA<span>Liz</span></b></div>
+    <div style="display:flex;gap:8px"><button class="ib sd ${SOM.mudo ? 'off' : ''}" data-act="som" aria-label="${SOM.mudo ? 'Ligar' : 'Desligar'} os sons" aria-pressed="${!SOM.mudo}">${ic(SOM.mudo ? 'mudo' : 'som')}</button><button class="ib" data-act="tema" aria-label="Trocar claro/escuro">${ic(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon')}</button>
+    <button class="ib" data-act="ir" data-v="carrinho" aria-label="Carrinho">${ic('bag')}${n ? `<span class="badge" id="badge">${n}</span>` : ''}</button></div>`;
+}
+function renderTabs() {
+  const n = nItens(), np = S.pedidos.length;
+  const t = [['cardapio','cookie','Cardápio'],['carrinho','bag','Carrinho', n],['pedidos','list','Meus pedidos', np]];
+  const show = !['checkout','enviado'].includes(S.tela);
+  $('tabbar').style.display = show ? '' : 'none';
+  $('tabbar').innerHTML = t.map(([k,i,l,b]) => `<button class="tab ${S.tela === k ? 'on' : ''}" data-act="ir" data-v="${k}"><span class="ic">${ic(i)}</span>${b ? `<span class="n">${b}</span>` : ''}${l}</button>`).join('');
+}
+function renderCartbar() {
+  const n = nItens(), el = $('cartbar');
+  const show = n && S.tela === 'cardapio';
+  el.classList.toggle('show', !!show);
+  if (!n) return;
+  const imgs = [...Object.keys(S.s).map(id => SB[id].img), ...S.c.map(c => SB[CB[c.id].imgs[0]].img)].slice(0, 3);
+  el.innerHTML = `<div class="thumbs">${imgs.map(i => `<img src="${i}" alt="">`).join('')}</div>
+    <div class="t"><b>${R(subtotal())}</b><span>${nCookies()} cookie${nCookies() > 1 ? 's' : ''}${temDesconto() ? ' · 5% off' : ''}</span></div>
+    <button class="go" data-act="ir" data-v="carrinho">Ver carrinho ${ic('arrow')}</button>`;
+}
+function cardHTML(s) {
+  const q = S.s[s.id] || 0, l = livre(s.id), out = s.est === 0;
+  let tag = '';
+  if (out) tag = '<span class="tag">ESGOTADO</span>';
+  else if (s.tags.includes('natal') && s.est > 3) tag = '<span class="tag nat">NATAL</span>';
+  else if (s.id === 'dl04') tag = '<span class="tag hot">MAIS PEDIDO</span>';
+  else if (s.est <= 3) tag = `<span class="tag low">ÚLTIMOS ${s.est}</span>`;
+  const ctl = out ? '' : q ? `<div class="step"><button data-act="menos" data-id="${s.id}" aria-label="Tirar um">–</button><em>${q}</em><button data-act="mais" data-id="${s.id}" aria-label="Pôr mais um">+</button></div>`
+    : `<button class="add" data-act="mais" data-id="${s.id}" aria-label="Adicionar ${s.nome}">${ic('plus')}</button>`;
+  return `<div class="card ${q ? 'sel' : ''} ${out ? 'out' : ''}" data-card="${s.id}">
+    <button class="ph" data-act="ver" data-id="${s.id}" aria-label="Ver ${s.nome}">${tag}<img src="${s.img}" alt=""></button>
+    <b>${s.nome}</b><div class="row"><span>${R(s.preco).replace(',00', '')}</span>${ctl}</div></div>`;
+}
+function vCardapio() {
+  const fs = [['todos','Todos'],['mais','Mais pedidos'],['recheado','Recheados'],['classico','Clássicos']];
+  const lista = SABR.filter(s => S.filtro === 'todos' || s.tags.includes(S.filtro));
+  const nt = natalOn(), dn = diasNatal();
+  const d0 = datas()[0];
+  const combos = combosLiberados()
+    ? `<div class="combos">${NORMAIS.map(c => `<button class="combo ${c.cls}" data-act="combo" data-id="${c.id}"><small>${c.tag}</small><b>${c.nome}</b>
+        <span class="st">${c.imgs.map((id,i) => `<img src="${SB[id].img}" alt="" style="${['left:0;top:34px','left:40px;top:0','left:44px;top:50px'][i]}">`).join('')}</span><span class="pr">${R(c.preco).replace(',00','')}</span></button>`).join('')}</div>`
+    : `<div class="lock"><span class="ic">${ic('lock')}</span><div><b>Combos a partir de quarta</b>Na segunda e na terça vale o desconto de 5% nos sabores.</div></div>`;
+  const CAPA = '<div class="capa"><svg viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h400v7c-8 0-9 7-17 7s-8-6-17-6-10 9-19 9-8-8-17-8-9 5-18 5-9-7-19-7-9 10-19 10-9-9-18-9-8 6-17 6-10-7-19-7-9 9-18 9-9-8-18-8-9 6-18 6-9-8-19-8-9 10-18 10-9-9-18-9-8 6-17 6-10-8-19-8-9 7-17 7-10-5-19-5Z"/></svg></div>';
+  const estr = [[8,62],[30,14],[52,38],[70,78],[88,30],[94,58],[18,88],[62,8],[44,70],[80,92]].map(([x,y],i) => `<i class="estr" style="left:${x}%;top:${y}%;animation-delay:-${i * .37}s;${i % 3 ? '' : 'width:14px;height:14px'}"></i>`).join('');
+  const AZEV = '<svg class="azev" viewBox="0 0 26 20" aria-hidden="true"><path d="M13 12C8 13 3 11 1 6c4-2 9-1 12 6Z" fill="#3fa468"/><path d="M13 12c5 1 10-1 12-6-4-2-9-1-12 6Z" fill="#2f8553"/><circle cx="11" cy="14" r="3" fill="#e0393f"/><circle cx="15.5" cy="14.5" r="3" fill="#c22f33"/><circle cx="13" cy="10.5" r="2.8" fill="#e8484e"/></svg>';
+  const hero = nt
+    ? `<div class="hero">${CAPA}<div class="glow"></div><div class="hk"><img src="img/hero.png" alt="">${GORRO}</div><span class="live">Encomendas de Natal abertas</span>
+      <h1>Natal Dona Liz <span class="s">feito para presentear</span></h1><p>Encomende até 20/12 · entregas dias 22, 23 e 24</p></div>`
+    : `<div class="hero"><div class="glow"></div><img src="img/hero.png" alt=""><span class="live">Aberto para pedidos</span>
+      <h1>Cookies da semana <span class="s">saindo do forno</span></h1><p>Entregas de quinta a sábado</p></div>`;
+  const area = !nt ? '' : `<section class="natal" aria-label="Especial de Natal">${estr}
+      <div class="bolas" aria-hidden="true"><span class="bola"><u style="height:14px"></u><b style="background:#c2343a"></b></span><span class="bola"><u style="height:30px"></u><b style="background:#e2b25a"></b></span><span class="bola"><u style="height:8px"></u><b style="background:#fbf3e4"></b></span></div>
+      <div class="cab"><small>${AZEV}Só em dezembro</small><h2>Especial de Natal</h2><p>Sabores que só aparecem nesta época e kits prontos para dar de presente, com laço e cartão.</p></div>
+      <div class="pl">${dn ? `<span>${ic('tree')}Falta${dn > 1 ? 'm' : ''} ${dn} dia${dn > 1 ? 's' : ''} para o Natal</span>` : ''}<span>${ic('cal')}Encomendas até 20/12</span><span>${ic('gift')}Cartão com mensagem grátis</span></div>
+      <h4>Sabores de Natal <em>${SABN.length} novidades</em></h4>
+      <div class="nrow">${SABN.map(cardHTML).join('')}</div>
+      <h4>Kits para presentear <em>${KITS.length} opções</em></h4>
+      <div class="nrow">${KITS.map(c => `<button class="kit ${c.cls}" data-act="combo" data-id="${c.id}"><small>${c.tag}</small><b>${c.nome}</b>
+        <svg class="laco i" viewBox="0 0 24 24" aria-hidden="true">${IC.bow}</svg>
+        <span class="st">${c.imgs.map((id,i) => `<img src="${SB[id].img}" alt="" style="${['left:0;top:34px','left:40px;top:0','left:44px;top:50px'][i]}">`).join('')}</span><span class="pr">${R(c.preco).replace(',00','')}</span></button>`).join('')}</div>
+    </section>`;
+  return hero + `
+    <div class="perks"><span>${ic('cal')}${DIAS[d0.getDay()]} ${d0.getDate()}/${d0.getMonth() + 1}</span><span class="${temDesconto() ? 'on' : ''}">${ic('pct')}5% off seg e ter</span><span>${ic('pix')}Pix ou dinheiro</span></div>
+    ${area}
+    <div class="sec"><h3>${nt ? 'Combos de sempre' : 'Combos'}</h3><small>${combosLiberados() ? NORMAIS.length + ' opções' : 'em breve'}</small></div>
+    ${combos}
+    <div class="sec"><h3>${nt ? 'Sabores de sempre' : 'Sabores'}</h3><small>${SABR.length} no cardápio</small></div>
+    <div class="chips">${fs.map(([k,l]) => `<button class="chip ${S.filtro === k ? 'on' : ''}" data-act="filtro" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="grid" id="grid">${lista.map(cardHTML).join('')}</div>
+    <div class="festas"><svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 4 13 16h5l-8 10h6l-8 10h28l-8-10h6l-8-10h5Z" fill="#2f8553"/><rect x="19.5" y="36" width="5" height="5" rx="1" fill="#7a4a32"/><circle cx="22" cy="5" r="3" fill="#e2b25a"/><circle cx="18" cy="21" r="1.6" fill="#e0393f"/><circle cx="26" cy="29" r="1.6" fill="#e2b25a"/><circle cx="17" cy="31" r="1.6" fill="#fff3d6"/><circle cx="25" cy="15" r="1.6" fill="#e0393f"/></svg><b>Boas festas!</b>Com carinho, família Dona Liz</div>`;
+}
+function vCarrinho() {
+  const n = nItens();
+  const head = `<div class="hdr"><button class="ib" data-act="ir" data-v="cardapio" aria-label="Voltar">${ic('back')}</button><h2>Seu carrinho</h2></div>`;
+  if (!n) return head + `<div class="empty"><img src="img/hero.png" alt=""><b>Carrinho vazio</b>Escolha seus cookies no cardápio.<br><br><button class="cta" data-act="ir" data-v="cardapio" style="max-width:240px;margin:0 auto">Ver cardápio</button></div>`;
+  const its = [
+    ...Object.entries(S.s).map(([id,q]) => { const s = SB[id]; return `<div class="cit"><img src="${s.img}" alt=""><div class="t"><b>${s.nome}</b><span>${R(s.preco)} cada</span><div class="p">${R(s.preco * q)}</div></div>
+      <div class="mini on"><button data-act="menos" data-id="${id}" aria-label="Tirar um">–</button><em>${q}</em><button data-act="mais" data-id="${id}" aria-label="Pôr mais um">+</button></div></div>`; }),
+    ...S.c.map((c,i) => { const cb = CB[c.id]; return `<div class="cit"><img src="${SB[cb.imgs[0]].img}" alt=""><div class="t"><b>${cb.nome}</b><span>${Object.entries(c.sab).map(([id,q]) => q + '× ' + SB[id].nome).join(', ')}</span><div class="p">${R(cb.preco)}</div></div>
+      <button class="rm" data-act="rmcombo" data-i="${i}">Remover</button></div>`; })
+  ].join('');
+  return head + `<div class="enter"><div class="box">${its}</div>
+    <div class="box sum"><div class="ln"><span>Subtotal</span><span>${R(subtotal())}</span></div>${desconto() ? `<div class="ln dc"><span>Desconto de segunda/terça (5%)</span><span>– ${R(desconto())}</span></div>` : ''}
+    <div class="ln"><span>Entrega</span><span>calculada no próximo passo</span></div></div>
+    <div class="pad"><button class="cta" data-act="checkout">Continuar · ${R(subtotal() - desconto())} ${ic('arrow')}</button></div></div>`;
+}
+function vCheckout() {
+  const k = S.ck, ds = datas();
+  if (k.data === null) k.data = 0;
+  const d = ds[k.data], per = (k.modo === 'entrega' ? ENT : RET)[d.getDay()];
+  const steps = `<div class="steps"><div class="s done"><i>✓</i>Carrinho</div><div class="ln done"></div><div class="s ${k.passo === 1 ? 'on' : 'done'}"><i>${k.passo === 1 ? 2 : '✓'}</i>Entrega</div><div class="ln ${k.passo === 2 ? 'done' : ''}"></div><div class="s ${k.passo === 2 ? 'on' : ''}"><i>3</i>Pagamento</div></div>`;
+  const head = `<div class="hdr"><button class="ib" data-act="${k.passo === 1 ? 'ir' : 'passo1'}" data-v="carrinho" aria-label="Voltar">${ic('back')}</button><h2>Finalizar pedido</h2></div>`;
+  const e = S.erro;
+  if (k.passo === 1) return head + steps + `<div class="enter">
+    <div class="box"><div class="seg"><button class="${k.modo === 'entrega' ? 'on' : ''}" data-act="modo" data-v="entrega">${ic('truck')}Entrega</button><button class="${k.modo === 'retirada' ? 'on' : ''}" data-act="modo" data-v="retirada">${ic('store')}Retirada</button></div></div>
+    <div class="box"><h4>Quando</h4><div class="dates">${ds.map((x,i) => `<button class="date ${k.data === i ? 'on' : ''}" data-act="data" data-i="${i}"><small>${DIAS[x.getDay()]}</small><b>${x.getDate()}</b></button>`).join('')}</div>
+      <div class="slotsrow">${per.map((p,i) => `<span class="chip on">${k.modo === 'entrega' ? 'Entrega' : 'Retirada'} · ${p}</span>`).join('')}</div></div>
+    ${k.modo === 'entrega' ? `<div class="box"><h4>Onde</h4>
+      <label class="fld ${e.bairro ? 'err' : ''}"><span>Bairro</span><select data-f="bairro"><option value="">Escolha o bairro</option>${TAXAS.map(t => `<option ${k.bairro === t.n ? 'selected' : ''} value="${t.n}">${t.n} · taxa ${R(t.v)}</option>`).join('')}</select></label>
+      <label class="fld ${e.end ? 'err' : ''}"><span>Endereço</span><input data-f="end" value="${k.end}" placeholder="Rua, número e complemento"></label></div>`
+      : `<div class="box"><h4>Onde retirar</h4><div class="note" style="margin:0">O endereço de retirada vai junto da confirmação do pedido.</div></div>`}
+    <div class="box"><h4>Seus dados</h4>
+      <label class="fld ${e.nome ? 'err' : ''}" style="margin-top:0"><span>Nome</span><input data-f="nome" value="${k.nome}" placeholder="Como devemos te chamar" autocomplete="name"></label>
+      <label class="fld ${e.tel ? 'err' : ''}"><span>WhatsApp</span><input data-f="tel" value="${k.tel}" placeholder="(11) 90000-0000" inputmode="tel"></label></div>
+    ${natalOn() ? `<div class="box"><button class="sw ${k.presente ? 'on' : ''}" data-act="presente" aria-pressed="${k.presente}"><span class="gi">${ic('gift')}</span><span class="t"><b>É presente?</b><span>Vai com laço e cartão, sem custo</span></span><span class="k"></span></button>
+      ${k.presente ? `<label class="fld"><span>De</span><input data-f="de" value="${k.de}" placeholder="Seu nome" maxlength="30"></label>
+      <label class="fld"><span>Para</span><input data-f="para" value="${k.para}" placeholder="Quem vai receber" maxlength="30"></label>
+      <label class="fld"><span>Mensagem do cartão (até 120 letras)</span><textarea data-f="msg" maxlength="120" placeholder="Feliz Natal! Com carinho...">${k.msg}</textarea></label>` : ''}</div>` : ''}
+    <div class="pad" style="padding-bottom:20px"><button class="cta" data-act="passo2">Ir para pagamento ${ic('arrow')}</button></div></div>`;
+  return head + steps + `<div class="enter">
+    <div class="box"><h4>Pagamento</h4><div class="pay"><button class="${k.pag === 'pix' ? 'on' : ''}" data-act="pag" data-v="pix"><span class="r"></span>Pix</button><button class="${k.pag === 'dinheiro' ? 'on' : ''}" data-act="pag" data-v="dinheiro"><span class="r"></span>Dinheiro</button></div>
+      ${k.pag === 'dinheiro' ? `<label class="fld"><span>Troco para quanto? (opcional)</span><input data-f="troco" value="${k.troco}" placeholder="Ex.: 100" inputmode="decimal"></label>` : '<div class="note">A chave Pix aparece logo depois de enviar o pedido.</div>'}</div>
+    <div class="box"><h4>Resumo</h4><div class="note" style="margin:0 0 8px">${k.modo === 'entrega' ? 'Entrega' : 'Retirada'} · ${DIAS[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1} · ${per[0]}${k.modo === 'entrega' ? ' · ' + k.bairro : ''}<br>${k.nome} · ${k.tel}</div>
+      <div class="sum">${Object.entries(S.s).map(([id,q]) => `<div class="ln"><span>${q}× ${SB[id].nome}</span><span>${R(SB[id].preco * q)}</span></div>`).join('')}${S.c.map(c => `<div class="ln"><span>${CB[c.id].nome}</span><span>${R(CB[c.id].preco)}</span></div>`).join('')}
+      ${desconto() ? `<div class="ln dc"><span>Desconto (5%)</span><span>– ${R(desconto())}</span></div>` : ''}${k.modo === 'entrega' ? `<div class="ln"><span>Entrega · ${k.bairro}</span><span>${R(taxa())}</span></div>` : ''}
+      <div class="tot"><b>Total</b><strong>${R(total())}</strong></div></div>${cartaoHTML(k)}</div>
+    <div class="pad" style="padding-bottom:20px"><button class="cta" data-act="enviar">Enviar pedido · ${R(total())}</button></div></div>`;
+}
+const cartaoHTML = k => k.presente ? `<div class="cartao"><b>Presente com cartão</b>${k.para ? 'Para ' + esc(k.para) : 'Com laço e cartão'}${k.de ? ' · de ' + esc(k.de) : ''}${k.msg ? `<i>“${esc(k.msg)}”</i>` : ''}</div>` : '';
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const ST = [['Pedido recebido','Agora mesmo'],['Confirmado pela Dona Liz','Seus cookies estão reservados'],['Em preparo','No dia, pela manhã'],['Saiu para entrega','Você recebe um aviso no WhatsApp']];
+function tlHTML(p) { return `<div class="tl">${ST.map(([a,b],i) => `<div class="it ${i < p.etapa ? 'done' : i === p.etapa ? 'now' : 'wait'}"><i></i><b>${a}</b><span>${i === 0 ? p.hora : b}</span></div>`).join('')}</div>`; }
+function vEnviado() {
+  const p = S.pedidos[0];
+  return `<div class="enter" style="padding-top:22px"><div class="okhead"><div class="glow"></div><img src="img/hero.png" alt=""><div class="okc">${ic('check')}</div>
+      <h2>Pedido #${String(p.num).padStart(4,'0')}<br>${p.etapa >= 1 ? 'confirmado!' : 'enviado!'}</h2><p>${p.quando}</p></div>
+    <div class="box" style="margin-top:14px"><h4>Acompanhe</h4>${tlHTML(p)}${p.cartao || ''}</div>
+    ${p.pag === 'pix' ? `<div class="box"><div class="pix"><span class="q">${ic('pix')}</span><div class="t"><b>Pague com Pix · ${R(p.total)}</b><span>donalizcookies@jim.com</span></div><button class="btn" data-act="copiar">${ic('copy')}Copiar</button></div></div>`
+      : `<div class="box"><div class="pix"><span class="q">${ic('cash')}</span><div class="t"><b>Pagamento em dinheiro</b><span>${R(p.total)}${p.troco ? ' · troco para R$ ' + p.troco : ''}</span></div></div></div>`}</div>
+    <div class="foot"><button class="cta lite" data-act="novo">Fazer outro pedido</button><span class="sq" title="WhatsApp (11) 93458-2615">${ic('wa','width:26px;height:26px')}</span></div>`;
+}
+function vPedidos() {
+  const head = `<div class="hdr"><h2 style="font-size:26px">Meus pedidos</h2></div>`;
+  if (!S.pedidos.length) return head + `<div class="empty"><img src="img/hero.png" alt=""><b>Nenhum pedido ainda</b>Quando você enviar um pedido, ele aparece aqui com o status atualizado.</div>`;
+  return head + `<div class="enter">${S.pedidos.map(p => { const lab = p.cancelado ? ['CANCELADO','no'] : p.etapa >= 1 ? ['CONFIRMADO','ok'] : ['AGUARDANDO','wait'];
+    return `<div class="ord" style="flex-direction:column;align-items:stretch"><div style="display:flex;gap:12px;align-items:center"><div class="thumbs">${p.imgs.slice(0,3).map(i => `<img src="${i}" alt="">`).join('')}</div>
+      <div class="t"><b>#${String(p.num).padStart(4,'0')} · ${R(p.total)}</b><span>${p.quando}</span><br><span class="pill ${lab[1]}">${lab[0]}</span></div></div>
+      ${p.cancelado ? '' : `<div style="margin-top:14px">${tlHTML(p)}</div>`}
+      ${!p.cancelado && p.etapa === 0 ? `<button class="rm" data-act="cancelar" data-n="${p.num}" style="align-self:flex-start;margin-top:10px">Cancelar pedido</button>` : ''}</div>`; }).join('')}</div>`;
+}
+function render(anim = true) {
+  renderTop(); renderTabs(); renderCartbar();
+  const v = $('view');
+  const html = { cardapio:vCardapio, carrinho:vCarrinho, checkout:vCheckout, enviado:vEnviado, pedidos:vPedidos }[S.tela]();
+  v.innerHTML = `<div class="${anim ? 'enter' : ''}">${html}</div>`;
+  if (anim) v.scrollTop = 0;
+}
+function soft() { // atualiza sem animar a tela toda
+  const top = $('view').scrollTop; render(false); $('view').scrollTop = top;
+}
+function bump() { const b = $('badge'); if (b) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); } }
+function voar(id) {
+  const card = document.querySelector(`[data-card="${id}"] .ph img`), dst = $('top').querySelector('.ib'), ph = $('phone');
+  if (!card || !dst) return;
+  const a = card.getBoundingClientRect(), b = dst.getBoundingClientRect(), o = ph.getBoundingClientRect();
+  const f = document.createElement('img'); f.src = SB[id].img; f.className = 'fly'; f.alt = '';
+  f.style.left = (a.left - o.left + a.width / 2 - 22) + 'px'; f.style.top = (a.top - o.top + a.height / 2 - 22) + 'px'; ph.appendChild(f);
+  requestAnimationFrame(() => { f.style.left = (b.left - o.left) + 'px'; f.style.top = (b.top - o.top) + 'px'; f.style.transform = 'scale(.4)'; f.style.opacity = '.6'; });
+  setTimeout(() => f.remove(), 650);
+}
+function confete() { const ph = $('phone'), cs = natalOn() ? ['#c2343a','#e2b25a','#2f7d4f','#fffaf3','#c2343a','#1f5a3f'] : ['#c46f12','#e59a45','#7ee2a1','#f6d9a8','#a52a35','#5a2814'];
+  for (let i = 0; i < 46; i++) { const c = document.createElement('i'); c.className = 'cf'; c.style.left = Math.random() * 100 + '%'; c.style.background = cs[i % cs.length]; c.style.animationDelay = Math.random() * .4 + 's'; c.style.animationDuration = 1.2 + Math.random() * .9 + 's'; ph.appendChild(c); setTimeout(() => c.remove(), 2600); } }
+// ---------- sons de Natal (sintetizados, sem arquivos) ----------
+const SOM = { mudo:false, ac:null };
+try { SOM.mudo = localStorage.getItem('dl-natal-mudo') === '1'; } catch (_) {}
+function actx() { if (SOM.mudo) return null; try { if (!SOM.ac) SOM.ac = new (window.AudioContext || window.webkitAudioContext)(); if (SOM.ac.state === 'suspended') SOM.ac.resume(); return SOM.ac; } catch (_) { return null; } }
+/* sino: fundamental + parciais de metal, com decaimento longo */
+function sino(f, t0 = 0, dur = .9, vol = .16) { const a = actx(); if (!a) return; const t = a.currentTime + t0;
+  [[1,1],[2.76,.32],[5.4,.12]].forEach(([m,g]) => { const o = a.createOscillator(), v = a.createGain(); o.type = 'sine'; o.frequency.value = f * m;
+    v.gain.setValueAtTime(.0001, t); v.gain.exponentialRampToValueAtTime(vol * g, t + .006); v.gain.exponentialRampToValueAtTime(.0001, t + dur / Math.sqrt(m));
+    o.connect(v); v.connect(a.destination); o.start(t); o.stop(t + dur + .05); }); }
+/* guizo: rajadas curtas de ruído agudo, como guizos de trenó */
+function guizo(t0 = 0, n = 4, gap = .12, vol = .1) { const a = actx(); if (!a) return;
+  if (!SOM.ruido) { const b = a.createBuffer(1, a.sampleRate * .2, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; SOM.ruido = b; }
+  for (let i = 0; i < n; i++) { const t = a.currentTime + t0 + i * gap, s = a.createBufferSource(), f = a.createBiquadFilter(), v = a.createGain(); s.buffer = SOM.ruido; f.type = 'bandpass'; f.frequency.value = 6800 + (i % 2) * 900; f.Q.value = 9;
+    v.gain.setValueAtTime(.0001, t); v.gain.exponentialRampToValueAtTime(vol, t + .004); v.gain.exponentialRampToValueAtTime(.0001, t + .09); s.connect(f); f.connect(v); v.connect(a.destination); s.start(t); s.stop(t + .12); } }
+const N = { C6:1046.5, D6:1174.7, E6:1318.5, G6:1568, A6:1760, C7:2093 };
+const SONS = {
+  add: () => { sino(N.G6, 0, .7, .14); sino(N.C7, .07, .6, .08); },
+  menos: () => sino(880, 0, .25, .07),
+  tick: () => sino(N.A6, 0, .12, .035),
+  abre: () => sino(N.E6, 0, .4, .05),
+  kit: () => { sino(N.D6, 0, .6, .12); sino(N.G6, .1, .6, .12); sino(N.C7, .2, .9, .1); guizo(.05, 3, .1, .06); },
+  presente: () => { [N.C6, N.E6, N.G6, N.C7].forEach((f,i) => sino(f, i * .07, .7, .1)); guizo(0, 5, .07, .07); },
+  /* sino de porta de loja: o badalo bate várias vezes, cada vez mais fraco, enquanto a porta balança */
+  porta: () => { [[0,.17],[.14,.13],[.31,.1],[.52,.07],[.78,.045],[1.08,.025]].forEach(([t,v],i) => sino(i % 2 ? 2217 : 2093, t, 1.3, v)); },
+  erro: () => { sino(392, 0, .3, .08); sino(330, .12, .4, .08); },
+  /* trecho de "Jingle Bells" (1857, domínio público) em caixinha de música */
+  natal: () => { const u = .17; [[0,'E6'],[1,'E6'],[2,'E6',1],[4,'E6'],[5,'E6'],[6,'E6',1],[8,'E6'],[9,'G6'],[10,'C6'],[11,'D6'],[12,'E6',2]].forEach(([p,n,l]) => sino(N[n], p * u, l ? 1.4 : .5, .13)); guizo(0, 14, u, .07); }
+};
+const som = k => { try { SONS[k] && SONS[k](); } catch (_) {} };
+// ---------- neve e brilhos (um canvas por cima de tudo) ----------
+const FX = { flocos:[], parts:[], w:0, h:0, x:195, y:400 };
+const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fxInit() {
+  const c = $('fx'), ph = $('phone'), g = c.getContext('2d');
+  const medir = () => { const d = Math.min(2, devicePixelRatio || 1); FX.w = ph.clientWidth; FX.h = ph.clientHeight; c.width = FX.w * d; c.height = FX.h * d; g.setTransform(d, 0, 0, d, 0, 0); luzes(); };
+  medir(); addEventListener('resize', medir);
+  if (calmo) return;
+  const novo = topo => ({ x: Math.random() * FX.w, y: topo ? -10 : Math.random() * FX.h, r: Math.random() < .16 ? 4 + Math.random() * 3 : 1 + Math.random() * 2.2, v: .25 + Math.random() * .55, f: Math.random() * 6.28, a: Math.random() * 6.28, o: .55 + Math.random() * .4 });
+  FX.flocos = Array.from({ length: 42 }, () => novo(false));
+  let ant = performance.now();
+  (function quadro(agora) {
+    requestAnimationFrame(quadro); if (document.hidden) { ant = agora; return; }
+    const dt = Math.min(40, agora - ant) / 16.7; ant = agora;
+    g.clearRect(0, 0, FX.w, FX.h);
+    g.shadowColor = 'rgba(70,45,30,.3)'; g.shadowBlur = 3;
+    for (const f of FX.flocos) {
+      f.f += .012 * dt; f.y += f.v * (f.r > 4 ? 1.5 : 1) * dt; f.x += Math.sin(f.f) * .35 * dt; f.a += .006 * dt;
+      if (f.y > FX.h + 10) Object.assign(f, novo(true));
+      g.globalAlpha = f.o;
+      if (f.r > 4) { g.save(); g.translate(f.x, f.y); g.rotate(f.a); g.strokeStyle = '#fff'; g.lineWidth = 1.2; g.lineCap = 'round'; g.beginPath();
+        for (let k = 0; k < 6; k++) { const an = k * Math.PI / 3, cx = Math.cos(an), sy = Math.sin(an); g.moveTo(0, 0); g.lineTo(cx * f.r, sy * f.r);
+          const bx = cx * f.r * .6, by = sy * f.r * .6; g.moveTo(bx, by); g.lineTo(bx + Math.cos(an + .9) * f.r * .32, by + Math.sin(an + .9) * f.r * .32); g.moveTo(bx, by); g.lineTo(bx + Math.cos(an - .9) * f.r * .32, by + Math.sin(an - .9) * f.r * .32); }
+        g.stroke(); g.restore(); }
+      else { g.fillStyle = '#fff'; g.beginPath(); g.arc(f.x, f.y, f.r, 0, 6.29); g.fill(); }
+    }
+    g.shadowBlur = 0;
+    for (let i = FX.parts.length - 1; i >= 0; i--) { const p = FX.parts[i]; p.t += dt; if (p.t > p.vida) { FX.parts.splice(i, 1); continue; }
+      p.vy += .14 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.g += p.vg * dt;
+      const k = 1 - p.t / p.vida; g.globalAlpha = Math.min(1, k * 1.6); g.fillStyle = p.cor; g.save(); g.translate(p.x, p.y); g.rotate(p.g); const r = p.r * (.5 + k * .5);
+      g.beginPath(); for (let j = 0; j < 8; j++) { const an = j * Math.PI / 4, rr = j % 2 ? r * .38 : r; g.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); } g.closePath(); g.fill(); g.restore(); }
+    g.globalAlpha = 1;
+  })(ant);
+}
+/* brilhos em estrela saindo de um ponto (x, y dentro do celular) */
+function brilho(n = 10, x = FX.x, y = FX.y, forca = 1) { if (calmo) return; const cs = ['#e2b25a','#fff3d6','#f0bf4c','#e0393f','#ffffff','#3fa468'];
+  for (let i = 0; i < n; i++) { const an = Math.random() * 6.28, v = (1.2 + Math.random() * 3.2) * forca; FX.parts.push({ x, y, vx: Math.cos(an) * v, vy: Math.sin(an) * v - 1.6 * forca, r: 3 + Math.random() * 5, cor: cs[i % cs.length], t: 0, vida: 34 + Math.random() * 26, g: Math.random() * 6, vg: (Math.random() - .5) * .3 }); } }
+/* varal de luzes: fio em curvas com lâmpadas piscando */
+function luzes() { const w = $('phone').clientWidth, n = Math.max(4, Math.round(w / 78)), seg = w / n; let d = 'M0 5', b = '', k = 0;
+  for (let i = 0; i < n; i++) { const x0 = i * seg; d += ` Q ${x0 + seg / 2} 27 ${x0 + seg} 5`;
+    for (const t of [.2, .5, .8]) { const x = x0 + seg * t, y = 2 * (1 - t) * t * 27 + ((1 - t) ** 2 + t ** 2) * 5; b += `<g class="b c${k % 4}" style="animation-delay:-${(k * .43 % 1.6).toFixed(2)}s"><rect x="${(x - 2).toFixed(1)}" y="${(y - 1).toFixed(1)}" width="4" height="4" rx="1" fill="#4a3527"/><ellipse cx="${x.toFixed(1)}" cy="${(y + 7).toFixed(1)}" rx="3.6" ry="5"/></g>`; k++; } }
+  $('luzes').innerHTML = `<svg viewBox="0 0 ${w} 34" aria-hidden="true"><path d="${d}" fill="none" stroke="#4a3527" stroke-width="1.4"/>${b}</svg>`; }
+// sheets
+function abrir(html) { $('sheetIn').innerHTML = html; $('scrim').classList.add('show'); $('sheet').classList.add('show'); }
+function fechar() { $('scrim').classList.remove('show'); $('sheet').classList.remove('show'); S.sheet = null; S.combo = null; }
+function sheetSabor(id) {
+  const s = SB[id], q = S.s[id] || 0, l = livre(id);
+  S.sheet = { tipo:'sabor', id };
+  abrir(`<div class="grab"></div><div class="bigck"><img src="${s.img}" alt=""></div><h2>${s.nome}</h2><div class="sub">${s.desc}</div>
+    <div class="row" style="margin:16px 0"><span style="font:800 22px Montserrat;color:var(--price)">${R(s.preco)}</span><span class="pill ${s.est === 0 ? 'no' : l <= 3 ? 'wait' : 'ok'}">${s.est === 0 ? 'ESGOTADO' : l + ' DISPONÍVEIS'}</span></div>
+    ${s.est === 0 ? '<button class="cta" disabled>Esgotado esta semana</button>' : `<button class="cta" data-act="maisSheet" data-id="${id}">${q ? `No carrinho: ${q} · pôr mais um` : 'Adicionar ao carrinho'}</button>`}`);
+}
+function sheetCombo(id) {
+  const cb = CB[id];
+  if (!cb.livre) { S.sheet = { tipo:'fixo', id };
+    return abrir(`<div class="grab"></div><h2>${cb.nome}</h2><div class="sub">${cb.tag} · ${R(cb.preco)}</div>
+      <div style="margin-top:12px">${Object.entries(cb.itens).map(([sid,q]) => `<div class="li"><img src="${SB[sid].img}" alt=""><div class="t"><b>${SB[sid].nome}</b><span>${SB[sid].desc}</span></div><b style="font:800 14px Montserrat;color:var(--price)">×${q}</b></div>`).join('')}</div>
+      <button class="cta" style="margin-top:16px" data-act="addfixo" data-id="${id}">Adicionar · ${R(cb.preco)}</button>`); }
+  if (!S.combo) S.combo = { id, sab:{} };
+  S.sheet = { tipo:'livre', id };
+  const sel = S.combo.sab, n = Object.values(sel).reduce((a,b) => a + b, 0), falta = cb.livre - n;
+  const slots = []; for (const [sid,q] of Object.entries(sel)) for (let i = 0; i < q; i++) slots.push(SB[sid].img);
+  abrir(`<div class="grab"></div><h2>${cb.nome}</h2><div class="sub">Escolha ${cb.livre} cookies do jeito que quiser · ${R(cb.preco)}</div>
+    <div class="slots">${Array.from({ length:cb.livre }, (_,i) => slots[i] ? `<div class="slot"><img src="${slots[i]}" alt=""></div>` : `<div class="slot vaga"><b>${i + 1}</b></div>`).join('')}</div>
+    <div class="prog"><i style="width:${n / cb.livre * 100}%"></i></div><div class="progt"><span>${n} de ${cb.livre} escolhidos</span>${falta ? `<b>falta${falta > 1 ? 'm' : ''} ${falta}</b>` : '<b style="color:var(--ok)">caixa completa!</b>'}</div>
+    <div style="margin-top:8px">${SAB.filter(s => s.est > 0).map(s => { const q = sel[s.id] || 0, l = livre(s.id) - q;
+      return `<div class="li"><img src="${s.img}" alt=""><div class="t"><b>${s.nome}</b><span>${s.desc}</span></div>
+        <div class="mini ${q ? 'on' : ''}"><button data-act="cmenos" data-id="${s.id}" ${q ? '' : 'disabled'} aria-label="Tirar um">–</button><em>${q}</em><button data-act="cmais" data-id="${s.id}" ${falta && l > 0 ? '' : 'disabled'} aria-label="Pôr mais um">+</button></div></div>`; }).join('')}</div>
+    <div style="position:sticky;bottom:0;padding-top:12px;background:var(--card)"><button class="cta" data-act="addlivre" ${falta ? 'disabled' : ''}>${falta ? `Escolha mais ${falta} cookie${falta > 1 ? 's' : ''}` : 'Adicionar caixa · ' + R(cb.preco)}</button></div>`);
+}
+function refreshSheet() { if (!S.sheet) return; const sc = $('sheetIn').scrollTop; if (S.sheet.tipo === 'sabor') sheetSabor(S.sheet.id); else sheetCombo(S.sheet.id); $('sheetIn').scrollTop = sc; }
+// ações
+function mais(id) { if (livre(id) <= 0) { som('erro'); return toast(`Só temos ${SB[id].est} de ${SB[id].nome} esta semana`); } const novo = !S.s[id]; S.s[id] = (S.s[id] || 0) + 1; som('add'); brilho(novo ? 12 : 7); if (novo && S.tela === 'cardapio') voar(id); soft(); bump(); }
+function menos(id) { if (!S.s[id]) return; som('menos'); S.s[id]--; if (!S.s[id]) delete S.s[id]; soft(); }
+function validar1() { const k = S.ck, e = {};
+  if (!k.nome.trim()) e.nome = 1; if (k.tel.replace(/\D/g, '').length < 10) e.tel = 1;
+  if (k.modo === 'entrega') { if (!k.bairro) e.bairro = 1; if (!k.end.trim()) e.end = 1; }
+  S.erro = e; return !Object.keys(e).length; }
+function enviar() {
+  const k = S.ck, d = datas()[k.data], per = (k.modo === 'entrega' ? ENT : RET)[d.getDay()][0];
+  const p = { num: ++S.numero, total: total(), pag: k.pag, troco: k.troco, etapa: 0, hora: 'Hoje, ' + new Date().toTimeString().slice(0,5),
+    cartao: cartaoHTML(k), quando: `${DIASL[d.getDay()]}, ${d.getDate()}/${d.getMonth() + 1} · ${k.modo === 'entrega' ? 'entrega ' + per.toLowerCase() : 'retirada ' + per}`,
+    imgs: [...Object.keys(S.s).map(id => SB[id].img), ...S.c.map(c => SB[CB[c.id].imgs[0]].img)] };
+  for (const [id,q] of Object.entries(usados())) SB[id].est -= q; // simula a reserva
+  S.pedidos.unshift(p); S.s = {}; S.c = []; S.ck.passo = 1; S.tela = 'enviado'; render(); confete(); som('natal');
+  [0, 350, 800, 1400].forEach((ms,i) => setTimeout(() => brilho(26, FX.w * [.5,.22,.78,.5][i], FX.h * [.3,.22,.26,.4][i], 1.5), ms));
+  setTimeout(() => { if (p.cancelado) return; p.etapa = 1; if (['enviado','pedidos'].includes(S.tela)) soft(); toast(natalOn() ? 'Pedido confirmado. Feliz Natal!' : 'A Dona Liz confirmou seu pedido!'); }, 2600);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act, id = b.dataset.id, v = b.dataset.v;
+  { const o = $('phone').getBoundingClientRect(); FX.x = e.clientX - o.left; FX.y = e.clientY - o.top; }
+  if (a === 'som') { SOM.mudo = !SOM.mudo; try { localStorage.setItem('dl-natal-mudo', SOM.mudo ? '1' : '0'); } catch (_) {} $('somBt').textContent = SOM.mudo ? 'Ligar os sons' : 'Desligar os sons'; renderTop(); if (!SOM.mudo) som('presente'); return toast(SOM.mudo ? 'Sons desligados' : 'Sons ligados'); }
+  if (['ir','filtro','modo','data','pag','passo1','cmais','cmenos','copiar','novo','checkout'].includes(a)) som('tick');
+  if (['ver','combo'].includes(a)) som('abre');
+  if (a === 'fechar') return fechar();
+  if (a === 'tema') { tema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); return renderTop(); }
+  if (a === 'ir') { if (v === 'carrinho' && S.tela === 'checkout') { S.tela = 'carrinho'; return render(); } S.tela = v; fechar(); return render(); }
+  if (a === 'presente') { S.ck.presente = !S.ck.presente; if (S.ck.presente) { som('presente'); brilho(18, FX.w - 70, FX.y, 1.2); } else som('menos'); soft(); const g = document.querySelector('.sw .gi'); if (g && S.ck.presente) g.classList.add('pulo'); return; }
+  if (a === 'filtro') { S.filtro = v; return render(); }
+  if (a === 'mais') return mais(id);
+  if (a === 'menos') return menos(id);
+  if (a === 'ver') return sheetSabor(id);
+  if (a === 'maisSheet') { mais(id); return refreshSheet(); }
+  if (a === 'combo') { S.combo = null; return sheetCombo(id); }
+  if (a === 'cmais') { const s = S.combo.sab; s[id] = (s[id] || 0) + 1; return refreshSheet(); }
+  if (a === 'cmenos') { const s = S.combo.sab; s[id]--; if (!s[id]) delete s[id]; return refreshSheet(); }
+  if (a === 'addlivre' || a === 'addfixo') { const cb = CB[S.sheet.id]; const sab = a === 'addfixo' ? { ...cb.itens } : { ...S.combo.sab };
+    for (const [sid,q] of Object.entries(sab)) if (livre(sid) < q) { return toast(`Sem estoque de ${SB[sid].nome} para esse combo`); }
+    S.c.push({ id: cb.id, sab }); fechar(); soft(); bump(); som('kit'); brilho(22, FX.w / 2, FX.h * .45, 1.4); return toast(`${cb.nome} no carrinho`); }
+  if (a === 'rmcombo') { S.c.splice(+b.dataset.i, 1); return soft(); }
+  if (a === 'checkout') { S.tela = 'checkout'; S.ck.passo = 1; S.erro = {}; return render(); }
+  if (a === 'modo') { S.ck.modo = v; return soft(); }
+  if (a === 'data') { S.ck.data = +b.dataset.i; return soft(); }
+  if (a === 'passo2') { if (!validar1()) { soft(); som('erro'); return toast('Preencha os campos marcados'); } som('tick'); S.ck.passo = 2; return render(); }
+  if (a === 'passo1') { S.ck.passo = 1; return render(); }
+  if (a === 'pag') { S.ck.pag = v; return soft(); }
+  if (a === 'enviar') return enviar();
+  if (a === 'copiar') { try { navigator.clipboard.writeText('donalizcookies@jim.com').then(() => toast('Chave Pix copiada'), () => toast('Chave: donalizcookies@jim.com')); } catch (_) { toast('Chave: donalizcookies@jim.com'); } return; }
+  if (a === 'novo') { S.tela = 'cardapio'; return render(); }
+  if (a === 'cancelar') { const p = S.pedidos.find(x => x.num === +b.dataset.n); p.cancelado = true; toast('Pedido cancelado'); return soft(); }
+});
+document.addEventListener('input', e => { const f = e.target.dataset.f; if (!f) return; S.ck[f] = e.target.value; if (S.erro[f]) { delete S.erro[f]; e.target.closest('.fld').classList.remove('err'); } if (f === 'bairro') soft(); });
+$('dia').addEventListener('change', e => { S.diaSim = e.target.value; S.ck.data = null; if (!combosLiberados()) S.c = []; render(); toast(e.target.value === '' ? 'Voltamos para hoje' : 'Simulando ' + e.target.options[e.target.selectedIndex].text.split(' (')[0].toLowerCase()); });
+const tema = t => { document.documentElement.dataset.theme = t; $('tema').textContent = t === 'dark' ? 'Modo claro' : 'Modo escuro'; try { localStorage.setItem('dl-proto-tema', t); } catch (_) {} };
+$('tema').addEventListener('click', () => { tema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); renderTop(); });
+try { const t = localStorage.getItem('dl-proto-tema'); if (t) tema(t); else if (matchMedia('(prefers-color-scheme: dark)').matches) tema('dark'); } catch (_) {}
+$('somBt').addEventListener('click', () => { const b = document.querySelector('[data-act="som"]'); if (b) b.click(); });
+$('somBt').textContent = SOM.mudo ? 'Ligar os sons' : 'Desligar os sons';
+document.documentElement.setAttribute('data-natal', '');
+fxInit();
+/* abertura automática e obrigatória: a porta abre sozinha depois de 2,6 s.
+   O sino de porta toca na hora se o navegador deixar; se ele bloquear som sem toque, toca no primeiro toque na tela. */
+let sinoPorta = false, portaAberta = false;
+const tocaPorta = () => { if (sinoPorta || !portaAberta || SOM.mudo) return; const a = actx(); if (a && a.state === 'running') { sinoPorta = true; som('porta'); } };
+const destrava = () => { const a = actx(); if (a) a.resume().then(tocaPorta).catch(() => {}); if (sinoPorta) ['pointerdown','keydown','touchend'].forEach(ev => removeEventListener(ev, destrava, true)); };
+['pointerdown','keydown','touchend'].forEach(ev => addEventListener(ev, destrava, true));
+setTimeout(() => { portaAberta = true; $('abre').classList.add('fim'); setTimeout(() => brilho(16, FX.w / 2, FX.h * .42, 1.3), 250); tocaPorta(); const a = actx(); if (a) a.resume().then(tocaPorta).catch(() => {}); }, 2600);
+render();
+</script>
+</body>
+</html>
