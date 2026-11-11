@@ -522,6 +522,22 @@ nav.tabs{grid-area:nav;box-shadow:0 -6px 20px rgba(58,28,16,.06)}
 .foto-sab-txt .row{margin-top:4px;flex-wrap:wrap;gap:8px}
 .link-btn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer}
 .sab-img{object-fit:cover}
+/* taxas de entrega por bairro (painel) */
+.taxas{display:flex;flex-direction:column;gap:8px;margin:2px 0 4px}
+.taxa-row{display:grid;grid-template-columns:minmax(0,1fr) 92px 44px;gap:8px;align-items:center}
+.taxa-row input{min-width:0}
+.taxa-row .tx-v{text-align:right}
+.taxas:empty::after{content:"Nenhum bairro cadastrado.";color:var(--muted);font-size:13px}
+/* fotos do combo (painel) */
+.cf-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.cf-item{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:var(--sand)}
+.cf-item img{width:100%;height:100%;object-fit:cover;display:block}
+.cf-capa{position:absolute;left:6px;top:6px;z-index:1;font:800 10px/1 var(--f-display,inherit);letter-spacing:.06em;text-transform:uppercase;background:var(--hero,#3a1c10);color:#fffaf3;padding:5px 7px;border-radius:8px}
+.cf-acoes{position:absolute;right:5px;bottom:5px;display:flex;gap:5px}
+.cf-bt{width:34px;height:34px;border-radius:10px;border:0;background:rgba(255,250,243,.94);color:#3a1c10;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer}
+.cf-bt svg{width:17px;height:17px}
+.cf-add{aspect-ratio:1/1;border-radius:14px;border:1.5px dashed var(--line);background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;padding:6px}
+.cf-add svg{width:24px;height:24px}
 
 /* ===== App do cliente ===== */
 #app{display:flex;flex-direction:column;height:100%}
@@ -751,6 +767,30 @@ main{padding-bottom:140px}
 .disp3:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 .disp3.low{color:var(--warn)}.disp3.zero{color:var(--muted)}.disp3.cheio{color:var(--gold)}
 .ficha3 .disp3{font-size:13px;padding:6px 10px;border-radius:10px;background:var(--surface-2);margin:0}
+/* ---------- ficha do combo: galeria de fotos ---------- */
+.gal3w{position:relative;flex:none;background:var(--sand);border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0;overflow:hidden}
+.gal3{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;height:max(230px,min(100vw,46vh));outline:none}
+.gal3::-webkit-scrollbar{display:none}
+.gal3 .sl{flex:0 0 100%;scroll-snap-align:center;position:relative;min-width:0;height:100%}
+.gal3 .sl img{width:100%;height:100%;object-fit:contain;display:block}
+.gal3 .sl img:not([src]){visibility:hidden}
+.gal3 .sl.carregando img[src]{filter:blur(6px);transform:scale(1.04)}
+.gal3 .sl.carregando::after{content:"";position:absolute;left:calc(50% - 15px);top:calc(50% - 15px);width:30px;height:30px;border-radius:50%;border:3px solid rgba(58,28,16,.18);border-top-color:var(--gold);animation:gira3 .8s linear infinite}
+@keyframes gira3{to{transform:rotate(360deg)}}
+.gal3w .icon-btn{position:absolute;top:12px;right:12px;background:rgba(255,250,243,.92);color:#3a1c10;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.dots3{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px;pointer-events:none}
+.dots3 i{width:7px;height:7px;border-radius:50%;background:rgba(58,28,16,.28);transition:all .2s}
+.dots3 i.on{width:18px;border-radius:4px;background:#3a1c10}
+.cont3{position:absolute;left:12px;top:14px;font:800 12px var(--f-display);background:rgba(58,28,16,.72);color:#fffaf3;padding:5px 9px;border-radius:10px}
+.ficha3-img.cb3{height:clamp(150px,40vw,200px)}
+.pilha3{position:relative;width:190px;height:130px}
+.pilha3 img{position:absolute;width:96px;height:96px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 12px 14px rgba(58,28,16,.3));animation:pop .5s var(--ease-spring) both}
+.pilha3 img:nth-child(1){left:0;top:28px}.pilha3 img:nth-child(2){left:48px;top:0;animation-delay:.06s}.pilha3 img:nth-child(3){left:94px;top:30px;animation-delay:.12s}
+.ficha3-img.cb3 .pilha3 img{width:96px;height:96px}
+.qx3{font:800 15px var(--f-display);color:var(--gold)}
+.combo3 .st.capa{right:-14px;bottom:-18px;width:104px;height:104px}
+.combo3 .st.capa img{position:static;width:100%;height:100%;border-radius:50%;object-fit:cover;box-shadow:0 0 0 3px rgba(255,250,243,.6)}
+@media (prefers-reduced-motion:reduce){.gal3 .sl.carregando::after{animation:none}}
 
 </style>
 </head>
@@ -1121,7 +1161,7 @@ function tCardapio() {
       const ok = c.tipo === 'livre' ? mx >= c.qtdLivre : mx > 0;
       const tag = c.tipo === 'livre' ? `Monte a sua · ${c.qtdLivre}` : plural(c.itens.reduce((a, x) => a + x.qtd, 0), 'cookie');
       return `<button class="combo3 c${i % 3}${ok ? '' : ' esg'}" data-act="combo" data-id="${c.id}" ${ok && L.aberto ? '' : 'disabled'} aria-label="${esc(c.nome)}, ${fmt(c.preco)}">
-        <span class="st" aria-hidden="true">${imgsCombo(c).map(n => `<img src="${srcSab(n)}" alt="">`).join('')}</span>
+        ${capaCombo(c) ? `<span class="st capa" aria-hidden="true"><img src="${capaCombo(c)}" alt=""></span>` : `<span class="st" aria-hidden="true">${imgsCombo(c).map(n => `<img src="${srcSab(n)}" alt="">`).join('')}</span>`}
         <small>${esc(tag)}</small><b>${esc(c.nome)}</b>${c.descricao ? `<em>${esc(c.descricao)}</em>` : ''}
         <span class="pr">${ok ? fmt(c.preco) : 'Esgotado'}</span>${qn ? `<span class="qn">${qn}</span>` : ''}</button>`;
     }).join('')}</div>` : `<div class="lock3">${ic('gift')}<div><b>Combos a partir de quarta</b>Na segunda e na terça vale o desconto de 5% nos sabores.</div></div>`}`;
@@ -1146,10 +1186,50 @@ const cookieSvg = n => imgSab(n || '', 'sm');
 
 /* ---------- combo "cliente escolhe" ---------- */
 let PK = null;
+/* fotos do combo enviadas pelo app: a capa (mini) vem em publico/fotos como cb_<id>; as grandes em publico/cfoto-<k>, buscadas ao abrir a ficha */
+const capaCombo = c => { const f = C.fotos['cb_' + c.id]; return f && f.mini ? f.mini : ''; };
+const GC = {}; const GC_PED = {};
+function fotoComboGrande(f) {
+  const g = GC[f.k]; if (g && g.v === f.v) return g.img;
+  if (db && GC_PED[f.k] !== f.v) { GC_PED[f.k] = f.v;
+    db.doc('publico/cfoto-' + f.k).get().then(d => { const x = d.exists ? d.data() : null; if (!x || !x.img) return; GC[f.k] = { v: x.v, img: x.img };
+      document.querySelectorAll(`img[data-cf="${f.k}"]`).forEach(i => { i.src = x.img; i.closest('.sl').classList.remove('carregando'); }); }).catch(() => { GC_PED[f.k] = 0; }); }
+  return '';
+}
+function addComboFixo(id) {
+  const c = comboPub(id); if (!c) return false;
+  if (maxCombo(c) <= 0) { toast('Esse combo esgotou.'); return false; }
+  const l = cart.c.find(x => x.comboId === id); if (l) l.qtd++; else cart.c.push({ key: uid(), comboId: id, qtd: 1 });
+  salvar(); toast(`${c.nome} no carrinho.`); return true;
+}
 function abrirCombo(id) {
   const c = comboPub(id); if (!c) return;
-  if (c.tipo !== 'livre') { if (maxCombo(c) <= 0) { toast('Esse combo esgotou.'); return; } const l = cart.c.find(x => x.comboId === id); if (l) l.qtd++; else cart.c.push({ key: uid(), comboId: id, qtd: 1 }); salvar(); toast(`${c.nome} no carrinho.`); render(); return; }
-  PK = { comboId: id, escolha: {} }; sheetCombo();
+  /* caixa para montar sem fotos nem descrição: vai direto para a escolha dos sabores, como sempre */
+  if (c.tipo === 'livre' && !(c.fotos || []).length && !c.texto) { PK = { comboId: id, escolha: {} }; return sheetCombo(); }
+  sheetComboInfo(id);
+}
+/* ficha do combo: fotos escolhidas no app, descrição e o que vem na caixa */
+function sheetComboInfo(id) {
+  const c = comboPub(id); if (!c) return; const L = C.loja; const fotos = c.fotos || []; const capa = capaCombo(c);
+  const livre = c.tipo === 'livre'; const esg = livre ? L.sabores.reduce((a, s) => a + Math.max(0, sobra(s.id)), 0) < c.qtdLivre : maxCombo(c) <= 0;
+  const nCk = livre ? c.qtdLivre : c.itens.reduce((a, x) => a + x.qtd, 0);
+  const topo = fotos.length
+    ? `<div class="gal3w"><div class="gal3" id="gal3" tabindex="0" aria-label="Fotos do combo">${fotos.map((f, i) => { const g = fotoComboGrande(f); const src = g || (i === 0 ? capa : ''); return `<div class="sl${g ? '' : ' carregando'}">${src ? `<img data-cf="${f.k}" src="${src}" alt="Foto ${i + 1} de ${esc(c.nome)}">` : `<img data-cf="${f.k}" alt="Foto ${i + 1} de ${esc(c.nome)}">`}</div>`; }).join('')}</div>
+        ${fotos.length > 1 ? `<div class="dots3" aria-hidden="true">${fotos.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div><span class="cont3" id="cont3">1/${fotos.length}</span>` : ''}
+        <button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></div>`
+    : `<div class="ficha3-img cb3"><span class="pilha3">${imgsCombo(c).map(n => `<img src="${srcSab(n)}" alt="">`).join('')}</span><button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></div>`;
+  const html = `${topo}
+  <div class="sh-body ficha3"><h2>${esc(c.nome)}</h2>
+    <div class="row" style="justify-content:space-between;align-items:center;gap:10px"><span class="pc3">${fmt(c.preco)}</span><span class="disp3">${livre ? `Monte com ${plural(nCk, 'cookie')}` : plural(nCk, 'cookie')}</span></div>
+    ${c.texto ? `<h3>Sobre o combo</h3><p>${esc(c.texto)}</p>` : ''}
+    ${livre ? `<h3>Como funciona</h3><p>Você escolhe ${plural(nCk, 'cookie')} entre os sabores disponíveis, do jeito que quiser.</p>`
+      : `<h3>O que vem</h3><div class="fs" style="gap:0">${c.itens.map(i => { const s = sabPub(i.saborId) || i; return `<div class="cat-row"><div class="sab-ico sm">${imgSab(s.nome, 'sm')}</div><div class="main"><div class="t">${esc(s.nome)}</div></div><b class="qx3">${i.qtd}×</b></div>`; }).join('')}</div>`}
+  </div>
+  <footer class="sh-foot">${esg ? '<button class="btn" data-act="fechar">Esgotado · voltar ao cardápio</button>'
+    : livre ? `<button class="btn primary" data-act="combo-montar" data-id="${id}" style="flex:1" ${L.aberto ? '' : 'disabled'}>Montar minha caixa · ${fmt(c.preco)}</button>`
+    : `<button class="btn primary" data-act="combo-add" data-id="${id}" style="flex:1" ${L.aberto ? '' : 'disabled'}>${ic('plus')} Adicionar · ${fmt(c.preco)}</button>`}</footer>`;
+  abrirSheet(html);
+  const g = $('#gal3', sheetEl); if (g && fotos.length > 1) g.addEventListener('scroll', () => { const i = Math.round(g.scrollLeft / g.clientWidth); sheetEl.querySelectorAll('.dots3 i').forEach((d, k) => d.classList.toggle('on', k === i)); const ct = $('#cont3', sheetEl); if (ct) ct.textContent = `${i + 1}/${fotos.length}`; }, { passive: true });
 }
 function sheetCombo() {
   const c = comboPub(PK.comboId); const tot = Object.values(PK.escolha).reduce((a, b) => a + b, 0); const uso = usoPorSabor();
@@ -1357,6 +1437,8 @@ document.addEventListener('click', async e => {
     case 'ficha': sheetSabor(id); break;
     case 'sq': { const s = sabPub(id); if (!s) break; const d = +b.dataset.d; if (d > 0 && sobra(id) <= 0) { toast('Esse é o máximo disponível desse sabor agora.'); break; } const novo = d > 0 && !cart.s[id] && C.tela === 'cardapio'; const de = novo && document.querySelector(`[data-sab="${id}"] .ph img`); const r0 = de && de.getBoundingClientRect(); cart.s[id] = Math.max(0, (cart.s[id] || 0) + d); if (!cart.s[id]) delete cart.s[id]; salvar(); render(); if (r0) voar(srcSab(s.nome), r0); if (b.dataset.ficha) { if (d > 0 && cart.s[id] === 1) toast(s.nome + ' no carrinho'); sheetSabor(id); } break; }
     case 'combo': abrirCombo(id); break;
+    case 'combo-add': if (addComboFixo(id)) { fecharSheet(); render(); } break;
+    case 'combo-montar': PK = { comboId: id, escolha: {} }; sheetCombo(); break;
     case 'cq': { const l = cart.c.find(x => x.key === id); if (!l) break; const c = comboPub(l.comboId); const d = +b.dataset.d; if (d > 0 && maxCombo(c) <= 0) { toast('Esse é o máximo disponível agora.'); break; } l.qtd += d; if (l.qtd <= 0) cart.c = cart.c.filter(x => x !== l); salvar(); render(); break; }
     case 'crm': cart.c = cart.c.filter(x => x.key !== id); salvar(); render(); break;
     case 'pk': { const c = comboPub(PK.comboId); const tot = Object.values(PK.escolha).reduce((x, y) => x + y, 0); const d = +b.dataset.d; if (d > 0 && tot >= c.qtdLivre) break; PK.escolha[id] = Math.max(0, (PK.escolha[id] || 0) + d); sheetCombo(); break; }
