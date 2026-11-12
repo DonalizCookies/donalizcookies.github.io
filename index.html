@@ -857,6 +857,72 @@ html[data-aniv] .brand::before{content:"";position:absolute;left:9px;top:-10px;w
 .fa-cx p{margin:10px 0 0;font-size:15px;color:#ead7c4;animation:rise3 .7s .3s both}
 @keyframes rise3{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.baloes3 i,.fa-s,.fa-n,.fa-cx p{animation:none}}
+/* ---------- Versão de Natal (ligada pelo painel) ---------- */
+:root{--nverde:#173a2b;--nverde2:#0f2a1e;--nred:#b3262c;--nouro:#e2b25a;--nmenta:#dcebdf}
+:root[data-theme=dark]{--nverde:#12301f;--nverde2:#0b2015;--nmenta:#1d3327}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--nverde:#12301f;--nverde2:#0b2015;--nmenta:#1d3327}}
+#natal-fx{position:fixed;inset:0;width:100%;height:100%;z-index:26;pointer-events:none}
+#luzes3{height:30px;margin-top:-3px;position:relative;z-index:3;pointer-events:none;flex:none}
+#luzes3 svg{display:block;width:100%;height:34px;overflow:visible}
+#luzes3 .b{animation:pisca3 1.6s ease-in-out infinite alternate}
+#luzes3 .b ellipse{fill:currentColor;filter:drop-shadow(0 0 5px currentColor)}
+#luzes3 .c0{color:#e0393f}#luzes3 .c1{color:#f0bf4c}#luzes3 .c2{color:#3fa468}#luzes3 .c3{color:#fff3d6}
+@keyframes pisca3{from{opacity:.35}to{opacity:1}}
+html[data-natal] .brand{position:relative}
+html[data-natal]:not([data-aniv]) .brand::before{content:"";position:absolute;left:-4px;top:-13px;width:46px;height:28px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120'%3E%3Cpath d='M182 94C186 50 152 10 98 12 56 14 24 34 13 64l24-2c-6 12-10 22-12 32Z' fill='%23c22f33'/%3E%3Crect x='8' y='82' width='184' height='30' rx='15' fill='%23fffaf3'/%3E%3Ccircle cx='15' cy='64' r='15' fill='%23fffaf3'/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(-8deg);z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));pointer-events:none}
+.som3{background:var(--nverde);color:var(--nouro);margin-right:8px}
+.som3.off{background:var(--surface-2);color:var(--muted)}
+#topo-acoes{display:flex;align-items:center}
+.capa3{position:absolute;left:0;right:0;top:-1px;height:20px;z-index:2;pointer-events:none}
+.capa3 svg{display:block;width:100%;height:100%}
+.capa3 path{fill:#fff;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+.hk3{position:absolute;right:-84px;top:84px;width:200px;height:200px;animation:boia3 5s ease-in-out infinite;pointer-events:none}
+.hk3 img{width:200px;height:200px;transform:rotate(-12deg);filter:drop-shadow(0 18px 24px rgba(0,0,0,.45))}
+.hk3 svg{position:absolute;left:-2px;top:-74px;width:204px;transform:rotate(-7deg);filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
+@keyframes boia3{50%{transform:translateY(-7px) rotate(2deg)}}
+html[data-natal] .hero3{overflow:hidden}
+html[data-natal] .hero3 .glow{background:radial-gradient(circle,rgba(226,178,90,.6),rgba(226,178,90,0) 65%)}
+html[data-natal] .btn.primary:not(:disabled){background:linear-gradient(135deg,#c2343a,#93191f);color:#fff;border-color:transparent}
+.natal3{margin:4px 0 2px;padding:20px 0;border-radius:28px;background:linear-gradient(170deg,var(--nverde),var(--nverde2));color:#fbf3e4;position:relative;overflow:hidden}
+.natal3 .cab{padding:0 16px;position:relative}
+.natal3 .cab small{font:800 10px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--nouro)}
+.natal3 .cab h2{font:700 33px/1 'Dancing Script',cursive;color:var(--nouro);margin:4px 0 0}
+.natal3 .cab p{font-size:13px;line-height:1.45;color:#d5e3d6;margin:8px 0 0;max-width:235px}
+.natal3 .pl{display:flex;gap:8px;padding:12px 16px 0}
+.natal3 .pl span{white-space:nowrap;height:32px;padding:0 11px;border-radius:16px;background:rgba(255,255,255,.1);display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700}
+.natal3 .pl svg{width:15px;height:15px;color:var(--nouro)}
+.natal3 h4{font:800 12px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:#bcd3c0;padding:18px 16px 10px;margin:0}
+.natal3 .trv{padding:0 16px;margin:0;font-size:13px;color:#d5e3d6}
+.nrow3{display:flex;gap:10px;padding:0 16px 4px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.nrow3::-webkit-scrollbar{display:none}
+.nrow3 .sab3{flex:0 0 158px;scroll-snap-align:start;color:var(--ink)}
+.natal3 .combos3{margin:0;padding:2px 16px 6px}
+.estr3{position:absolute;width:10px;height:10px;background:var(--nouro);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:brilha3 2.2s ease-in-out infinite alternate;pointer-events:none}
+@keyframes brilha3{from{opacity:.1;transform:scale(.5)}to{opacity:.9;transform:scale(1.1) rotate(20deg)}}
+.bolas3{position:absolute;right:14px;top:0;display:flex;gap:12px;z-index:1}
+.bolas3 span{display:flex;flex-direction:column;align-items:center;transform-origin:50% 0;animation:balanca3 3.4s ease-in-out infinite alternate}
+.bolas3 span:nth-child(2){animation-duration:2.7s;animation-delay:-1s}.bolas3 span:nth-child(3){animation-duration:3.9s;animation-delay:-2s}
+.bolas3 u{display:block;width:1.5px;background:rgba(226,178,90,.7)}
+.bolas3 b{display:block;width:22px;height:22px;border-radius:50%;box-shadow:inset -5px -6px 10px rgba(0,0,0,.28),0 6px 10px -4px rgba(0,0,0,.5)}
+@keyframes balanca3{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.natal-abre{position:fixed;inset:0;z-index:70;color:#fbf3e4;transition:visibility 0s 1s}
+.natal-abre.fim{visibility:hidden;pointer-events:none}
+.natal-abre .pt{position:absolute;top:0;bottom:0;width:50.5%;background:linear-gradient(170deg,#173a2b,#0f2a1e);transition:transform .9s cubic-bezier(.6,0,.2,1)}
+.natal-abre .pt.e{left:0;box-shadow:inset -1.5px 0 0 rgba(226,178,90,.55)}.natal-abre .pt.d{right:0;box-shadow:inset 1.5px 0 0 rgba(226,178,90,.55)}
+.natal-abre .pt::after{content:"";position:absolute;top:76%;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6dc9c,#c98f2f)}
+.natal-abre .pt.e::after{right:12px}.natal-abre .pt.d::after{left:12px}
+.natal-abre.fim .pt.e{transform:translateX(-102%)}.natal-abre.fim .pt.d{transform:translateX(102%)}
+.natal-abre .cx{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .3s}
+.natal-abre.fim .cx{opacity:0}
+.natal-abre .lg{position:relative;width:96px;height:96px}
+.natal-abre .lg img{width:96px;height:96px;border-radius:50%;box-shadow:0 14px 30px -10px rgba(0,0,0,.6)}
+.natal-abre .lg svg{position:absolute;left:-6px;top:-42px;width:108px;transform:rotate(-8deg)}
+.natal-abre .h2{font:700 44px/1 'Dancing Script',cursive;color:#e2b25a;margin-top:10px}
+.natal-abre .sub{font:700 12px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:#cfe0d2}
+.natal-abre .barra{width:120px;height:4px;border-radius:2px;background:rgba(255,255,255,.14);margin-top:26px;overflow:hidden}
+.natal-abre .barra i{display:block;height:100%;border-radius:2px;background:#e2b25a;transform-origin:0 50%;animation:enche3 2.3s .2s cubic-bezier(.4,0,.2,1) both}
+@keyframes enche3{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){#luzes3 .b,.hk3,.bolas3 span,.estr3{animation:none!important}}
 
 </style>
 </head>
@@ -1320,10 +1386,105 @@ function aplicarFesta() {
 }
 
 /* =========================================================
+   Versão de Natal: ligada e desligada pelo painel (Ajustes > Versão de Natal)
+   ========================================================= */
+const natalOn = () => !!(C.loja && C.loja.natal && C.loja.natal.ativo);
+const GORRAO = '<svg viewBox="0 0 200 120" aria-hidden="true"><path d="M182 94C186 50 152 10 98 12 56 14 24 34 13 64l24-2c-6 12-10 22-12 32Z" fill="#c22f33"/><path d="M150 30c-22-10-58-8-86 10" fill="none" stroke="#e2585c" stroke-width="7" stroke-linecap="round" opacity=".55"/><rect x="8" y="82" width="184" height="30" rx="15" fill="#fffaf3"/><path d="M22 104h156" stroke="#eadfce" stroke-width="4" stroke-linecap="round"/><circle cx="15" cy="64" r="15" fill="#fffaf3"/></svg>';
+ICON.som = '<path d="M4 10v4h3l4 4V6l-4 4H4Z"/><path d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/>';
+ICON.mudo = '<path d="M4 10v4h3l4 4V6l-4 4H4Z"/><path d="m15 9.5 5 5m0-5-5 5"/>';
+ICON.tree = '<path d="M12 3 7.5 9H10l-4 5h3l-4 5h14l-4-5h3l-4-5h2.5Z"/><path d="M12 19v2.5"/>';
+const NT = { on: false, mudo: false, ac: null, ruido: null, raf: 0, flocos: [], parts: [], x: 0, y: 0, porta: false, sino: false };
+try { NT.mudo = localStorage.getItem('dl_natal_mudo') === '1'; } catch (e) { }
+function nActx() { if (NT.mudo || !NT.on) return null; try { if (!NT.ac) NT.ac = new (window.AudioContext || window.webkitAudioContext)(); if (NT.ac.state === 'suspended') NT.ac.resume(); return NT.ac; } catch (e) { return null; } }
+function nSino(f, t0 = 0, dur = .9, vol = .16) { const a = nActx(); if (!a) return; const t = a.currentTime + t0;
+  [[1, 1], [2.76, .32], [5.4, .12]].forEach(([m, g]) => { const o = a.createOscillator(), v = a.createGain(); o.type = 'sine'; o.frequency.value = f * m;
+    v.gain.setValueAtTime(.0001, t); v.gain.exponentialRampToValueAtTime(vol * g, t + .006); v.gain.exponentialRampToValueAtTime(.0001, t + dur / Math.sqrt(m));
+    o.connect(v); v.connect(a.destination); o.start(t); o.stop(t + dur + .05); }); }
+function nGuizo(t0 = 0, n = 4, gap = .12, vol = .1) { const a = nActx(); if (!a) return;
+  if (!NT.ruido) { const b = a.createBuffer(1, a.sampleRate * .2, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; NT.ruido = b; }
+  for (let i = 0; i < n; i++) { const t = a.currentTime + t0 + i * gap, s = a.createBufferSource(), f = a.createBiquadFilter(), v = a.createGain(); s.buffer = NT.ruido; f.type = 'bandpass'; f.frequency.value = 6800 + (i % 2) * 900; f.Q.value = 9;
+    v.gain.setValueAtTime(.0001, t); v.gain.exponentialRampToValueAtTime(vol, t + .004); v.gain.exponentialRampToValueAtTime(.0001, t + .09); s.connect(f); f.connect(v); v.connect(a.destination); s.start(t); s.stop(t + .12); } }
+const NN = { C6: 1046.5, D6: 1174.7, E6: 1318.5, G6: 1568, A6: 1760, C7: 2093 };
+const NSONS = {
+  add: () => { nSino(NN.G6, 0, .7, .14); nSino(NN.C7, .07, .6, .08); },
+  menos: () => nSino(880, 0, .25, .07), tick: () => nSino(NN.A6, 0, .12, .035), abre: () => nSino(NN.E6, 0, .4, .05),
+  kit: () => { nSino(NN.D6, 0, .6, .12); nSino(NN.G6, .1, .6, .12); nSino(NN.C7, .2, .9, .1); nGuizo(.05, 3, .1, .06); },
+  liga: () => { [NN.C6, NN.E6, NN.G6, NN.C7].forEach((f, i) => nSino(f, i * .07, .7, .1)); nGuizo(0, 5, .07, .07); },
+  /* sino de porta de loja: várias batidas, cada uma mais fraca */
+  porta: () => { [[0, .17], [.14, .13], [.31, .1], [.52, .07], [.78, .045], [1.08, .025]].forEach(([t, v], i) => nSino(i % 2 ? 2217 : 2093, t, 1.3, v)); },
+  /* trecho de "Jingle Bells" (1857, domínio público) em caixinha de música */
+  natal: () => { const u = .17; [[0, 'E6'], [1, 'E6'], [2, 'E6', 1], [4, 'E6'], [5, 'E6'], [6, 'E6', 1], [8, 'E6'], [9, 'G6'], [10, 'C6'], [11, 'D6'], [12, 'E6', 2]].forEach(([p, n, l]) => nSino(NN[n], p * u, l ? 1.4 : .5, .13)); nGuizo(0, 14, u, .07); }
+};
+const nSom = k => { if (!NT.on) return; try { NSONS[k] && NSONS[k](); } catch (e) { } };
+/* brilhos em estrela saindo de um ponto da tela */
+function nBrilho(n = 10, x = NT.x, y = NT.y, forca = 1) { if (!NT.on || REDUZ) return; const cs = ['#e2b25a', '#fff3d6', '#f0bf4c', '#e0393f', '#ffffff', '#3fa468'];
+  for (let i = 0; i < n; i++) { const an = Math.random() * 6.28, v = (1.2 + Math.random() * 3.2) * forca; NT.parts.push({ x, y, vx: Math.cos(an) * v, vy: Math.sin(an) * v - 1.6 * forca, r: 3 + Math.random() * 5, cor: cs[i % cs.length], t: 0, vida: 34 + Math.random() * 26, g: Math.random() * 6, vg: (Math.random() - .5) * .3 }); } }
+function neveNatal(ligar) {
+  let cv = $('#natal-fx'); if (!ligar) { cancelAnimationFrame(NT.raf); if (cv) cv.remove(); NT.parts = []; return; }
+  if (cv || REDUZ) return; cv = document.createElement('canvas'); cv.id = 'natal-fx'; cv.setAttribute('aria-hidden', 'true'); document.body.appendChild(cv);
+  const g = cv.getContext('2d'); let W = 0, H = 0; const medir = () => { const d = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); luzesNatal(); }; medir(); addEventListener('resize', medir);
+  const novo = topo => ({ x: Math.random() * W, y: topo ? -10 : Math.random() * H, r: Math.random() < .16 ? 4 + Math.random() * 3 : 1 + Math.random() * 2.2, v: .25 + Math.random() * .55, f: Math.random() * 6.28, a: Math.random() * 6.28, o: .55 + Math.random() * .4 });
+  NT.flocos = Array.from({ length: 40 }, () => novo(false)); let ant = performance.now();
+  (function quadro(agora) { NT.raf = requestAnimationFrame(quadro); if (document.hidden) { ant = agora; return; } const dt = Math.min(40, agora - ant) / 16.7; ant = agora;
+    g.clearRect(0, 0, W, H); g.shadowColor = 'rgba(70,45,30,.3)'; g.shadowBlur = 3;
+    for (const f of NT.flocos) { f.f += .012 * dt; f.y += f.v * (f.r > 4 ? 1.5 : 1) * dt; f.x += Math.sin(f.f) * .35 * dt; f.a += .006 * dt; if (f.y > H + 10) Object.assign(f, novo(true)); g.globalAlpha = f.o;
+      if (f.r > 4) { g.save(); g.translate(f.x, f.y); g.rotate(f.a); g.strokeStyle = '#fff'; g.lineWidth = 1.2; g.lineCap = 'round'; g.beginPath();
+        for (let k = 0; k < 6; k++) { const an = k * Math.PI / 3, cx = Math.cos(an), sy = Math.sin(an); g.moveTo(0, 0); g.lineTo(cx * f.r, sy * f.r); const bx = cx * f.r * .6, by = sy * f.r * .6; g.moveTo(bx, by); g.lineTo(bx + Math.cos(an + .9) * f.r * .32, by + Math.sin(an + .9) * f.r * .32); g.moveTo(bx, by); g.lineTo(bx + Math.cos(an - .9) * f.r * .32, by + Math.sin(an - .9) * f.r * .32); }
+        g.stroke(); g.restore(); } else { g.fillStyle = '#fff'; g.beginPath(); g.arc(f.x, f.y, f.r, 0, 6.29); g.fill(); } }
+    g.shadowBlur = 0;
+    for (let i = NT.parts.length - 1; i >= 0; i--) { const p = NT.parts[i]; p.t += dt; if (p.t > p.vida) { NT.parts.splice(i, 1); continue; } p.vy += .14 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.g += p.vg * dt;
+      const k = 1 - p.t / p.vida; g.globalAlpha = Math.min(1, k * 1.6); g.fillStyle = p.cor; g.save(); g.translate(p.x, p.y); g.rotate(p.g); const r = p.r * (.5 + k * .5);
+      g.beginPath(); for (let j = 0; j < 8; j++) { const an = j * Math.PI / 4, rr = j % 2 ? r * .38 : r; g.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); } g.closePath(); g.fill(); g.restore(); }
+    g.globalAlpha = 1; })(ant);
+}
+/* varal de luzes logo abaixo da barra do topo */
+function luzesNatal() {
+  let el = $('#luzes3'); if (!NT.on) { if (el) el.remove(); return; }
+  const topo = document.querySelector('.topbar'); if (!topo) return;
+  if (!el) { el = document.createElement('div'); el.id = 'luzes3'; el.setAttribute('aria-hidden', 'true'); topo.insertAdjacentElement('afterend', el); }
+  const w = el.clientWidth || innerWidth, n = Math.max(4, Math.round(w / 78)), seg = w / n; let d = 'M0 5', b = '', k = 0;
+  for (let i = 0; i < n; i++) { const x0 = i * seg; d += ` Q ${x0 + seg / 2} 27 ${x0 + seg} 5`;
+    for (const t of [.2, .5, .8]) { const x = x0 + seg * t, y = 2 * (1 - t) * t * 27 + ((1 - t) ** 2 + t ** 2) * 5; b += `<g class="b c${k % 4}" style="animation-delay:-${(k * .43 % 1.6).toFixed(2)}s"><rect x="${(x - 2).toFixed(1)}" y="${(y - 1).toFixed(1)}" width="4" height="4" rx="1" fill="#4a3527"/><ellipse cx="${x.toFixed(1)}" cy="${(y + 7).toFixed(1)}" rx="3.6" ry="5"/></g>`; k++; } }
+  el.innerHTML = `<svg viewBox="0 0 ${w} 34"><path d="${d}" fill="none" stroke="#4a3527" stroke-width="1.4"/>${b}</svg>`;
+}
+/* abertura: tela verde "Feliz Natal" que se abre como porta, com sino. Uma vez por visita. */
+function portaNatal() {
+  let visto = false; try { visto = sessionStorage.getItem('dl_natal_porta') === '1'; sessionStorage.setItem('dl_natal_porta', '1'); } catch (e) { }
+  if (visto) { NT.porta = true; return; }
+  const o = document.createElement('div'); o.className = 'natal-abre'; o.setAttribute('role', 'status'); o.setAttribute('aria-label', 'Abrindo a loja');
+  o.innerHTML = `<span class="pt e"></span><span class="pt d"></span><span class="cx"><span class="lg"><img src="${BRAND.cookie}" alt="">${GORRAO}</span><span class="h2">Feliz Natal</span><span class="sub">Dona Liz Cookies Artesanais</span><span class="barra"><i></i></span></span>`;
+  document.body.appendChild(o);
+  const toca = () => { if (NT.sino || !NT.porta || NT.mudo) return; const a = nActx(); if (a && a.state === 'running') { NT.sino = true; nSom('porta'); } };
+  const destrava = () => { const a = nActx(); if (a) a.resume().then(toca).catch(() => { }); if (NT.sino) ['pointerdown', 'keydown', 'touchend'].forEach(ev => removeEventListener(ev, destrava, true)); };
+  ['pointerdown', 'keydown', 'touchend'].forEach(ev => addEventListener(ev, destrava, true));
+  setTimeout(() => { NT.porta = true; o.classList.add('fim'); setTimeout(() => nBrilho(16, innerWidth / 2, innerHeight * .42, 1.3), 250); toca(); const a = nActx(); if (a) a.resume().then(toca).catch(() => { }); setTimeout(() => o.remove(), 1100); }, 2600);
+}
+function aplicarNatal() {
+  const on = natalOn(); if (on === NT.on) return; NT.on = on;
+  document.documentElement.toggleAttribute('data-natal', on); neveNatal(on); luzesNatal();
+  if (on) portaNatal();
+}
+const diasAteNatal = () => { const h = new Date(); const ano = h.getMonth() === 11 && h.getDate() > 25 ? h.getFullYear() + 1 : h.getFullYear(); return Math.max(0, Math.ceil((new Date(ano, 11, 25) - new Date(h.toDateString())) / 864e5)); };
+const CAPA_NEVE = '<div class="capa3" aria-hidden="true"><svg viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M0 0h400v7c-8 0-9 7-17 7s-8-6-17-6-10 9-19 9-8-8-17-8-9 5-18 5-9-7-19-7-9 10-19 10-9-9-18-9-8 6-17 6-10-7-19-7-9 9-18 9-9-8-18-8-9 6-18 6-9-8-19-8-9 10-18 10-9-9-18-9-8 6-17 6-10-8-19-8-9 7-17 7-10-5-19-5Z"/></svg></div>';
+/* bloco "Especial de Natal" do cardápio: sabores e combos marcados como de Natal no painel */
+function areaNatal(sabCards, comboCards, travado) {
+  if (!natalOn() || (!sabCards.length && !comboCards.length)) return '';
+  const dn = diasAteNatal();
+  const estr = [[8, 62], [30, 14], [52, 38], [70, 78], [88, 30], [94, 58], [18, 88], [62, 8], [44, 70], [80, 92]].map(([x, y], i) => `<i class="estr3" style="left:${x}%;top:${y}%;animation-delay:-${i * .37}s"></i>`).join('');
+  return `<section class="natal3" aria-label="Especial de Natal">${estr}
+    <div class="bolas3" aria-hidden="true"><span><u style="height:14px"></u><b style="background:#c2343a"></b></span><span><u style="height:30px"></u><b style="background:#e2b25a"></b></span><span><u style="height:8px"></u><b style="background:#fbf3e4"></b></span></div>
+    <div class="cab"><small>Só nesta época</small><h2>Especial de Natal</h2><p>Sabores e combos que só aparecem no Natal.</p></div>
+    ${dn ? `<div class="pl"><span>${ic('tree')}Falta${dn > 1 ? 'm' : ''} ${plural(dn, 'dia')} para o Natal</span></div>` : ''}
+    ${sabCards.length ? `<h4>Sabores de Natal</h4><div class="nrow3">${sabCards.join('')}</div>` : ''}
+    ${comboCards.length ? `<h4>Combos de Natal</h4>${travado ? '<p class="trv">Os combos entram a partir de quarta.</p>' : `<div class="combos3">${comboCards.join('')}</div>`}` : ''}
+  </section>`;
+}
+
+/* =========================================================
    Telas
    ========================================================= */
 function render() {
-  aplicarFesta();
+  aplicarNatal(); aplicarFesta();
   renderTopo();
   const v = $('#view');
   if (!C.carregou && !C.erroLoja) { v.innerHTML = `<div class="wrap"><div class="sk sk-h"></div><div class="sk sk-card"></div><div class="sk sk-card"></div></div>`; renderNav(); return; }
@@ -1338,7 +1499,7 @@ function render() {
 /* barra superior igual à do painel: marca + selo de status */
 function renderTopo() {
   const L = C.loja; const aberto = !!(L && L.aberto);
-  $('#topo-acoes').innerHTML = C.carregou && L ? `<span class="sync ${aberto ? 'nuvem' : 'local'}">${aberto ? 'Aberto para pedidos' : 'Pedidos pausados'}</span>` : '';
+  $('#topo-acoes').innerHTML = C.carregou && L ? `${natalOn() ? `<button class="icon-btn som3${NT.mudo ? ' off' : ''}" data-act="natal-som" aria-label="${NT.mudo ? 'Ligar' : 'Desligar'} os sons" aria-pressed="${!NT.mudo}">${ic(NT.mudo ? 'mudo' : 'som')}</button>` : ''}<span class="sync ${aberto ? 'nuvem' : 'local'}">${aberto ? 'Aberto para pedidos' : 'Pedidos pausados'}</span>` : '';
 }
 /* abas embaixo, no mesmo estilo do painel */
 function renderNav() {
@@ -1418,9 +1579,10 @@ function sheetSabor(id) {
 }
 function heroHtml() {
   const L = C.loja; const aberto = !!(L && L.aberto);
-  return `<section class="hero3"><div class="glow" aria-hidden="true"></div><img class="hero-ck" src="${BRAND.hero}" alt="" aria-hidden="true">
+  const nt = natalOn();
+  return `<section class="hero3">${nt ? CAPA_NEVE : ''}<div class="glow" aria-hidden="true"></div>${nt ? `<span class="hk3" aria-hidden="true"><img src="${BRAND.hero}" alt="">${GORRAO}</span>` : `<img class="hero-ck" src="${BRAND.hero}" alt="" aria-hidden="true">`}
     <span class="live ${aberto ? '' : 'off'}">${aberto ? 'Aberto para pedidos' : 'Pedidos pausados'}</span>
-    ${emSemanaAniv() ? `<h1>Feliz aniversário<span>${esc(primNome())}!</span></h1><p>Esta semana é sua.</p><button class="ouvir3" data-act="parabens">${ic('nota')} Ouvir os parabéns</button>${BALOES}` : `<h1>Cookies da semana<span>saindo do forno</span></h1><p>Entregas e retiradas de quinta a sábado</p>`}</section>`;
+    ${emSemanaAniv() ? `<h1>Feliz aniversário<span>${esc(primNome())}!</span></h1><p>Esta semana é sua.</p><button class="ouvir3" data-act="parabens">${ic('nota')} Ouvir os parabéns</button>${BALOES}` : nt ? `<h1>Natal Dona Liz<span>feito para presentear</span></h1><p>Entregas e retiradas de quinta a sábado</p>` : `<h1>Cookies da semana<span>saindo do forno</span></h1><p>Entregas e retiradas de quinta a sábado</p>`}</section>`;
 }
 function tCardapio() {
   if (C.erroLoja) return `${heroHtml()}<div class="card empty"><strong>Ops!</strong>${esc(C.erroLoja)}</div>`;
@@ -1428,9 +1590,10 @@ function tCardapio() {
   if (!L || !(L.sabores || []).length) return `${heroHtml()}<div class="card empty"><strong>O cardápio da semana ainda não foi publicado</strong>Volte em breve${L && L.whatsapp ? ' ou fale com a gente no WhatsApp' : ''}.${L && L.whatsapp ? `<div><a class="btn" href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">${ic('wa')} WhatsApp</a></div>` : ''}</div>`;
   const uso = usoPorSabor(); const desc = temDesconto(); const datas = datasDisponiveis();
   const temCombos = (L.combos || []).length > 0; const liberados = combosLiberados();
-  const nSab = L.sabores.filter(s => s.max > 0).length;
-  const combos = !temCombos ? '' : `<div class="sec3"><h2>Combos</h2><small>${liberados ? plural(L.combos.length, 'opção', 'opções') : 'a partir de quarta'}</small></div>
-    ${liberados ? `<div class="combos3">${L.combos.map((c, i) => {
+  const SR = L.sabores.filter(s => !s.natal), SN = natalOn() ? L.sabores.filter(s => s.natal) : [];
+  const CR = (L.combos || []).filter(c => !c.natal), CN = natalOn() ? (L.combos || []).filter(c => c.natal) : [];
+  const nSab = SR.filter(s => s.max > 0).length;
+  const cardCombo = (c, i) => {
       const mx = c.tipo === 'livre' ? L.sabores.reduce((a, s) => a + Math.max(0, s.max - (uso[s.id] || 0)), 0) : maxCombo(c);
       const qn = cart.c.filter(l => l.comboId === c.id).reduce((a, l) => a + l.qtd, 0);
       const ok = c.tipo === 'livre' ? mx >= c.qtdLivre : mx > 0;
@@ -1439,9 +1602,8 @@ function tCardapio() {
         ${capaCombo(c) ? `<span class="st capa" aria-hidden="true"><img src="${capaCombo(c)}" alt=""></span>` : `<span class="st" aria-hidden="true">${imgsCombo(c).map(n => `<img src="${srcSab(n)}" alt="">`).join('')}</span>`}
         <small>${esc(tag)}</small><b>${esc(c.nome)}</b>${c.descricao ? `<em>${esc(c.descricao)}</em>` : ''}
         <span class="pr">${ok ? fmt(c.preco) : 'Esgotado'}</span>${qn ? `<span class="qn">${qn}</span>` : ''}</button>`;
-    }).join('')}</div>` : `<div class="lock3">${ic('gift')}<div><b>Combos a partir de quarta</b>Na segunda e na terça vale o desconto de 5% nos sabores.</div></div>`}`;
-  const sabores = `<div class="sec3"><h2>Sabores</h2><small>${plural(nSab, 'disponível', 'disponíveis')}${desc ? ' · 5% off hoje' : ''}</small></div>
-    <div class="grade3">${L.sabores.map(s => {
+    };
+  const cardSab = s => {
       const q = cart.s[s.id] || 0; const resta = s.max - (uso[s.id] || 0); const esg = s.max <= 0;
       const selo = esg ? '<span class="selo">ESGOTADO</span>' : s.max <= 3 ? `<span class="selo low">${s.max === 1 ? 'ÚLTIMO' : 'ÚLTIMOS ' + s.max}</span>` : '';
       const ctl = esg ? '' : q ? `<div class="step3"><button data-act="sq" data-id="${s.id}" data-d="-1" aria-label="Tirar um ${esc(s.nome)}">${ic('minus')}</button><b aria-label="Quantidade">${q}</b><button data-act="sq" data-id="${s.id}" data-d="1" aria-label="Mais um ${esc(s.nome)}" ${resta <= 0 || !L.aberto ? 'disabled' : ''}>${ic('plus')}</button></div>`
@@ -1449,12 +1611,17 @@ function tCardapio() {
       return `<article class="sab3${q ? ' tem' : ''}${esg ? ' esg' : ''}" data-sab="${s.id}">${fotoSab(s.nome) ? `<div class="ph foto" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}<img class="foto3" src="${fotoSab(s.nome)}"${fgAttr(s.nome)} alt="Cookie ${esc(s.nome)}" loading="lazy" decoding="async"></div>` : `<div class="ph" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}${imgSab(s.nome)}</div>`}
         <button class="nm" data-act="ficha" data-id="${s.id}">${esc(s.nome)}</button>${fichaSab(s) ? `<button class="ds" data-act="ficha" data-id="${s.id}">${esc(fichaSab(s))}</button><button class="mais3" data-act="ficha" data-id="${s.id}">Ver ingredientes</button>` : ''}
         ${dispHtml(s, resta, q > 0)}<div class="rw"><span class="pc">${desc ? `<s>${fmt(s.preco)}</s>${fmt(round2(s.preco * .95))}` : fmt(s.preco)}</span>${ctl}</div></article>`;
-    }).join('')}</div>`;
+    };
+  const combos = !CR.length ? '' : `<div class="sec3"><h2>${natalOn() && CN.length ? 'Combos de sempre' : 'Combos'}</h2><small>${liberados ? plural(CR.length, 'opção', 'opções') : 'a partir de quarta'}</small></div>
+    ${liberados ? `<div class="combos3">${CR.map(cardCombo).join('')}</div>` : `<div class="lock3">${ic('gift')}<div><b>Combos a partir de quarta</b>Na segunda e na terça vale o desconto de 5% nos sabores.</div></div>`}`;
+  const sabores = `<div class="sec3"><h2>${natalOn() && SN.length ? 'Sabores de sempre' : 'Sabores'}</h2><small>${plural(nSab, 'disponível', 'disponíveis')}${desc ? ' · 5% off hoje' : ''}</small></div>
+    <div class="grade3">${SR.map(cardSab).join('')}</div>`;
   return `${heroHtml()}
   ${avisoBrinde()}
   <div class="perks3"><span>${ic('cal')}${datas.length ? `Próxima: ${wdShort(datas[0])} ${ddmm(datas[0])}` : 'Sem datas agora'}</span><span class="${desc ? 'on' : ''}">${ic('tag')}5% off seg e ter</span><span>${ic('clock')}Pedidos até 18h</span></div>
   ${!L.aberto ? `<div class="banner"><div style="flex:1"><b>Pedidos pausados no momento.</b> Fale com a gente no WhatsApp.</div>${L.whatsapp ? `<a class="btn sm" href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">${ic('wa')} WhatsApp</a>` : ''}</div>` : ''}
   ${desc ? `<div class="banner info">${ic('tag')}<div><b>5% de desconto</b> em todos os sabores para pedidos feitos hoje (segunda e terça). Os combos entram a partir de quarta.</div></div>` : ''}
+  ${areaNatal(SN.map(cardSab), CN.map(cardCombo), !liberados)}
   ${combos}${sabores}
   <p class="rodape">Dúvidas? ${L.whatsapp ? `<a href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">Fale no WhatsApp</a>` : ''}</p>`;
 }
@@ -1612,7 +1779,7 @@ async function enviar() {
     await db.collection('pedidos').doc(C.envioId).set(p);
     clearTimeout(aviso);
     C.ultimo = { ...p, id: C.envioId }; C.envioId = null; C.enviando = false;
-    cart = { s: {}, c: [] }; salvar(); C.secao = 'sabores'; C.tela = 'enviado'; render(); confete();
+    cart = { s: {}, c: [] }; salvar(); C.secao = 'sabores'; C.tela = 'enviado'; render(); confete(); if (NT.on) { nSom('natal'); [0, 350, 800, 1400].forEach((ms, i) => setTimeout(() => nBrilho(26, innerWidth * [.5, .22, .78, .5][i], innerHeight * [.3, .22, .26, .4][i], 1.5), ms)); }
   } catch (e) {
     clearTimeout(aviso); C.enviando = false; render();
     toast(e && e.code === 'permission-denied' ? 'O pedido não foi aceito. Atualize a página e tente de novo.' : 'Não deu para enviar agora. Confira a internet e toque em Enviar de novo.');
@@ -1709,6 +1876,12 @@ function voar(src, r0) {
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id;
+  if (NT.on) { NT.x = e.clientX; NT.y = e.clientY;
+    if (a === 'natal-som') { NT.mudo = !NT.mudo; try { localStorage.setItem('dl_natal_mudo', NT.mudo ? '1' : '0'); } catch (_) { } renderTopo(); if (!NT.mudo) nSom('liga'); toast(NT.mudo ? 'Sons desligados' : 'Sons ligados'); return; }
+    if (a === 'sq') { if (+b.dataset.d > 0) { if (sobra(id) > 0) { nSom('add'); nBrilho(9); } } else nSom('menos'); }
+    else if (['combo', 'ficha', 'brinde'].includes(a)) nSom('abre');
+    else if (['combo-add', 'pk-ok', 'brinde-escolher'].includes(a)) { nSom('kit'); nBrilho(20, innerWidth / 2, innerHeight * .45, 1.4); }
+    else if (['ir', 'tipo', 'data', 'faixa', 'pag', 'pk', 'conta-modo'].includes(a)) nSom('tick'); }
   if (['ir', 'tipo', 'data', 'faixa', 'pag', 'enviar'].includes(a) && C.tela === 'carrinho') lerCampos();
   switch (a) {
     case 'ir': C.tela = b.dataset.t; render(); break;
