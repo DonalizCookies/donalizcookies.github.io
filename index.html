@@ -923,6 +923,13 @@ html[data-natal] .btn.primary:not(:disabled){background:linear-gradient(135deg,#
 .natal-abre .barra i{display:block;height:100%;border-radius:2px;background:#e2b25a;transform-origin:0 50%;animation:enche3 2.3s .2s cubic-bezier(.4,0,.2,1) both}
 @keyframes enche3{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @media (prefers-reduced-motion:reduce){#luzes3 .b,.hk3,.bolas3 span,.estr3{animation:none!important}}
+/* documento para liberar o presente */
+.doc3{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;border:1.5px dashed var(--line);background:var(--surface)}
+.doc3>svg{width:24px;height:24px;flex:none;color:var(--gold);margin-top:2px}
+.doc3 b{display:block;font:800 15px/1.25 var(--f-display)}
+.doc3 span{display:block;margin-top:4px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.doc3 .btn{margin-top:10px}
+.doc3.ok{border-style:solid}.doc3.ok>svg{color:#2f8553}
 
 </style>
 </head>
@@ -1209,14 +1216,14 @@ const pedidoBrinde = p => (p.itens || []).some(i => i.brinde);
 /* situação do presente para a conta logada: { ok, motivo, semana, prox } */
 function situacaoBrinde() {
   const c = C.conta; if (!anivOn() || !c) return { ok: false, motivo: 'sem-conta' };
-  const hoje = todayISO(); const sem = semanaAnivEm(c, hoje);
+  const hoje = todayISO(); const sem = semanaAnivEm(c, hoje); const semDoc = !c.docOk;
   let prox = semanaAniv(c, +hoje.slice(0, 4)); if (prox && prox.fim < hoje) prox = semanaAniv(c, +hoje.slice(0, 4) + 1);
-  if (!sem) return { ok: false, motivo: 'fora', prox };
+  if (!sem) return { ok: false, motivo: 'fora', prox, semDoc };
   const usado = Object.values(C.pedidos).find(p => p.status !== 'cancelado' && pedidoBrinde(p) && p.dataPedido >= sem.ini && p.dataPedido <= sem.fim);
   if (usado) return { ok: false, motivo: 'usado', semana: sem, pedido: usado, prox: semanaAniv(c, +sem.dia.slice(0, 4) + 1) };
   const criado = msDe(c.criadoEm) || Date.now();
   if (anivMinDias() > 0 && new Date(sem.ini + 'T00:00').getTime() - criado < anivMinDias() * 864e5) return { ok: false, motivo: 'recente', semana: sem, prox: semanaAniv(c, +sem.dia.slice(0, 4) + 1) };
-  return { ok: true, semana: sem };
+  return { ok: true, semana: sem, semDoc };
 }
 const brindeNoCarrinho = () => (cart.b && sabPub(cart.b) ? sabPub(cart.b) : null);
 let desassinarConta = null;
@@ -1272,8 +1279,13 @@ async function contaAcao(qual) {
     if (qual === 'sair') { if (!await ask('Sair da conta?', 'Você continua podendo pedir sem conta neste aparelho.', 'Sair')) return; cart.b = null; salvar(); await auth.signOut(); C.tela = 'cardapio'; return fim('Você saiu da conta.'); }
   } catch (e) { fim(erroAuth(e)); }
 }
+const linkDoc = () => { const c = C.conta || {}; const w = digits((C.loja || {}).whatsapp); if (!w) return ''; const msg = `Olá! Sou ${c.nome || ''} (${c.email || C.email || ''}). Segue a foto do meu documento com a data de nascimento para liberar o cookie de aniversário.`; return `https://wa.me/${w.length <= 11 ? '55' + w : w}?text=${encodeURIComponent(msg)}`; };
+/* aviso do documento: aparece depois de escolher o cookie e enquanto o pedido do presente espera a confirmação */
+const faltaDoc = () => !!(C.conta && !C.conta.docOk);
+function avisoDoc(curto) { if (!faltaDoc()) return ''; return `<div class="doc3">${ic('user')}<div><b>Envie seu documento para confirmar o presente</b><span>${curto ? 'Mande pelo WhatsApp da Dona Liz a foto de um documento com sua data de nascimento.' : 'Para o pedido ser confirmado, envie para a Dona Liz no WhatsApp a foto de um documento com seu nome e data de nascimento (RG ou CNH). Pode cobrir os outros dados. É só na primeira vez.'}</span>${linkDoc() ? `<a class="btn primary sm" href="${linkDoc()}" target="_blank" rel="noopener">${ic('wa')} Enviar documento pelo WhatsApp</a>` : ''}</div></div>`; }
+function blocoDoc() { return C.conta && C.conta.docOk ? `<div class="doc3 ok">${ic('check')}<div><b>Documento conferido</b><span>Seus próximos presentes são confirmados direto.</span></div></div>` : ''; }
 const dataBR = s => `${s.slice(8)}/${s.slice(5, 7)}`;
-function regrasBrinde() { const n = anivMinDias(); return `<ul class="regras3"><li>Vale 1 cookie de qualquer sabor disponível na semana (combos não entram).</li><li>É liberado na semana do seu aniversário, de segunda a domingo.</li><li>Um presente por pessoa por ano.</li>${n ? `<li>O cadastro precisa ter sido feito pelo menos ${plural(n, 'dia')} antes da semana do aniversário.</li>` : ''}</ul>`; }
+function regrasBrinde() { const n = anivMinDias(); return `<ul class="regras3"><li>Vale 1 cookie de qualquer sabor disponível na semana (combos não entram).</li><li>É liberado na semana do seu aniversário, de segunda a domingo.</li><li>Um presente por pessoa por ano.</li><li>Na primeira vez, o pedido do presente só é confirmado depois que você envia pelo WhatsApp da Dona Liz um documento com a data de nascimento.</li>${n ? `<li>O cadastro precisa ter sido feito pelo menos ${plural(n, 'dia')} antes da semana do aniversário.</li>` : ''}</ul>`; }
 function camposPerfil() {
   return `<label class="fld"><span>Nome completo</span><input data-ac="nome" value="${esc(AC.nome)}" autocomplete="name" maxlength="80" placeholder="Nome e sobrenome"></label>
     <label class="fld"><span>WhatsApp com DDD</span><input data-ac="telefone" value="${esc(AC.telefone)}" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(11) 90000-0000"></label>
@@ -1302,7 +1314,7 @@ function tConta() {
     : st.motivo === 'usado' ? `<div class="presente3"><span class="pi">${ic('check')}</span><div><b>Presente deste ano já pedido</b><p>O próximo libera na semana ${quando(st.prox)}.</p></div></div>`
     : st.motivo === 'recente' ? `<div class="presente3"><span class="pi">${ic('clock')}</span><div><b>Seu cadastro é recente</b><p>O presente vale para contas criadas pelo menos ${plural(anivMinDias(), 'dia')} antes da semana do aniversário. O seu libera na semana ${quando(st.prox)}.</p></div></div>`
     : `<div class="presente3"><span class="pi">${ic('cake')}</span><div><b>Seu presente está guardado</b><p>Ele libera na semana do seu aniversário, ${quando(st.prox)}.</p></div></div>`;
-  return `<h1 class="tit">Olá, ${esc(prim)}</h1>${bloco}
+  return `<h1 class="tit">Olá, ${esc(prim)}</h1>${bloco}${blocoDoc()}
     <section class="fs"><h3>Sua conta</h3><div class="kv"><span>Nome</span><b>${esc(c.nome || '')}</b></div><div class="kv"><span>WhatsApp</span><b>${esc(c.telefone || '')}</b></div><div class="kv"><span>E-mail</span><b>${esc(c.email || C.email || '')}</b></div><div class="kv"><span>Aniversário</span><b>${c.nascDia} de ${MESES[c.nascMes - 1] || ''}</b></div>
       <p class="hint">Precisa corrigir algum dado? Fale com a loja pelo WhatsApp.</p><button class="btn ghost sm" data-act="conta" data-v="sair">Sair da conta</button></section>
     <section class="fs"><h3>Como funciona o presente</h3>${regrasBrinde()}</section>`;
@@ -1318,7 +1330,8 @@ function sheetBrinde() {
 function avisoBrinde() {
   if (!anivOn()) return '';
   if (C.anon !== false) return `<button class="presente3 mini" data-act="ir" data-t="conta"><span class="pi">${ic('cake')}</span><div><b>Ganhe um cookie no seu aniversário</b><p>Crie sua conta em 1 minuto.</p></div>${ic('arrow')}</button>`;
-  const st = situacaoBrinde(); if (!st.ok) return '';
+  const st = situacaoBrinde();
+  if (!st.ok) return '';
   const b = brindeNoCarrinho();
   return `<div class="presente3 on"><span class="pi">${ic('gift')}</span><div><b>${b ? `Presente no carrinho: ${esc(b.nome)}` : 'Feliz aniversário! Seu cookie de presente está liberado'}</b><p>${b ? 'É só enviar o pedido.' : `Qualquer sabor da semana, por nossa conta. Vale até ${dataBR(st.semana.fim)}.`}</p><button class="btn primary sm" data-act="brinde">${b ? 'Trocar o sabor' : 'Escolher meu cookie'}</button></div></div>`;
 }
@@ -1789,6 +1802,7 @@ function tEnviado() {
   const p = (C.ultimo && C.pedidos[C.ultimo.id]) || C.ultimo; if (!p) { C.tela = 'cardapio'; return tCardapio(); }
   const L = C.loja; const { total } = { total: valorPedido(p) };
   return `<section class="ok3"><div class="glow" aria-hidden="true"></div><img class="hero-ck" src="${BRAND.hero}" alt="" aria-hidden="true"><div class="ok-ico">${ic('check')}</div><h1>${p.numero ? 'Pedido #' + pad(p.numero) : 'Pedido enviado'}<br>${p.status === 'novo' ? 'enviado!' : p.status === 'cancelado' ? 'cancelado' : 'confirmado!'}</h1><p>${p.status === 'novo' ? 'A Dona Liz já recebeu e vai confirmar em instantes.' : p.status === 'cancelado' ? 'Fale com a gente no WhatsApp se precisar.' : 'Seus cookies estão reservados.'}</p></section>
+  ${pedidoBrinde(p) && p.status === 'novo' ? avisoDoc() : ''}
   ${pedidoCard(p, true)}
   ${blocoPix(p)}
   <div class="row" style="justify-content:center">${L.whatsapp ? `<a class="btn" href="${waLink(p)}" target="_blank" rel="noopener">${ic('wa')} Falar no WhatsApp</a>` : ''}<button class="btn" data-act="ir" data-t="pedidos">${ic('list')} Meus pedidos</button></div>
@@ -1803,6 +1817,7 @@ function pixDoPedido(p) {
 }
 function blocoPix(p) {
   const L = C.loja; if (!p || p.pagamento !== 'pix' || !L || !L.pix || !L.pix.chave) return '';
+  if (valorPedido(p) <= 0 && !p.taxaPendente) return ''; // presente de aniversário sozinho: nada a pagar
   if (p.pago) return `<section class="fs pix3 ok"><div class="pago3">${ic('check')}<div><b>Pagamento recebido</b><span>Obrigado! Seu Pix já foi confirmado.</span></div></div></section>`;
   if (p.status === 'cancelado') return '';
   const code = pixDoPedido(p);
@@ -1826,14 +1841,14 @@ function pedidoCard(p, aberto) {
     <div class="t">${p.tipoEntrega === 'entrega' ? 'Entrega' : 'Retirada'} ${wdLong(p.dataEntrega)} ${ddmm(p.dataEntrega)}${p.periodo ? ' · ' + esc(p.periodo) : ''}</div></div><span class="pill ${st[2]}">${st[0]}</span></div>
     ${p.status !== 'cancelado' ? `<div class="passos">${['Recebido', 'Confirmado', p.tipoEntrega === 'entrega' ? 'Entregue' : 'Retirado'].map((n, i) => `<div class="passo ${i <= at ? 'on' : ''}"><i></i><span>${n}</span></div>`).join('')}</div>` : ''}
     <div class="s">${(p.itens || []).map(i => `${i.qtd}× ${esc(i.nome)}`).join(' · ')}</div>
-    <div class="row"><b class="money" style="flex:1">${fmt(valorPedido(p))}${p.taxaPendente ? ' + taxa' : ''}</b><span class="pill ${p.pago ? 'ok' : 'warn'}">${p.pago ? 'Pago' : 'Pagamento pendente'} · ${p.pagamento === 'pix' ? 'Pix' : 'Dinheiro'}</span></div>
+    <div class="row"><b class="money" style="flex:1">${fmt(valorPedido(p))}${p.taxaPendente ? ' + taxa' : ''}</b>${valorPedido(p) <= 0 && !p.taxaPendente ? '<span class="pill ok">Presente · nada a pagar</span>' : `<span class="pill ${p.pago ? 'ok' : 'warn'}">${p.pago ? 'Pago' : 'Pagamento pendente'} · ${p.pagamento === 'pix' ? 'Pix' : 'Dinheiro'}</span>`}</div>
     ${!aberto && pixDoPedido(p) ? `<button class="btn primary sm" data-act="pix-qr" data-id="${esc(p.id || '')}" style="align-self:flex-start">${ic('pix')} Pagar com Pix · ${fmt(valorPedido(p))}</button>` : ''}
     ${!aberto && p.status !== 'cancelado' && p.status !== 'entregue' ? `<div class="row">${C.loja && C.loja.whatsapp ? `<a class="btn sm" href="${waLink(p, 'Quero alterar o meu pedido')}" target="_blank" rel="noopener">${ic('wa')} Alterar pelo WhatsApp</a>` : ''}${p.status === 'novo' ? `<button class="btn sm ghost danger" data-act="cancelar" data-id="${p.id}">Cancelar pedido</button>` : ''}</div>` : ''}
   </article>`;
 }
 function tPedidos() {
   const l = Object.values(C.pedidos).sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
-  return `<h1 class="tit">Meus pedidos</h1>${l.length ? l.map(p => pedidoCard(p)).join('') : `<div class="card empty"><strong>Nenhum pedido ainda</strong>Os pedidos feitos neste celular aparecem aqui.<div><button class="btn primary" data-act="ir" data-t="cardapio">Ver cardápio</button></div></div>`}
+  return `<h1 class="tit">Meus pedidos</h1>${l.length ? l.map(p => (pedidoBrinde(p) && p.status === 'novo' ? avisoDoc(true) : '') + pedidoCard(p)).join('') : `<div class="card empty"><strong>Nenhum pedido ainda</strong>Os pedidos feitos neste celular aparecem aqui.<div><button class="btn primary" data-act="ir" data-t="cardapio">Ver cardápio</button></div></div>`}
   <p class="hint" style="text-align:center">Os pedidos ficam salvos neste navegador.</p>`;
 }
 
@@ -1896,7 +1911,10 @@ document.addEventListener('click', async e => {
     case 'parabens': if (!tocarParabens()) toast('Não deu para tocar o som neste aparelho.'); break;
     case 'brm': cart.b = null; salvar(); render(); break;
     case 'brinde': sheetBrinde(); break;
-    case 'brinde-escolher': cart.b = id; salvar(); fecharSheet(); toast('Presente no carrinho. É só enviar o pedido.'); C.tela = 'carrinho'; render(); break;
+    case 'brinde-escolher': cart.b = id; salvar(); fecharSheet(); C.tela = 'carrinho'; render();
+      if (faltaDoc()) abrirSheet(`<header class="sh-head"><h2>Presente no carrinho</h2><button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></header><div class="sh-body">${avisoDoc()}<p class="hint">Você pode enviar o documento agora ou logo depois de enviar o pedido.</p></div><footer class="sh-foot"><button class="btn primary" data-act="fechar" style="flex:1">Continuar para o pedido</button></footer>`);
+      else toast('Presente no carrinho. É só enviar o pedido.');
+      break;
     case 'conta-modo': AC.modo = b.dataset.v; render(); break;
     case 'conta': await contaAcao(b.dataset.v); break;
     case 'crm': cart.c = cart.c.filter(x => x.key !== id); salvar(); render(); break;
