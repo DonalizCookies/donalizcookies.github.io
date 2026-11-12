@@ -543,6 +543,18 @@ nav.tabs{grid-area:nav;box-shadow:0 -6px 20px rgba(58,28,16,.06)}
 .actions .btn{width:100%;min-width:0;white-space:normal;text-align:center;justify-content:center;min-height:46px;height:auto;padding-block:10px}
 .sh-body{overflow-x:hidden}
 .sh-body>*{min-width:0}
+/* aniversariantes (painel) */
+.aniv-h{font-size:14px;margin:0 0 6px}
+.aniv-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.aniv-h+.aniv-row{border-top:0}
+.aniv-row .main{flex:1;min-width:0}
+.aniv-dia{width:48px;height:52px;border-radius:14px;background:var(--sand);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex:none;text-transform:uppercase;letter-spacing:.04em}
+.aniv-dia b{font-size:19px;line-height:1;color:var(--ink);letter-spacing:0}
+.aniv-st{display:inline-block;margin-top:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.aniv-st.pode{background:#fff1d6;color:#8a5200}
+.aniv-st.resgatou{background:#dff3e4;color:#1f6b38}
+:root[data-theme=dark] .aniv-st.pode{background:#4a3410;color:#f2c879}
+:root[data-theme=dark] .aniv-st.resgatou{background:#17402a;color:#9fe0b4}
 
 /* ===== App do cliente ===== */
 #app{display:flex;flex-direction:column;height:100%}
@@ -799,6 +811,52 @@ main{padding-bottom:140px}
 /* ficha do sabor: foto quadrada, preenchendo tudo (corta só as sobras das laterais ou de cima/baixo), sem faixas vazias */
 .ficha3-img.foto{height:auto;aspect-ratio:1/1;max-height:58vh;display:block}
 .ficha3-img.foto img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+/* ---------- conta e presente de aniversário ---------- */
+.presente3{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--sh1,0 1px 0 rgba(58,28,16,.04));border:1px solid var(--line);text-align:left;width:100%;color:inherit}
+.presente3 .pi{width:46px;height:46px;border-radius:14px;background:var(--sand);color:var(--gold);display:grid;place-items:center;flex:none}
+.presente3 .pi svg{width:24px;height:24px}
+.presente3 b{display:block;font:800 15.5px/1.25 var(--f-display)}
+.presente3 p{margin:4px 0 0;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.presente3 .btn{margin-top:10px}
+.presente3>div{flex:1;min-width:0}
+.presente3.on{background:linear-gradient(135deg,var(--hero,#3a1c10),#5a2814);border-color:transparent;color:#fffaf3}
+.presente3.on p{color:#ead7c4}
+.presente3.on .pi{background:rgba(255,255,255,.12);color:var(--mel,#e59a45)}
+.presente3.on .btn.primary{background:var(--mel,#e59a45);color:#2b170c}
+.presente3.mini{align-items:center;padding:12px 14px;cursor:pointer;margin-bottom:2px}
+.presente3.mini>svg{width:20px;height:20px;color:var(--gold);flex:none}
+.presente3.mini .pi{width:40px;height:40px}
+.regras3{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.kv span{color:var(--muted)}.kv b{text-align:right;min-width:0;overflow-wrap:anywhere}
+.pick3{width:100%;text-align:left;background:none;border:0;color:inherit;cursor:pointer}
+.pick3[aria-pressed=true]{background:var(--sand);border-radius:14px}
+.chk span{font-size:13px;line-height:1.4}
+/* ---------- semana do aniversário: clima de festa só para o aniversariante ---------- */
+#festa-fx{position:fixed;inset:0;width:100%;height:100%;z-index:25;pointer-events:none}
+.baloes3{position:absolute;right:10px;top:-6px;width:110px;height:150px;pointer-events:none;z-index:1}
+.baloes3 i{position:absolute;width:38px;height:46px;border-radius:50% 50% 50% 50%/45% 45% 55% 55%;box-shadow:inset -6px -8px 12px rgba(0,0,0,.18);animation:balao3 4.6s ease-in-out infinite alternate;transform-origin:50% 140%}
+.baloes3 i::after{content:"";position:absolute;left:50%;top:100%;width:1.5px;height:58px;background:rgba(255,250,243,.55)}
+.baloes3 i::before{content:"";position:absolute;left:8px;top:8px;width:9px;height:12px;border-radius:50%;background:rgba(255,255,255,.45);transform:rotate(-24deg)}
+.baloes3 i:nth-child(1){left:0;top:26px;background:#e59a45}
+.baloes3 i:nth-child(2){left:36px;top:4px;background:#e8a0a8;animation-delay:-1.4s;animation-duration:5.4s}
+.baloes3 i:nth-child(3){left:70px;top:34px;background:#fffaf3;animation-delay:-2.6s;animation-duration:4s}
+@keyframes balao3{from{transform:rotate(-5deg) translateY(0)}to{transform:rotate(5deg) translateY(-7px)}}
+html[data-aniv] .hero3 .hero-ck{opacity:.5}
+html[data-aniv] .hero3 h1 span{display:block}
+.ouvir3{position:relative;z-index:2;margin-top:12px;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:19px;border:0;background:rgba(255,250,243,.14);color:#fffaf3;font:700 13px var(--f-body,inherit);cursor:pointer}
+.ouvir3 svg{width:17px;height:17px;color:var(--mel,#e59a45)}
+html[data-aniv] .brand{position:relative}
+html[data-aniv] .brand::before{content:"";position:absolute;left:9px;top:-10px;width:20px;height:22px;background:repeating-linear-gradient(135deg,#e59a45 0 5px,#fffaf3 5px 10px);clip-path:polygon(50% 0,100% 100%,0 100%);transform:rotate(-16deg);z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.festa-abre{position:fixed;inset:0;z-index:60;background:linear-gradient(160deg,#3a1c10,#5a2814 70%,#7a3a17);color:#fffaf3;display:grid;place-items:center;text-align:center;padding:24px;transition:opacity .6s}
+.festa-abre.fim{opacity:0;pointer-events:none}
+.festa-abre .baloes3{right:50%;top:14%;transform:translateX(50%) scale(1.5)}
+.fa-cx{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:90px}
+.fa-s{font:700 40px/1 'Dancing Script',cursive;color:var(--mel,#e59a45);animation:rise3 .7s both}
+.fa-n{font:800 44px/1.05 var(--f-display,'Montserrat');letter-spacing:-.02em;animation:rise3 .7s .15s both;overflow-wrap:anywhere}
+.fa-cx p{margin:10px 0 0;font-size:15px;color:#ead7c4;animation:rise3 .7s .3s both}
+@keyframes rise3{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.baloes3 i,.fa-s,.fa-n,.fa-cx p{animation:none}}
 
 </style>
 </head>
@@ -959,7 +1017,7 @@ const ic = (n, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidde
 
 /* ---------- estado ---------- */
 const LS = 'donaliz-cliente-v1';
-const C = { secao: 'sabores', fotos: {}, loja: null, carregou: false, uid: null, pedidos: {}, tela: 'cardapio', envioId: null, enviando: false, ultimo: null, erroLoja: '' };
+const C = { secao: 'sabores', fotos: {}, loja: null, carregou: false, uid: null, anon: null, email: '', conta: null, contaPronta: false, pedidos: {}, tela: 'cardapio', envioId: null, enviando: false, ultimo: null, erroLoja: '' };
 let cart = { s: {}, c: [] }, dados = { nome: '', telefone: '', endereco: '', bairro: '' };
 let ck = { tipo: 'retirada', data: null, faixa: null, pagamento: 'pix', obs: '', bairroOutro: false };
 try { const j = JSON.parse(localStorage.getItem(LS) || '{}'); if (j.cart) cart = j.cart; if (j.dados) dados = { ...dados, ...j.dados }; } catch (e) { }
@@ -996,12 +1054,15 @@ const sabPub = id => (C.loja && C.loja.sabores || []).find(s => s.id === id);
 const comboPub = id => (C.loja && C.loja.combos || []).find(c => c.id === id);
 function usoPorSabor() {
   const m = {}; for (const [id, q] of Object.entries(cart.s)) m[id] = (m[id] || 0) + q;
+  if (cart.b) m[cart.b] = (m[cart.b] || 0) + 1;
   for (const l of cart.c) { const c = comboPub(l.comboId); if (!c) continue; if (c.tipo === 'livre') for (const [id, q] of Object.entries(l.escolha || {})) m[id] = (m[id] || 0) + q; else for (const i of c.itens) m[i.saborId] = (m[i.saborId] || 0) + i.qtd * l.qtd; }
   return m;
 }
 function limparCarrinho() {
   // remove o que saiu do cardápio ou passou do disponível
   if (!C.loja) return; let mudou = false; let ajustou = false;
+  /* presente de aniversário: sai do carrinho se o sabor acabou ou se o presente não está mais liberado */
+  if (cart.b && (!sabPub(cart.b) || sabPub(cart.b).max <= 0 || (C.contaPronta && !situacaoBrinde().ok))) { cart.b = null; mudou = true; }
   for (const id of Object.keys(cart.s)) { const s = sabPub(id); if (!s || !cart.s[id]) { delete cart.s[id]; mudou = true; } else if (cart.s[id] > s.max) { cart.s[id] = s.max; mudou = true; ajustou = true; if (!s.max) delete cart.s[id]; } }
   const antes = cart.c.length; cart.c = cart.c.filter(l => { const c = comboPub(l.comboId); return c && combosLiberados(); }); if (cart.c.length !== antes) mudou = true;
   // somando avulsos + combos, nada pode passar do estoque: tira primeiro dos avulsos, depois dos combos
@@ -1029,6 +1090,7 @@ function totais() {
   let subS = 0, subC = 0, n = 0;
   for (const [id, q] of Object.entries(cart.s)) { const s = sabPub(id); if (s) { subS += s.preco * q; n += q; } }
   for (const l of cart.c) { const c = comboPub(l.comboId); if (!c) continue; subC += c.preco * l.qtd; n += c.tipo === 'livre' ? Object.values(l.escolha || {}).reduce((a, b) => a + b, 0) : c.itens.reduce((a, i) => a + i.qtd, 0) * l.qtd; }
+  if (brindeNoCarrinho()) n += 1;
   const desconto = temDesconto() ? round2(subS * 0.05) : 0;
   let taxa = 0, taxaPendente = false;
   if (ck.tipo === 'entrega') { const t = (C.loja.taxas || []).find(x => norm(x.bairro) === norm(dados.bairro)); if (t && !ck.bairroOutro) taxa = t.valor; else if (dados.bairro || ck.bairroOutro) taxaPendente = true; }
@@ -1043,26 +1105,230 @@ function iniciar() {
   db.doc('publico/fotos').onSnapshot(d => { C.fotos = d.exists ? d.data() || {} : {}; try { localStorage.setItem('dl_fotos', JSON.stringify(C.fotos)); } catch (e) { } if (C.loja) render(); }, () => { });
   db.doc('publico/loja').onSnapshot(d => { C.loja = d.exists ? d.data() : null; C.carregou = true; C.erroLoja = ''; limparCarrinho(); render(); }, e => { C.carregou = true; C.erroLoja = 'Não conseguimos carregar o cardápio. Confira sua internet e tente de novo.'; render(); });
   firebase.auth().onAuthStateChanged(u => {
-    if (u) { C.uid = u.uid; assinarPedidos(); }
-    else firebase.auth().signInAnonymously().catch(() => { });
+    if (u) { const trocou = C.uid !== u.uid; C.uid = u.uid; C.anon = !!u.isAnonymous; C.email = u.email || ''; assinarPedidos(trocou); assinarConta(); render(); }
+    else { C.uid = null; C.anon = null; C.conta = null; firebase.auth().signInAnonymously().catch(() => { }); }
   });
   setTimeout(() => { if (!C.carregou) { C.erroLoja = 'O cardápio está demorando para carregar. Confira sua internet.'; render(); } }, 12000);
 }
 let desassinar = null;
-function assinarPedidos() {
+function assinarPedidos(denovo) {
+  if (denovo && desassinar) { desassinar(); desassinar = null; C.pedidos = {}; }
   if (desassinar || !C.uid) return;
   desassinar = db.collection('pedidos').where('uid', '==', C.uid).onSnapshot(s => { const o = {}; s.docs.forEach(d => { o[d.id] = { ...d.data(), id: d.id }; }); C.pedidos = o; if (C.tela === 'pedidos' || C.tela === 'enviado') render(); renderTopo(); }, () => { });
+}
+
+/* =========================================================
+   Conta do cliente e cookie de aniversário
+   - o pedido continua sem cadastro; a conta (e-mail e senha) só é exigida para o presente
+   - quem confere e libera o presente é o painel, na confirmação do pedido
+   ========================================================= */
+ICON.user = '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.400 3.600-7 8-7s8 2.600 8 7"/>'.replace(/\.(\d)00/g, '.$1');
+ICON.cake = '<path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c2.300 1.500 4.700 1.500 7 0s4.700-1.500 7 0M12 12V8"/><path d="M12 3c1.300 1.300 1.300 2.700 0 4-1.300-1.300-1.300-2.700 0-4Z"/>'.replace(/\.(\d)00/g, '.$1');
+const AC = { modo: 'criar', nome: '', telefone: '', email: '', senha: '', dia: '', mes: '', aceite: false, ocupado: false };
+const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const anivOn = () => !!(C.loja && C.loja.aniv && C.loja.aniv.ativo);
+const anivMinDias = () => Math.max(0, +((C.loja && C.loja.aniv && C.loja.aniv.minDias) ?? 7) || 0);
+const msDe = v => v && typeof v.toMillis === 'function' ? v.toMillis() : (+v || 0);
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+/* semana (segunda a domingo) em que cai o aniversário num certo ano; 29/02 vira 28/02 fora de ano bissexto */
+function semanaAniv(conta, ano) {
+  let dia = +conta.nascDia, mes = +conta.nascMes; if (!dia || !mes) return null;
+  if (mes === 2 && dia === 29 && new Date(ano, 1, 29).getMonth() !== 1) dia = 28;
+  const d = new Date(ano, mes - 1, dia, 12); const seg = new Date(d); seg.setDate(d.getDate() - ((d.getDay() + 6) % 7)); const dom = new Date(seg); dom.setDate(seg.getDate() + 6);
+  return { dia: iso(d), ini: iso(seg), fim: iso(dom) };
+}
+/* a semana de aniversário que contém a data (olha o ano anterior e o seguinte por causa da virada do ano) */
+function semanaAnivEm(conta, dataISO) { const a = +dataISO.slice(0, 4); for (const y of [a - 1, a, a + 1]) { const s = semanaAniv(conta, y); if (s && dataISO >= s.ini && dataISO <= s.fim) return s; } return null; }
+const pedidoBrinde = p => (p.itens || []).some(i => i.brinde);
+/* situação do presente para a conta logada: { ok, motivo, semana, prox } */
+function situacaoBrinde() {
+  const c = C.conta; if (!anivOn() || !c) return { ok: false, motivo: 'sem-conta' };
+  const hoje = todayISO(); const sem = semanaAnivEm(c, hoje);
+  let prox = semanaAniv(c, +hoje.slice(0, 4)); if (prox && prox.fim < hoje) prox = semanaAniv(c, +hoje.slice(0, 4) + 1);
+  if (!sem) return { ok: false, motivo: 'fora', prox };
+  const usado = Object.values(C.pedidos).find(p => p.status !== 'cancelado' && pedidoBrinde(p) && p.dataPedido >= sem.ini && p.dataPedido <= sem.fim);
+  if (usado) return { ok: false, motivo: 'usado', semana: sem, pedido: usado, prox: semanaAniv(c, +sem.dia.slice(0, 4) + 1) };
+  const criado = msDe(c.criadoEm) || Date.now();
+  if (anivMinDias() > 0 && new Date(sem.ini + 'T00:00').getTime() - criado < anivMinDias() * 864e5) return { ok: false, motivo: 'recente', semana: sem, prox: semanaAniv(c, +sem.dia.slice(0, 4) + 1) };
+  return { ok: true, semana: sem };
+}
+const brindeNoCarrinho = () => (cart.b && sabPub(cart.b) ? sabPub(cart.b) : null);
+let desassinarConta = null;
+function assinarConta() {
+  if (desassinarConta) { desassinarConta(); desassinarConta = null; }
+  C.conta = null; C.contaPronta = false;
+  if (!C.uid || C.anon) { C.contaPronta = true; return; }
+  desassinarConta = db.collection('contas').doc(C.uid).onSnapshot(d => { C.conta = d.exists ? d.data() : null; C.contaPronta = true;
+    if (C.conta) { if (!dados.nome) dados.nome = C.conta.nome || ''; if (!dados.telefone) dados.telefone = C.conta.telefone || ''; salvar(); }
+    limparCarrinho(); render(); }, () => { C.contaPronta = true; render(); });
+}
+const erroAuth = e => { const c = (e && e.code) || ''; return c.includes('email-already-in-use') || c.includes('credential-already-in-use') ? 'Esse e-mail já tem conta. Toque em “Já tenho conta”.'
+  : c.includes('weak-password') ? 'A senha precisa ter pelo menos 6 caracteres.' : c.includes('invalid-email') ? 'Confira o e-mail digitado.'
+  : c.includes('wrong-password') || c.includes('invalid-credential') || c.includes('user-not-found') || c.includes('invalid-login') ? 'E-mail ou senha incorretos.'
+  : c.includes('too-many-requests') ? 'Muitas tentativas. Espere alguns minutos e tente de novo.' : c.includes('network') ? 'Sem conexão. Confira sua internet.'
+  : c.includes('permission-denied') ? 'Não deu para salvar o cadastro agora. Tente de novo mais tarde.' : 'Não deu certo agora. Tente de novo.'; };
+function validarPerfil() {
+  if (AC.nome.trim().split(/\s+/).filter(Boolean).length < 2) return 'Digite seu nome completo.';
+  if (digits(AC.telefone).length < 10) return 'Digite seu WhatsApp com DDD.';
+  const dia = +AC.dia, mes = +AC.mes; if (!dia || !mes || dia > new Date(2024, mes, 0).getDate()) return 'Escolha o dia e o mês do seu aniversário.';
+  if (!AC.aceite) return 'Marque a caixinha para aceitar o uso dos dados.';
+  return '';
+}
+async function salvarPerfil() {
+  const u = firebase.auth().currentUser; try { await u.getIdToken(true); } catch (e) { }
+  await db.collection('contas').doc(u.uid).set({ nome: AC.nome.trim().slice(0, 80), telefone: AC.telefone.trim().slice(0, 20), email: u.email || AC.email.trim(), nascDia: +AC.dia, nascMes: +AC.mes, aceite: true, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
+}
+async function contaAcao(qual) {
+  if (AC.ocupado) return; const auth = firebase.auth(); const email = AC.email.trim().toLowerCase();
+  const fim = (msg) => { AC.ocupado = false; render(); if (msg) toast(msg); };
+  try {
+    if (qual === 'criar') {
+      const e1 = validarPerfil(); if (e1) return toast(e1);
+      if (!/^\S+@\S+\.\S+$/.test(email)) return toast('Confira o e-mail digitado.');
+      if (AC.senha.length < 6) return toast('A senha precisa ter pelo menos 6 caracteres.');
+      AC.ocupado = true; render();
+      const u = auth.currentUser;
+      /* quem já estava pedindo sem conta mantém os pedidos: a conta é ligada ao mesmo usuário */
+      if (u && u.isAnonymous) await u.linkWithCredential(firebase.auth.EmailAuthProvider.credential(email, AC.senha)); else await auth.createUserWithEmailAndPassword(email, AC.senha);
+      C.uid = auth.currentUser.uid; C.anon = false; C.email = email;
+      await salvarPerfil(); AC.senha = ''; assinarPedidos(true); assinarConta();
+      return fim('Conta criada! Seu presente fica guardado para a semana do seu aniversário.');
+    }
+    if (qual === 'completar') { const e1 = validarPerfil(); if (e1) return toast(e1); AC.ocupado = true; render(); await salvarPerfil(); return fim('Cadastro salvo.'); }
+    if (qual === 'entrar') {
+      if (!email || !AC.senha) return toast('Digite o e-mail e a senha.');
+      AC.ocupado = true; render(); await auth.signInWithEmailAndPassword(email, AC.senha); AC.senha = ''; return fim('Bem-vindo de volta!');
+    }
+    if (qual === 'senha') {
+      if (!/^\S+@\S+\.\S+$/.test(email)) return toast('Digite seu e-mail no campo acima e toque de novo.');
+      AC.ocupado = true; render(); auth.languageCode = 'pt-BR'; await auth.sendPasswordResetEmail(email); return fim('Enviamos um e-mail com o link para criar uma senha nova. Olhe também o spam.');
+    }
+    if (qual === 'sair') { if (!await ask('Sair da conta?', 'Você continua podendo pedir sem conta neste aparelho.', 'Sair')) return; cart.b = null; salvar(); await auth.signOut(); C.tela = 'cardapio'; return fim('Você saiu da conta.'); }
+  } catch (e) { fim(erroAuth(e)); }
+}
+const dataBR = s => `${s.slice(8)}/${s.slice(5, 7)}`;
+function regrasBrinde() { const n = anivMinDias(); return `<ul class="regras3"><li>Vale 1 cookie de qualquer sabor disponível na semana (combos não entram).</li><li>É liberado na semana do seu aniversário, de segunda a domingo.</li><li>Um presente por pessoa por ano.</li>${n ? `<li>O cadastro precisa ter sido feito pelo menos ${plural(n, 'dia')} antes da semana do aniversário.</li>` : ''}</ul>`; }
+function camposPerfil() {
+  return `<label class="fld"><span>Nome completo</span><input data-ac="nome" value="${esc(AC.nome)}" autocomplete="name" maxlength="80" placeholder="Nome e sobrenome"></label>
+    <label class="fld"><span>WhatsApp com DDD</span><input data-ac="telefone" value="${esc(AC.telefone)}" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(11) 90000-0000"></label>
+    <div class="fld"><span>Aniversário</span><div class="grid2"><select data-ac="dia" aria-label="Dia do aniversário"><option value="">Dia</option>${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${+AC.dia === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select>
+      <select data-ac="mes" aria-label="Mês do aniversário"><option value="">Mês</option>${MESES.map((m, i) => `<option value="${i + 1}" ${+AC.mes === i + 1 ? 'selected' : ''}>${m}</option>`).join('')}</select></div><small class="hint">Depois de salvo, o aniversário só pode ser corrigido falando com a loja.</small></div>
+    <label class="chk"><input type="checkbox" data-ac="aceite" ${AC.aceite ? 'checked' : ''}> <span>Aceito que a Dona Liz guarde meu nome, WhatsApp, e-mail e aniversário para o presente e para falar comigo sobre meus pedidos.</span></label>`;
+}
+function tConta() {
+  if (!anivOn()) { C.tela = 'cardapio'; return tCardapio(); }
+  const oc = AC.ocupado ? 'disabled' : '';
+  if (C.anon !== false) {
+    const criar = AC.modo === 'criar';
+    return `<div class="presente3"><span class="pi">${ic('cake')}</span><div><b>Um cookie de presente no seu aniversário</b><p>Crie sua conta e, na semana do seu aniversário, escolha um cookie por nossa conta.</p></div></div>
+    <div class="seg" role="tablist" style="align-self:stretch;display:flex"><button role="tab" style="flex:1" aria-pressed="${criar}" data-act="conta-modo" data-v="criar">Criar conta</button><button role="tab" style="flex:1" aria-pressed="${!criar}" data-act="conta-modo" data-v="entrar">Já tenho conta</button></div>
+    <section class="fs">${criar ? camposPerfil().replace('<label class="fld"><span>WhatsApp', `<label class="fld"><span>E-mail</span><input data-ac="email" type="email" value="${esc(AC.email)}" autocomplete="email" inputmode="email" placeholder="voce@email.com"></label><label class="fld"><span>Crie uma senha (mínimo 6 caracteres)</span><input data-ac="senha" type="password" value="${esc(AC.senha)}" autocomplete="new-password"></label><label class="fld"><span>WhatsApp`) + `<button class="btn primary" data-act="conta" data-v="criar" ${oc}>${AC.ocupado ? 'Criando…' : 'Criar minha conta'}</button>`
+      : `<label class="fld"><span>E-mail</span><input data-ac="email" type="email" value="${esc(AC.email)}" autocomplete="email" inputmode="email"></label>
+        <label class="fld"><span>Senha</span><input data-ac="senha" type="password" value="${esc(AC.senha)}" autocomplete="current-password"></label>
+        <button class="btn primary" data-act="conta" data-v="entrar" ${oc}>${AC.ocupado ? 'Entrando…' : 'Entrar'}</button><button class="btn ghost sm" data-act="conta" data-v="senha" ${oc}>Esqueci minha senha</button>`}</section>
+    <section class="fs"><h3>Como funciona o presente</h3>${regrasBrinde()}<p class="hint">Para pedir cookies não precisa de conta: ela serve só para o presente.</p></section>`;
+  }
+  if (!C.contaPronta) return `<div class="sk sk-card"></div>`;
+  if (!C.conta) return `<h1 class="tit">Falta pouco</h1><section class="fs"><p class="hint">Você entrou como ${esc(C.email || '')}. Complete o cadastro para ganhar o presente de aniversário.</p>${camposPerfil()}<button class="btn primary" data-act="conta" data-v="completar" ${oc}>Salvar cadastro</button><button class="btn ghost sm" data-act="conta" data-v="sair">Sair da conta</button></section>`;
+  const c = C.conta, st = situacaoBrinde(); const prim = String(c.nome || '').split(/\s+/)[0];
+  const quando = s => s ? `de ${dataBR(s.ini)} a ${dataBR(s.fim)}` : '';
+  const bloco = st.ok ? `<div class="presente3 on"><span class="pi">${ic('gift')}</span><div><b>Parabéns, ${esc(prim)}! Seu cookie está liberado</b><p>Vale até domingo, ${dataBR(st.semana.fim)}. Escolha o sabor e envie o pedido.</p><button class="btn primary sm" data-act="brinde">${brindeNoCarrinho() ? 'Trocar o sabor do presente' : 'Escolher meu cookie'}</button></div></div>`
+    : st.motivo === 'usado' ? `<div class="presente3"><span class="pi">${ic('check')}</span><div><b>Presente deste ano já pedido</b><p>O próximo libera na semana ${quando(st.prox)}.</p></div></div>`
+    : st.motivo === 'recente' ? `<div class="presente3"><span class="pi">${ic('clock')}</span><div><b>Seu cadastro é recente</b><p>O presente vale para contas criadas pelo menos ${plural(anivMinDias(), 'dia')} antes da semana do aniversário. O seu libera na semana ${quando(st.prox)}.</p></div></div>`
+    : `<div class="presente3"><span class="pi">${ic('cake')}</span><div><b>Seu presente está guardado</b><p>Ele libera na semana do seu aniversário, ${quando(st.prox)}.</p></div></div>`;
+  return `<h1 class="tit">Olá, ${esc(prim)}</h1>${bloco}
+    <section class="fs"><h3>Sua conta</h3><div class="kv"><span>Nome</span><b>${esc(c.nome || '')}</b></div><div class="kv"><span>WhatsApp</span><b>${esc(c.telefone || '')}</b></div><div class="kv"><span>E-mail</span><b>${esc(c.email || C.email || '')}</b></div><div class="kv"><span>Aniversário</span><b>${c.nascDia} de ${MESES[c.nascMes - 1] || ''}</b></div>
+      <p class="hint">Precisa corrigir algum dado? Fale com a loja pelo WhatsApp.</p><button class="btn ghost sm" data-act="conta" data-v="sair">Sair da conta</button></section>
+    <section class="fs"><h3>Como funciona o presente</h3>${regrasBrinde()}</section>`;
+}
+/* escolha do sabor do presente */
+function sheetBrinde() {
+  const st = situacaoBrinde(); if (!st.ok) return toast('O presente ainda não está liberado.');
+  const livres = C.loja.sabores.filter(s => sobra(s.id) + (cart.b === s.id ? 1 : 0) > 0);
+  abrirSheet(`<header class="sh-head"><h2>Seu cookie de presente</h2><button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></header>
+  <div class="sh-body"><p class="hint">Escolha 1 sabor. Ele entra no carrinho de graça.</p>${livres.length ? `<div class="fs" style="gap:0">${livres.map(s => `<button class="cat-row pick3" data-act="brinde-escolher" data-id="${s.id}" aria-pressed="${cart.b === s.id}"><div class="sab-ico sm">${imgSab(s.nome, 'sm')}</div><div class="main"><div class="t">${esc(s.nome)}</div><div class="s">${esc((s.descricao || '').slice(0, 60))}</div></div><b class="qx3">${cart.b === s.id ? 'Escolhido' : 'Grátis'}</b></button>`).join('')}</div>` : '<div class="card empty"><strong>Os sabores desta semana esgotaram</strong>Volte mais tarde: o presente vale até domingo.</div>'}</div>`);
+}
+/* cartões do presente no cardápio */
+function avisoBrinde() {
+  if (!anivOn()) return '';
+  if (C.anon !== false) return `<button class="presente3 mini" data-act="ir" data-t="conta"><span class="pi">${ic('cake')}</span><div><b>Ganhe um cookie no seu aniversário</b><p>Crie sua conta em 1 minuto.</p></div>${ic('arrow')}</button>`;
+  const st = situacaoBrinde(); if (!st.ok) return '';
+  const b = brindeNoCarrinho();
+  return `<div class="presente3 on"><span class="pi">${ic('gift')}</span><div><b>${b ? `Presente no carrinho: ${esc(b.nome)}` : 'Feliz aniversário! Seu cookie de presente está liberado'}</b><p>${b ? 'É só enviar o pedido.' : `Qualquer sabor da semana, por nossa conta. Vale até ${dataBR(st.semana.fim)}.`}</p><button class="btn primary sm" data-act="brinde">${b ? 'Trocar o sabor' : 'Escolher meu cookie'}</button></div></div>`;
+}
+
+/* =========================================================
+   Semana do aniversário: o site entra em clima de festa, só para o aniversariante logado
+   ========================================================= */
+const emSemanaAniv = () => !!(anivOn() && C.conta && semanaAnivEm(C.conta, todayISO()));
+const primNome = () => String((C.conta && C.conta.nome) || '').trim().split(/\s+/)[0] || '';
+const FESTA = { on: false, ac: null, tocou: false, pediu: false, raf: 0 };
+ICON.nota = '<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>';
+/* melodia de "Parabéns a você" (Happy Birthday to You, domínio público), só as notas, devagar e em timbre de caixinha de música */
+function tocarParabens() {
+  let a = FESTA.ac; try { if (!a) a = FESTA.ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return false; }
+  if (a.state !== 'running') { a.resume().catch(() => { }); if (a.state !== 'running') return false; }
+  const F = { G: 392, A: 440, B: 493.88, C: 523.25, D: 587.33, E: 659.25, F: 698.46, g: 783.99 };
+  const seq = [['G', .75], ['G', .25], ['A', 1], ['G', 1], ['C', 1], ['B', 2], ['G', .75], ['G', .25], ['A', 1], ['G', 1], ['D', 1], ['C', 2],
+    ['G', .75], ['G', .25], ['g', 1], ['E', 1], ['C', 1], ['B', 1], ['A', 2], ['F', .75], ['F', .25], ['E', 1], ['C', 1], ['D', 1], ['C', 3]];
+  const tempo = .6; let t = a.currentTime + .15;
+  const saida = a.createGain(); saida.gain.value = .5; saida.connect(a.destination);
+  for (const [n, d] of seq) { const f = F[n] * 2;
+    [[1, .1], [2, .028], [3, .009]].forEach(([m, v]) => { const o = a.createOscillator(), g = a.createGain(); o.type = 'sine'; o.frequency.value = f * m;
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + Math.max(1.1, d * tempo * 1.9) / Math.sqrt(m));
+      o.connect(g); g.connect(saida); o.start(t); o.stop(t + 3.2); });
+    t += d * tempo; }
+  return true;
+}
+/* o navegador só libera som depois de um toque: tenta na hora e, se não der, toca no primeiro toque */
+function parabensQuandoDer() {
+  if (FESTA.tocou) return; if (tocarParabens()) { FESTA.tocou = true; return; }
+  if (FESTA.pediu) return; FESTA.pediu = true;
+  const go = () => { if (FESTA.tocou || !FESTA.on) return fim(); const a = FESTA.ac; const ok = () => { if (!FESTA.tocou && tocarParabens()) { FESTA.tocou = true; fim(); } }; if (a) a.resume().then(ok).catch(() => { }); ok(); };
+  const fim = () => ['pointerdown', 'touchend', 'keydown'].forEach(ev => removeEventListener(ev, go, true));
+  ['pointerdown', 'touchend', 'keydown'].forEach(ev => addEventListener(ev, go, true));
+}
+/* confete caindo devagar por cima do site */
+function confeteFesta(ligar) {
+  let cv = $('#festa-fx'); if (!ligar) { cancelAnimationFrame(FESTA.raf); if (cv) cv.remove(); return; }
+  if (cv || REDUZ) return; cv = document.createElement('canvas'); cv.id = 'festa-fx'; cv.setAttribute('aria-hidden', 'true'); document.body.appendChild(cv);
+  const g = cv.getContext('2d'); let W = 0, H = 0; const medir = () => { const d = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); }; medir(); addEventListener('resize', medir);
+  const cores = ['#e59a45', '#f6d9a8', '#e8a0a8', '#9fd3b4', '#fffaf3', '#c46f12'];
+  const novo = topo => ({ x: Math.random() * W, y: topo ? -12 : Math.random() * H, w: 5 + Math.random() * 5, h: 8 + Math.random() * 6, v: .35 + Math.random() * .6, f: Math.random() * 6.28, r: Math.random() * 6.28, vr: (Math.random() - .5) * .05, c: cores[Math.floor(Math.random() * cores.length)], bola: Math.random() < .3 });
+  const ps = Array.from({ length: 30 }, () => novo(false)); let ant = performance.now();
+  (function quadro(agora) { FESTA.raf = requestAnimationFrame(quadro); if (document.hidden) { ant = agora; return; } const dt = Math.min(40, agora - ant) / 16.7; ant = agora;
+    g.clearRect(0, 0, W, H);
+    for (const p of ps) { p.f += .015 * dt; p.y += p.v * dt; p.x += Math.sin(p.f) * .5 * dt; p.r += p.vr * dt; if (p.y > H + 14) Object.assign(p, novo(true));
+      g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.globalAlpha = .85; g.fillStyle = p.c; if (p.bola) { g.beginPath(); g.arc(0, 0, p.w * .45, 0, 6.29); g.fill(); } else g.fillRect(-p.w / 2, -p.h / 2 * Math.abs(Math.cos(p.f * 2)), p.w, p.h * Math.abs(Math.cos(p.f * 2)) + 1); g.restore(); } })(ant);
+}
+const BALOES = '<span class="baloes3" aria-hidden="true"><i></i><i></i><i></i></span>';
+/* tela de abertura da festa: aparece uma vez por visita */
+function abrirFesta() {
+  let visto = false; try { visto = sessionStorage.getItem('dl_festa') === todayISO(); sessionStorage.setItem('dl_festa', todayISO()); } catch (e) { }
+  if (visto) { parabensUmaVezPorDia(); return; }
+  const o = document.createElement('div'); o.className = 'festa-abre'; o.setAttribute('role', 'status');
+  o.innerHTML = `${BALOES}<div class="fa-cx"><span class="fa-s">Feliz aniversário,</span><b class="fa-n">${esc(primNome())}!</b><p>A Dona Liz preparou esta semana para você</p></div>`;
+  document.body.appendChild(o); parabensUmaVezPorDia();
+  setTimeout(() => { o.classList.add('fim'); setTimeout(() => o.remove(), 700); }, 3200);
+}
+/* a música toca sozinha só uma vez por dia; depois, só pelo botão "Ouvir os parabéns" */
+function parabensUmaVezPorDia() { let ja = false; try { ja = localStorage.getItem('dl_festa_som') === todayISO(); localStorage.setItem('dl_festa_som', todayISO()); } catch (e) { } if (!ja) parabensQuandoDer(); }
+function aplicarFesta() {
+  const on = emSemanaAniv(); if (on === FESTA.on) return; FESTA.on = on;
+  document.documentElement.toggleAttribute('data-aniv', on); confeteFesta(on);
+  if (on) abrirFesta();
 }
 
 /* =========================================================
    Telas
    ========================================================= */
 function render() {
+  aplicarFesta();
   renderTopo();
   const v = $('#view');
   if (!C.carregou && !C.erroLoja) { v.innerHTML = `<div class="wrap"><div class="sk sk-h"></div><div class="sk sk-card"></div><div class="sk sk-card"></div></div>`; renderNav(); return; }
   splashFora();
-  const fn = { cardapio: tCardapio, carrinho: tCarrinho, enviado: tEnviado, pedidos: tPedidos }[C.tela] || tCardapio;
+  const fn = { cardapio: tCardapio, carrinho: tCarrinho, enviado: tEnviado, pedidos: tPedidos, conta: tConta }[C.tela] || tCardapio;
   const chave = C.tela + (C.tela === 'cardapio' ? ':' + C.secao : '');
   v.innerHTML = `<div class="wrap${C._ult !== chave && !REDUZ ? ' enter' : ''}">${fn()}</div>`;
   if (C._ult !== chave) v.scrollTop = 0;
@@ -1079,7 +1345,8 @@ function renderNav() {
   const n = C.loja ? totais().n : 0;
   const ativos = Object.values(C.pedidos).filter(p => ['novo', 'confirmado', 'parcial'].includes(p.status)).length;
   const aba = C.tela === 'enviado' ? 'pedidos' : C.tela;
-  const it = [['cardapio', 'Cardápio', 'cookie', 0], ['carrinho', 'Carrinho', 'bag', n], ['pedidos', 'Meus pedidos', 'list', ativos]];
+  const it = [['cardapio', 'Cardápio', 'cookie', 0], ['carrinho', 'Carrinho', 'bag', n], ['pedidos', anivOn() ? 'Pedidos' : 'Meus pedidos', 'list', ativos]];
+  if (anivOn()) it.push(['conta', 'Conta', 'user', C.anon === false && situacaoBrinde().ok && !cart.b ? 1 : 0]);
   $('#tabs').innerHTML = it.map(([k, l, i, b]) => `<button data-act="ir" data-t="${k}" ${aba === k ? 'aria-current="page"' : ''}><span class="nav-ico">${ic(i)}${b ? `<span class="badge">${b}</span>` : ''}</span><span>${l}</span></button>`).join('');
 }
 function barraCarrinho() {
@@ -1153,7 +1420,7 @@ function heroHtml() {
   const L = C.loja; const aberto = !!(L && L.aberto);
   return `<section class="hero3"><div class="glow" aria-hidden="true"></div><img class="hero-ck" src="${BRAND.hero}" alt="" aria-hidden="true">
     <span class="live ${aberto ? '' : 'off'}">${aberto ? 'Aberto para pedidos' : 'Pedidos pausados'}</span>
-    <h1>Cookies da semana<span>saindo do forno</span></h1><p>Entregas e retiradas de quinta a sábado</p></section>`;
+    ${emSemanaAniv() ? `<h1>Feliz aniversário<span>${esc(primNome())}!</span></h1><p>Esta semana é sua.</p><button class="ouvir3" data-act="parabens">${ic('nota')} Ouvir os parabéns</button>${BALOES}` : `<h1>Cookies da semana<span>saindo do forno</span></h1><p>Entregas e retiradas de quinta a sábado</p>`}</section>`;
 }
 function tCardapio() {
   if (C.erroLoja) return `${heroHtml()}<div class="card empty"><strong>Ops!</strong>${esc(C.erroLoja)}</div>`;
@@ -1184,6 +1451,7 @@ function tCardapio() {
         ${dispHtml(s, resta, q > 0)}<div class="rw"><span class="pc">${desc ? `<s>${fmt(s.preco)}</s>${fmt(round2(s.preco * .95))}` : fmt(s.preco)}</span>${ctl}</div></article>`;
     }).join('')}</div>`;
   return `${heroHtml()}
+  ${avisoBrinde()}
   <div class="perks3"><span>${ic('cal')}${datas.length ? `Próxima: ${wdShort(datas[0])} ${ddmm(datas[0])}` : 'Sem datas agora'}</span><span class="${desc ? 'on' : ''}">${ic('tag')}5% off seg e ter</span><span>${ic('clock')}Pedidos até 18h</span></div>
   ${!L.aberto ? `<div class="banner"><div style="flex:1"><b>Pedidos pausados no momento.</b> Fale com a gente no WhatsApp.</div>${L.whatsapp ? `<a class="btn sm" href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">${ic('wa')} WhatsApp</a>` : ''}</div>` : ''}
   ${desc ? `<div class="banner info">${ic('tag')}<div><b>5% de desconto</b> em todos os sabores para pedidos feitos hoje (segunda e terça). Os combos entram a partir de quarta.</div></div>` : ''}
@@ -1259,6 +1527,7 @@ function linhasCarrinho() {
   const L = [];
   for (const [id, q] of Object.entries(cart.s)) { const s = sabPub(id); if (s && q) L.push({ k: 's:' + id, img: s.nome, nome: s.nome, sub: '', q, preco: s.preco, stepper: true, id, resta: sobra(id) }); }
   for (const l of cart.c) { const c = comboPub(l.comboId); if (!c) continue; L.push({ k: 'c:' + l.key, img: imgsCombo(c)[0] || '', combo: true, nome: c.nome, sub: c.tipo === 'livre' ? Object.entries(l.escolha).map(([i, q]) => `${q}× ${(sabPub(i) || {}).nome || ''}`).join(', ') : c.descricao, q: l.qtd, preco: c.preco, stepper: c.tipo !== 'livre', key: l.key, resta: c.tipo === 'livre' ? 0 : maxCombo(c) }); }
+  const b = brindeNoCarrinho(); if (b) L.push({ k: 'b', img: b.nome, nome: b.nome, sub: 'Presente de aniversário', q: 1, preco: 0, brinde: true });
   return L;
 }
 function tCarrinho() {
@@ -1269,9 +1538,9 @@ function tCarrinho() {
   const fx = faixasDe(ck.data); if (ck.faixa && !fx.includes(ck.faixa)) ck.faixa = null; if (!ck.faixa && fx.length === 1) ck.faixa = fx[0];
   const bairros = (L.taxas || []).slice().sort((a, b) => a.bairro.localeCompare(b.bairro, 'pt-BR'));
   return `${voltar()}<h1 class="tit">Seu pedido</h1>
-  <section class="fs">${linhas.map(l => `<div class="cart-row"><span class="cr-img${l.combo ? ' cb' : ''}">${imgSab(l.img)}</span><div class="main"><div class="t">${esc(l.nome)}</div>${l.sub ? `<div class="s">${esc(l.sub)}</div>` : ''}<div class="s">${fmt(l.preco)} cada</div></div>
-    ${l.stepper ? `<div class="stepper"><button data-act="${l.id ? 'sq' : 'cq'}" data-id="${l.id || l.key}" data-d="-1" aria-label="Menos">${ic('minus')}</button><input readonly tabindex="-1" value="${l.q}"><button data-act="${l.id ? 'sq' : 'cq'}" data-id="${l.id || l.key}" data-d="1" aria-label="Mais" ${l.resta <= 0 ? 'disabled' : ''}>${ic('plus')}</button></div>` : `<button class="icon-btn" data-act="crm" data-id="${l.key}" aria-label="Tirar ${esc(l.nome)}">${ic('x')}</button>`}
-    <b class="money">${fmt(l.q * l.preco)}</b></div>`).join('')}
+  <section class="fs">${linhas.map(l => `<div class="cart-row"><span class="cr-img${l.combo ? ' cb' : ''}">${imgSab(l.img)}</span><div class="main"><div class="t">${esc(l.nome)}</div>${l.sub ? `<div class="s">${esc(l.sub)}</div>` : ''}<div class="s">${l.brinde ? 'Grátis' : fmt(l.preco) + ' cada'}</div></div>
+    ${l.stepper ? `<div class="stepper"><button data-act="${l.id ? 'sq' : 'cq'}" data-id="${l.id || l.key}" data-d="-1" aria-label="Menos">${ic('minus')}</button><input readonly tabindex="-1" value="${l.q}"><button data-act="${l.id ? 'sq' : 'cq'}" data-id="${l.id || l.key}" data-d="1" aria-label="Mais" ${l.resta <= 0 ? 'disabled' : ''}>${ic('plus')}</button></div>` : `<button class="icon-btn" data-act="${l.brinde ? 'brm' : 'crm'}" data-id="${l.key || ''}" aria-label="Tirar ${esc(l.nome)}">${ic('x')}</button>`}
+    <b class="money">${l.brinde ? 'Grátis' : fmt(l.q * l.preco)}</b></div>`).join('')}
     <button class="btn sm ghost" data-act="ir" data-t="cardapio">${ic('plus')} Adicionar mais</button></section>
 
   <section class="fs"><h3>Seus dados</h3>
@@ -1327,6 +1596,8 @@ async function enviar() {
   const itens = [];
   for (const [id, q] of Object.entries(cart.s)) { const s = sabPub(id); if (s && q) itens.push({ tipo: 'sabor', refId: id, nome: s.nome, precoUnit: s.preco, qtd: q }); }
   for (const l of cart.c) { const c = comboPub(l.comboId); if (!c) continue; itens.push(c.tipo === 'livre' ? { tipo: 'combo', fixo: false, refId: c.id, nome: c.nome, precoUnit: c.preco, qtd: 1, sabores: Object.entries(l.escolha).filter(([, q]) => q > 0).map(([i, q]) => ({ saborId: i, nome: (sabPub(i) || {}).nome || '', qtd: q })) } : { tipo: 'combo', fixo: true, refId: c.id, nome: c.nome, precoUnit: c.preco, qtd: l.qtd, sabores: c.itens.map(i => ({ saborId: i.saborId, nome: i.nome, qtd: i.qtd * l.qtd })) }); }
+  const pres = brindeNoCarrinho();
+  if (pres) { if (C.anon !== false || !situacaoBrinde().ok) { cart.b = null; salvar(); render(); return erro('O presente de aniversário não está mais liberado. Tiramos do carrinho.'); } itens.push({ tipo: 'sabor', refId: pres.id, nome: pres.nome + ' (presente de aniversário)', precoUnit: 0, qtd: 1, brinde: 'aniversario' }); }
   const p = {
     uid: C.uid, origem: 'app', status: 'novo', pago: false, numero: 0, cliente: dados.nome, telefone: dados.telefone,
     dataPedido: todayISO(), dataEntrega: ck.data, horaEntrega: '', periodo: ck.faixa || '', tipoEntrega: ck.tipo,
@@ -1334,6 +1605,7 @@ async function enviar() {
     taxaEntrega: t.taxa, taxaPendente: t.taxaPendente, desconto: t.desconto, descontoMotivo: t.desconto ? '5% pedido antecipado (seg/ter)' : '',
     pagamento: ck.pagamento, obs: ck.obs, itens, criadoEm: Date.now()
   };
+  if (pres) p.brinde = 'aniversario';
   C.envioId = C.envioId || uid(); C.enviando = true; render();
   const aviso = setTimeout(() => toast('Ainda enviando… não feche esta página.'), 8000);
   try {
@@ -1448,6 +1720,12 @@ document.addEventListener('click', async e => {
     case 'combo-add': if (addComboFixo(id)) { fecharSheet(); render(); } break;
     case 'combo-montar': PK = { comboId: id, escolha: {} }; sheetCombo(); break;
     case 'cq': { const l = cart.c.find(x => x.key === id); if (!l) break; const c = comboPub(l.comboId); const d = +b.dataset.d; if (d > 0 && maxCombo(c) <= 0) { toast('Esse é o máximo disponível agora.'); break; } l.qtd += d; if (l.qtd <= 0) cart.c = cart.c.filter(x => x !== l); salvar(); render(); break; }
+    case 'parabens': if (!tocarParabens()) toast('Não deu para tocar o som neste aparelho.'); break;
+    case 'brm': cart.b = null; salvar(); render(); break;
+    case 'brinde': sheetBrinde(); break;
+    case 'brinde-escolher': cart.b = id; salvar(); fecharSheet(); toast('Presente no carrinho. É só enviar o pedido.'); C.tela = 'carrinho'; render(); break;
+    case 'conta-modo': AC.modo = b.dataset.v; render(); break;
+    case 'conta': await contaAcao(b.dataset.v); break;
     case 'crm': cart.c = cart.c.filter(x => x.key !== id); salvar(); render(); break;
     case 'pk': { const c = comboPub(PK.comboId); const tot = Object.values(PK.escolha).reduce((x, y) => x + y, 0); const d = +b.dataset.d; if (d > 0 && tot >= c.qtdLivre) break; PK.escolha[id] = Math.max(0, (PK.escolha[id] || 0) + d); sheetCombo(); break; }
     case 'pk-ok': { const c = comboPub(PK.comboId); cart.c.push({ key: uid(), comboId: c.id, qtd: 1, escolha: { ...PK.escolha } }); salvar(); fecharSheet(); toast(`${c.nome} no carrinho.`); render(); break; }
@@ -1462,6 +1740,8 @@ document.addEventListener('click', async e => {
     case 'cancelar': { if (!await ask('Cancelar este pedido?', 'A Dona Liz é avisada na hora. Se já estiver confirmado, fale pelo WhatsApp.', 'Cancelar pedido', true)) break; try { await db.collection('pedidos').doc(id).update({ status: 'cancelado', canceladoEm: Date.now(), canceladoPor: 'cliente' }); toast('Pedido cancelado.'); } catch (er) { toast('Não deu para cancelar. Ele pode já ter sido confirmado: fale pelo WhatsApp.'); } break; }
   }
 });
+/* campos da tela de conta ficam em AC para sobreviver às atualizações da tela */
+document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.ac; if (k) AC[k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value; });
 document.addEventListener('change', e => {
   if (e.target.id === 'd-bairro') { lerCampos(); const v = e.target.value; ck.bairroOutro = v === '__outro'; dados.bairro = ck.bairroOutro ? '' : v; salvar(); render(); }
 });
