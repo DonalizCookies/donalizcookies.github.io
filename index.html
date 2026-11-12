@@ -538,6 +538,11 @@ nav.tabs{grid-area:nav;box-shadow:0 -6px 20px rgba(58,28,16,.06)}
 .cf-bt svg{width:17px;height:17px}
 .cf-add{aspect-ratio:1/1;border-radius:14px;border:1.5px dashed var(--line);background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;padding:6px}
 .cf-add svg{width:24px;height:24px}
+/* ações do pedido: uma embaixo da outra, sem rolar para o lado */
+.actions{grid-template-columns:minmax(0,1fr)}
+.actions .btn{width:100%;min-width:0;white-space:normal;text-align:center;justify-content:center;min-height:46px;height:auto;padding-block:10px}
+.sh-body{overflow-x:hidden}
+.sh-body>*{min-width:0}
 
 /* ===== App do cliente ===== */
 #app{display:flex;flex-direction:column;height:100%}
@@ -972,7 +977,7 @@ function datasDisponiveis() {
   const L = C.loja; if (!L) return [];
   const agora = new Date(); const corte = agora.getHours() < 18 || (agora.getHours() === 18 && agora.getMinutes() === 0);
   const out = []; const hoje = todayISO();
-  if (ck.tipo === 'retirada' && [4, 5, 6].includes(dow(hoje)) && !(L.fechadas || []).includes(hoje) && ((L.retirada || {})[dow(hoje)] || []).some(faixaAbertaHoje)) out.push(hoje);
+  /* regra da loja: nada de pedir e receber no mesmo dia; retirada e entrega só a partir do dia seguinte */
   let d = addDays(hoje, corte ? 1 : 2);
   for (let i = 0; i < 21 && out.length < 6; i++, d = addDays(d, 1)) {
     const k = dow(d); if (![4, 5, 6].includes(k) || (L.fechadas || []).includes(d)) continue;
