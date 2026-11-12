@@ -260,7 +260,7 @@ svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 :root{--nverde:#173a2b;--nverde2:#0f2a1e;--nred:#b3262c;--nouro:#e2b25a;--nonverde:#fbf3e4;--nmenta:#dcebdf}
 [data-theme=dark]{--nverde:#12301f;--nverde2:#0b2015;--nmenta:#1d3327}
 .brand{position:relative}
-.gorro{display:none;position:absolute;left:-7px;top:-14px;width:31px;transform:rotate(-16deg);filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));pointer-events:none}
+.gorro{display:none;position:absolute;left:-3px;top:-17px;width:44px;transform:rotate(-8deg);filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));pointer-events:none}
 [data-natal] .gorro{display:block}
 .ib.sd{background:var(--nverde);color:var(--nouro)}
 .ib.sd.off{background:var(--card);color:var(--muted)}
@@ -316,7 +316,7 @@ svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 .abre.fim .cx{opacity:0}
 .abre .lg{position:relative;width:96px;height:96px;animation:pop .7s cubic-bezier(.3,1.5,.5,1) both}
 .abre .lg img{width:96px;height:96px;border-radius:50%;box-shadow:0 14px 30px -10px rgba(0,0,0,.6)}
-.abre .lg svg{position:absolute;left:-16px;top:-34px;width:76px;transform:rotate(-16deg)}
+.abre .lg svg{position:absolute;left:-6px;top:-42px;width:108px;transform:rotate(-8deg)}
 .abre .h2{display:block;font:700 44px/1 'Dancing Script';color:var(--nouro);margin-top:10px;animation:rise .7s .2s both}
 .abre .sub{display:block;font:700 12px 'Montserrat';letter-spacing:.16em;text-transform:uppercase;color:#cfe0d2;animation:rise .7s .35s both}
 .abre .barra{display:block;width:120px;height:4px;border-radius:2px;background:rgba(255,255,255,.14);margin-top:26px;overflow:hidden}
@@ -467,6 +467,8 @@ const $ = id => document.getElementById(id);
 const hoje = () => { const d = new Date(); if (S.diaSim !== '') { const t = +S.diaSim; d.setDate(d.getDate() + ((t - d.getDay() + 7) % 7)); } d.setHours(10,0,0,0); return d; };
 const temDesconto = () => [1,2].includes(hoje().getDay());
 const combosLiberados = () => ![1,2].includes(hoje().getDay());
+/* gorro largo, do tamanho do cookie, com a ponta caída para a esquerda */
+const GORRAO = '<svg viewBox="0 0 200 120" aria-hidden="true"><path d="M182 94C186 50 152 10 98 12 56 14 24 34 13 64l24-2c-6 12-10 22-12 32Z" fill="#c22f33"/><path d="M150 30c-22-10-58-8-86 10" fill="none" stroke="#e2585c" stroke-width="7" stroke-linecap="round" opacity=".55"/><rect x="8" y="82" width="184" height="30" rx="15" fill="#fffaf3"/><path d="M22 104h156" stroke="#eadfce" stroke-width="4" stroke-linecap="round"/><circle cx="15" cy="64" r="15" fill="#fffaf3"/></svg>';
 const natalOn = () => true; // o tema de Natal é fixo durante a temporada
 const GORRO = '<svg viewBox="0 0 40 34" aria-hidden="true"><path d="M6 26C8 12 18 3 30 6c4 1 6 5 6 9l-5-3c-2 5-2 9-1 14Z" fill="#c22f33"/><path d="M12 22c2-8 8-13 16-13" fill="none" stroke="#e2585c" stroke-width="2" stroke-linecap="round" opacity=".6"/><rect x="3" y="24" width="29" height="8" rx="4" fill="#fffaf3"/><circle cx="36" cy="16" r="4" fill="#fffaf3"/></svg>';
 const anoNatal = () => { const d = new Date(); return d.getMonth() === 11 && d.getDate() > 25 ? d.getFullYear() + 1 : d.getFullYear(); };
@@ -490,7 +492,7 @@ function renderTop() {
   if (['checkout','carrinho'].includes(S.tela)) { $('top').style.display = 'none'; return; }
   $('top').style.display = '';
   const n = nItens();
-  $('top').innerHTML = `<div class="brand"><img src="img/marca.png" alt="">${GORRO.replace('<svg ', '<svg class="gorro" ')}<b>DONA<span>Liz</span></b></div>
+  $('top').innerHTML = `<div class="brand"><img src="img/marca.png" alt="">${GORRAO.replace('<svg ', '<svg class="gorro" ')}<b>DONA<span>Liz</span></b></div>
     <div style="display:flex;gap:8px"><button class="ib sd ${SOM.mudo ? 'off' : ''}" data-act="som" aria-label="${SOM.mudo ? 'Ligar' : 'Desligar'} os sons" aria-pressed="${!SOM.mudo}">${ic(SOM.mudo ? 'mudo' : 'som')}</button><button class="ib" data-act="tema" aria-label="Trocar claro/escuro">${ic(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon')}</button>
     <button class="ib" data-act="ir" data-v="carrinho" aria-label="Carrinho">${ic('bag')}${n ? `<span class="badge" id="badge">${n}</span>` : ''}</button></div>`;
 }
@@ -536,8 +538,6 @@ function vCardapio() {
   const CAPA = '<div class="capa"><svg viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h400v7c-8 0-9 7-17 7s-8-6-17-6-10 9-19 9-8-8-17-8-9 5-18 5-9-7-19-7-9 10-19 10-9-9-18-9-8 6-17 6-10-7-19-7-9 9-18 9-9-8-18-8-9 6-18 6-9-8-19-8-9 10-18 10-9-9-18-9-8 6-17 6-10-8-19-8-9 7-17 7-10-5-19-5Z"/></svg></div>';
   const estr = [[8,62],[30,14],[52,38],[70,78],[88,30],[94,58],[18,88],[62,8],[44,70],[80,92]].map(([x,y],i) => `<i class="estr" style="left:${x}%;top:${y}%;animation-delay:-${i * .37}s;${i % 3 ? '' : 'width:14px;height:14px'}"></i>`).join('');
   const AZEV = '<svg class="azev" viewBox="0 0 26 20" aria-hidden="true"><path d="M13 12C8 13 3 11 1 6c4-2 9-1 12 6Z" fill="#3fa468"/><path d="M13 12c5 1 10-1 12-6-4-2-9-1-12 6Z" fill="#2f8553"/><circle cx="11" cy="14" r="3" fill="#e0393f"/><circle cx="15.5" cy="14.5" r="3" fill="#c22f33"/><circle cx="13" cy="10.5" r="2.8" fill="#e8484e"/></svg>';
-  /* gorro largo, do tamanho do cookie do destaque, com a ponta caída para o lado visível */
-  const GORRAO = '<svg viewBox="0 0 200 120" aria-hidden="true"><path d="M182 94C186 50 152 10 98 12 56 14 24 34 13 64l24-2c-6 12-10 22-12 32Z" fill="#c22f33"/><path d="M150 30c-22-10-58-8-86 10" fill="none" stroke="#e2585c" stroke-width="7" stroke-linecap="round" opacity=".55"/><rect x="8" y="82" width="184" height="30" rx="15" fill="#fffaf3"/><path d="M22 104h156" stroke="#eadfce" stroke-width="4" stroke-linecap="round"/><circle cx="15" cy="64" r="15" fill="#fffaf3"/></svg>';
   const hero = nt
     ? `<div class="hero">${CAPA}<div class="glow"></div><div class="hk"><img src="img/hero.png" alt="">${GORRAO}</div><span class="live">Encomendas de Natal abertas</span>
       <h1>Natal Dona Liz <span class="s">feito para presentear</span></h1><p>Encomende até 20/12 · entregas dias 22, 23 e 24</p></div>`
@@ -815,6 +815,7 @@ $('somBt').addEventListener('click', () => { const b = document.querySelector('[
 $('somBt').textContent = SOM.mudo ? 'Ligar os sons' : 'Desligar os sons';
 document.documentElement.setAttribute('data-natal', '');
 fxInit();
+{ const g = document.querySelector('#abre .lg svg'); if (g) g.outerHTML = GORRAO; }
 /* abertura automática e obrigatória: a porta abre sozinha depois de 2,6 s.
    O sino de porta toca na hora se o navegador deixar; se ele bloquear som sem toque, toca no primeiro toque na tela. */
 let sinoPorta = false, portaAberta = false;
