@@ -930,6 +930,14 @@ html[data-natal] .btn.primary:not(:disabled){background:linear-gradient(135deg,#
 .doc3 span{display:block;margin-top:4px;font-size:13.5px;line-height:1.45;color:var(--muted)}
 .doc3 .btn{margin-top:10px}
 .doc3.ok{border-style:solid}.doc3.ok>svg{color:#2f8553}
+/* ---------- privacidade ---------- */
+.priv3{display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.55}
+.priv3 h3{margin:10px 0 0;font:800 15px var(--f-display)}
+.priv3 ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.priv3 p{margin:0}
+.priv3 a,.rodape a,.priv-nota a,.chk a{color:var(--gold);font-weight:700}
+.priv-nota{margin:0 0 10px;text-align:center;font-size:12.5px}
+.btn.danger{color:#b3262c}
 
 </style>
 </head>
@@ -1291,7 +1299,7 @@ function camposPerfil() {
     <label class="fld"><span>WhatsApp com DDD</span><input data-ac="telefone" value="${esc(AC.telefone)}" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(11) 90000-0000"></label>
     <div class="fld"><span>Aniversário</span><div class="grid2"><select data-ac="dia" aria-label="Dia do aniversário"><option value="">Dia</option>${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${+AC.dia === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select>
       <select data-ac="mes" aria-label="Mês do aniversário"><option value="">Mês</option>${MESES.map((m, i) => `<option value="${i + 1}" ${+AC.mes === i + 1 ? 'selected' : ''}>${m}</option>`).join('')}</select></div><small class="hint">Depois de salvo, o aniversário só pode ser corrigido falando com a loja.</small></div>
-    <label class="chk"><input type="checkbox" data-ac="aceite" ${AC.aceite ? 'checked' : ''}> <span>Aceito que a Dona Liz guarde meu nome, WhatsApp, e-mail e aniversário para o presente e para falar comigo sobre meus pedidos.</span></label>`;
+    <label class="chk"><input type="checkbox" data-ac="aceite" ${AC.aceite ? 'checked' : ''}> <span>Aceito que a Dona Liz guarde meu nome, WhatsApp, e-mail e aniversário para o presente e para falar comigo sobre meus pedidos. <a href="#privacidade" data-act="privacidade">Ler a política de privacidade</a></span></label>`;
 }
 function tConta() {
   if (!anivOn()) { C.tela = 'cardapio'; return tCardapio(); }
@@ -1316,7 +1324,7 @@ function tConta() {
     : `<div class="presente3"><span class="pi">${ic('cake')}</span><div><b>Seu presente está guardado</b><p>Ele libera na semana do seu aniversário, ${quando(st.prox)}.</p></div></div>`;
   return `<h1 class="tit">Olá, ${esc(prim)}</h1>${bloco}${blocoDoc()}
     <section class="fs"><h3>Sua conta</h3><div class="kv"><span>Nome</span><b>${esc(c.nome || '')}</b></div><div class="kv"><span>WhatsApp</span><b>${esc(c.telefone || '')}</b></div><div class="kv"><span>E-mail</span><b>${esc(c.email || C.email || '')}</b></div><div class="kv"><span>Aniversário</span><b>${c.nascDia} de ${MESES[c.nascMes - 1] || ''}</b></div>
-      <p class="hint">Precisa corrigir algum dado? Fale com a loja pelo WhatsApp.</p><button class="btn ghost sm" data-act="conta" data-v="sair">Sair da conta</button></section>
+      <p class="hint">Precisa corrigir algum dado? Fale com a loja pelo WhatsApp.</p><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghost sm" data-act="conta" data-v="sair">Sair da conta</button><button class="btn ghost sm danger" data-act="excluir-conta">Excluir minha conta</button><button class="btn ghost sm" data-act="privacidade">Privacidade</button></div></section>
     <section class="fs"><h3>Como funciona o presente</h3>${regrasBrinde()}</section>`;
 }
 /* escolha do sabor do presente */
@@ -1494,6 +1502,65 @@ function areaNatal(sabCards, comboCards, travado) {
 }
 
 /* =========================================================
+   Privacidade (LGPD): política dentro do site, com link direto em #privacidade
+   ========================================================= */
+const PRIV_ATUALIZADA = '13/11/2026';
+function textoPrivacidade() {
+  const L = C.loja || {}; const w = digits(L.whatsapp); const wa = w ? `https://wa.me/${w.length <= 11 ? '55' + w : w}?text=${encodeURIComponent('Olá! Quero falar sobre os meus dados pessoais (LGPD).')}` : '';
+  const canal = wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp da Dona Liz</a>` : 'WhatsApp da Dona Liz';
+  return `<div class="priv3">
+  <p class="hint">Atualizada em ${PRIV_ATUALIZADA}</p>
+  <p>A <b>Dona Liz Cookies Artesanais</b> é a responsável pelos dados que você informa neste site. Usamos esses dados só para preparar, entregar e acompanhar o seu pedido. Não vendemos e não usamos seus dados para propaganda de outras empresas.</p>
+  <h3>Quais dados coletamos</h3>
+  <ul>
+    <li><b>Para fazer o pedido:</b> nome, WhatsApp, endereço e bairro (se for entrega), observações, itens escolhidos, forma de pagamento e data de retirada ou entrega.</li>
+    <li><b>Se você criar uma conta:</b> e-mail, senha e dia e mês do aniversário. A senha é guardada pelo Google; nós não temos acesso a ela.</li>
+    <li><b>Presente de aniversário:</b> na primeira vez, pedimos pelo WhatsApp a foto de um documento só para conferir a data de nascimento. Ela não é guardada no site nem no nosso sistema e é apagada da conversa depois da conferência.</li>
+    <li><b>No seu aparelho:</b> o site guarda no navegador o seu carrinho, nome e WhatsApp, para você não digitar de novo, e um código anônimo que liga o aparelho aos seus pedidos. Não usamos cookies de propaganda nem de rastreamento.</li>
+  </ul>
+  <h3>Por que usamos (base legal)</h3>
+  <ul>
+    <li><b>Pedido:</b> para cumprir o que você pediu (execução de contrato, art. 7º, V da LGPD).</li>
+    <li><b>Conta e aniversário:</b> com o seu consentimento, que você dá ao marcar a caixinha do cadastro (art. 7º, I). Você pode retirar quando quiser, apagando a conta.</li>
+    <li><b>Conferência do documento:</b> para evitar fraude no presente (art. 7º, IX e art. 11, II, g).</li>
+  </ul>
+  <h3>Com quem compartilhamos</h3>
+  <ul>
+    <li><b>Google (Firebase):</b> guarda os pedidos e as contas. Os servidores podem ficar fora do Brasil, com as proteções exigidas pela lei.</li>
+    <li><b>GitHub:</b> hospeda as páginas do site. Não recebe os dados dos pedidos.</li>
+    <li><b>WhatsApp e seu banco:</b> só quando você fala com a gente ou paga com Pix.</li>
+  </ul>
+  <h3>Por quanto tempo guardamos</h3>
+  <ul>
+    <li><b>Pedidos:</b> até 5 anos, por obrigações legais e fiscais. Depois disso, são apagados ou ficam sem os seus dados pessoais.</li>
+    <li><b>Conta:</b> até você pedir a exclusão.</li>
+    <li><b>Foto do documento:</b> apagada logo depois da conferência.</li>
+  </ul>
+  <h3>Seus direitos</h3>
+  <p>Pela LGPD (art. 18), você pode pedir: confirmação de que tratamos seus dados, acesso a eles, correção, exclusão, portabilidade, informação sobre com quem compartilhamos e a retirada do consentimento. É só falar com a gente pelo ${canal}. Respondemos em até 15 dias.</p>
+  <p>Se tiver uma conta, você mesmo pode apagá-la na aba <b>Conta</b>. Os dados guardados no seu navegador você apaga no botão abaixo.</p>
+  <h3>Segurança</h3>
+  <p>O site usa conexão criptografada (HTTPS). Cada cliente só enxerga os próprios pedidos, e só a loja acessa a lista completa, com senha.</p>
+  <p>Se não ficarmos de acordo, você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD), em gov.br/anpd.</p>
+  </div>`;
+}
+function sheetPrivacidade() {
+  abrirSheet(`<header class="sh-head"><h2>Privacidade e seus dados</h2><button class="icon-btn" data-act="fechar" aria-label="Fechar">${ic('x')}</button></header>
+  <div class="sh-body">${textoPrivacidade()}</div>
+  <footer class="sh-foot"><button class="btn" data-act="limpar-local">Apagar dados deste aparelho</button><button class="btn primary" data-act="fechar" style="flex:1">Entendi</button></footer>`);
+}
+async function excluirConta() {
+  if (!await ask('Excluir sua conta?', 'Apagamos seu cadastro, e-mail e aniversário. Seus pedidos continuam guardados pelo prazo da lei. Essa ação não pode ser desfeita.', 'Excluir conta')) return;
+  const u = firebase.auth().currentUser; if (!u) return;
+  try {
+    await db.collection('contas').doc(u.uid).delete();
+    try { await u.delete(); } catch (e) { if (String(e && e.code).includes('requires-recent-login')) { toast('Cadastro apagado. Para remover também o login, entre de novo e exclua mais uma vez.'); await firebase.auth().signOut(); return; } }
+    cart.b = null; salvar(); toast('Sua conta foi excluída.'); C.tela = 'cardapio';
+    try { await firebase.auth().signOut(); } catch (e) { }
+  } catch (e) { toast('Não deu para excluir agora. Tente de novo ou fale com a loja pelo WhatsApp.'); }
+}
+
+/* =========================================================
    Telas
    ========================================================= */
 function render() {
@@ -1636,7 +1703,7 @@ function tCardapio() {
   ${desc ? `<div class="banner info">${ic('tag')}<div><b>5% de desconto</b> em todos os sabores para pedidos feitos hoje (segunda e terça). Os combos entram a partir de quarta.</div></div>` : ''}
   ${areaNatal(SN.map(cardSab), CN.map(cardCombo), !liberados)}
   ${combos}${sabores}
-  <p class="rodape">Dúvidas? ${L.whatsapp ? `<a href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">Fale no WhatsApp</a>` : ''}</p>`;
+  <p class="rodape">Dúvidas? ${L.whatsapp ? `<a href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">Fale no WhatsApp</a> · ` : ''}<a href="#privacidade" data-act="privacidade">Privacidade e seus dados</a></p>`;
 }
 const cookieSvg = n => imgSab(n || '', 'sm');
 
@@ -1748,6 +1815,7 @@ function tCarrinho() {
     ${ck.tipo === 'entrega' ? `<div class="sum-tot"><span>Taxa de entrega</span><span class="money">${t.taxaPendente ? 'a confirmar' : t.taxa ? fmt(t.taxa) : '—'}</span></div>` : ''}
     <div class="sum-tot total"><span>Total</span><span class="money">${fmt(t.total)}${t.taxaPendente ? ' + taxa' : ''}</span></div></section>
   <p class="hint" style="text-align:center">Depois de enviado, para mudar data, horário ou endereço é só chamar no WhatsApp.</p>
+  <p class="hint priv-nota">Usamos seus dados só para preparar e entregar o pedido. <a href="#privacidade" data-act="privacidade">Como cuidamos deles</a></p>
   <button class="btn primary enviar" data-act="enviar" ${C.enviando || !L.aberto ? 'disabled' : ''}>${C.enviando ? 'Enviando…' : `${ic('check')} Enviar pedido · ${fmt(t.total)}`}</button>`;
 }
 const voltar = () => `<button class="btn sm ghost voltar" data-act="ir" data-t="cardapio">${ic('back')} Cardápio</button>`;
@@ -1909,6 +1977,12 @@ document.addEventListener('click', async e => {
     case 'combo-montar': PK = { comboId: id, escolha: {} }; sheetCombo(); break;
     case 'cq': { const l = cart.c.find(x => x.key === id); if (!l) break; const c = comboPub(l.comboId); const d = +b.dataset.d; if (d > 0 && maxCombo(c) <= 0) { toast('Esse é o máximo disponível agora.'); break; } l.qtd += d; if (l.qtd <= 0) cart.c = cart.c.filter(x => x !== l); salvar(); render(); break; }
     case 'parabens': if (!tocarParabens()) toast('Não deu para tocar o som neste aparelho.'); break;
+    case 'privacidade': e.preventDefault(); sheetPrivacidade(); break;
+    case 'excluir-conta': await excluirConta(); break;
+    case 'limpar-local': if (!await ask('Apagar os dados deste aparelho?', 'Saem o carrinho, seu nome e WhatsApp guardados neste navegador. Seus pedidos continuam na loja.', 'Apagar')) break;
+      cart.s = {}; cart.c = []; cart.b = null; dados.nome = ''; dados.telefone = ''; dados.endereco = ''; dados.bairro = ''; salvar();
+      try { ['dl_fotos', 'dl_festa_som', 'dl_natal_mudo'].forEach(k => localStorage.removeItem(k)); } catch (_) { }
+      fecharSheet(); render(); toast('Dados deste aparelho apagados.'); break;
     case 'brm': cart.b = null; salvar(); render(); break;
     case 'brinde': sheetBrinde(); break;
     case 'brinde-escolher': cart.b = id; salvar(); fecharSheet(); C.tela = 'carrinho'; render();
@@ -1939,6 +2013,9 @@ document.addEventListener('change', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheetEl) fecharSheet(); const t = e.target.closest && e.target.closest('[data-act="ficha"][role="button"]'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); sheetSabor(t.dataset.id); } });
 render();
 iniciar();
+/* link direto para a política: donalizcookies.github.io/#privacidade */
+const abrePriv = () => { if (location.hash === '#privacidade') setTimeout(sheetPrivacidade, 400); };
+addEventListener('hashchange', abrePriv); abrePriv();
 
 </script>
 </body>
