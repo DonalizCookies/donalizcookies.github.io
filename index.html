@@ -938,6 +938,11 @@ html[data-natal] .btn.primary:not(:disabled){background:linear-gradient(135deg,#
 .priv3 a,.rodape a,.priv-nota a,.chk a{color:var(--gold);font-weight:700}
 .priv-nota{margin:0 0 10px;text-align:center;font-size:12.5px}
 .btn.danger{color:#b3262c}
+/* Natal: só retirada */
+.natal-ret3{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(178,34,34,.07);border:1px solid rgba(178,34,34,.18)}
+.natal-ret3 svg{flex:none;width:22px;height:22px;color:#b22222}
+.natal-ret3 b{display:block;font-size:15px}
+.natal-ret3 span{display:block;font-size:13px;opacity:.8}
 
 </style>
 </head>
@@ -1114,9 +1119,35 @@ const fimFaixa = f => { const m = String(f || '').match(/(\d{1,2})(?:h|:)?(\d{2}
 const horaAgora = () => { const a = new Date(); return a.getHours() + a.getMinutes() / 60; };
 const faixaAbertaHoje = f => { const fim = fimFaixa(f); return fim !== null && horaAgora() <= fim - MARGEM_HOJE; };
 const ehHoje = d => d === todayISO();
-function faixasBrutas(d) { return d ? ((ck.tipo === 'retirada' ? C.loja.retirada : C.loja.entrega) || {})[dow(d)] || [] : []; }
+function faixasBrutas(d) { if (!d) return []; if (natalOnCedo()) return natalFaixas(d); return ((ck.tipo === 'retirada' ? C.loja.retirada : C.loja.entrega) || {})[dow(d)] || []; }
+/* ---------- Natal: pedidos até 18/12, só retirada de 21 a 23/12 (o app pode mudar as datas) ---------- */
+const NATAL_PAD = { pedidosAte: '12-18', retiradaDe: '12-21', retiradaAte: '12-23' };
+const natalOnCedo = () => !!(C.loja && C.loja.natal && C.loja.natal.ativo);
+function natalRegra() {
+  const n = (C.loja && C.loja.natal) || {}, ano = new Date().getFullYear();
+  const d = k => /^\d{4}-\d{2}-\d{2}$/.test(n[k] || '') ? n[k] : ano + '-' + NATAL_PAD[k];
+  return { ate: d('pedidosAte'), de: d('retiradaDe'), fim: d('retiradaAte'), horarios: Array.isArray(n.horarios) ? n.horarios.filter(Boolean) : [] };
+}
+const natalEncerrado = () => natalOnCedo() && todayISO() > natalRegra().ate;
+const podePedir = () => !!(C.loja && C.loja.aberto) && !natalEncerrado();
+const ddmmISO = d => d.slice(8, 10) + '/' + d.slice(5, 7);
+const natalAviso = () => { const r = natalRegra(); return natalEncerrado() ? `Pedidos encerrados · retirada de ${ddmmISO(r.de)} a ${ddmmISO(r.fim)}` : `Pedidos até ${ddmmISO(r.ate)} · retirada de ${ddmmISO(r.de)} a ${ddmmISO(r.fim)}`; };
+function natalFaixas(d) {
+  const r = natalRegra(); if (r.horarios.length) return r.horarios;
+  const L = C.loja || {}; const proprio = (L.retirada || {})[dow(d)] || [];
+  if (proprio.length) return proprio;
+  const todas = []; [4, 5, 6].forEach(k => ((L.retirada || {})[k] || []).forEach(f => { if (!todas.includes(f)) todas.push(f); }));
+  return todas;
+}
 function datasDisponiveis() {
   const L = C.loja; if (!L) return [];
+  if (natalOnCedo()) {
+    if (natalEncerrado()) return [];
+    const r = natalRegra(), out = []; const agora = new Date(); const corte = agora.getHours() < 18 || (agora.getHours() === 18 && agora.getMinutes() === 0);
+    const min = addDays(todayISO(), corte ? 1 : 2);
+    for (let d = r.de, i = 0; d <= r.fim && i < 14; d = addDays(d, 1), i++) if (d >= min && !(L.fechadas || []).includes(d)) out.push(d);
+    return out;
+  }
   const agora = new Date(); const corte = agora.getHours() < 18 || (agora.getHours() === 18 && agora.getMinutes() === 0);
   const out = []; const hoje = todayISO();
   /* regra da loja: nada de pedir e receber no mesmo dia; retirada e entrega só a partir do dia seguinte */
@@ -1578,8 +1609,8 @@ function render() {
 }
 /* barra superior igual à do painel: marca + selo de status */
 function renderTopo() {
-  const L = C.loja; const aberto = !!(L && L.aberto);
-  $('#topo-acoes').innerHTML = C.carregou && L ? `${natalOn() ? `<button class="icon-btn som3${NT.mudo ? ' off' : ''}" data-act="natal-som" aria-label="${NT.mudo ? 'Ligar' : 'Desligar'} os sons" aria-pressed="${!NT.mudo}">${ic(NT.mudo ? 'mudo' : 'som')}</button>` : ''}<span class="sync ${aberto ? 'nuvem' : 'local'}">${aberto ? 'Aberto para pedidos' : 'Pedidos pausados'}</span>` : '';
+  const L = C.loja; const aberto = podePedir();
+  $('#topo-acoes').innerHTML = C.carregou && L ? `${natalOn() ? `<button class="icon-btn som3${NT.mudo ? ' off' : ''}" data-act="natal-som" aria-label="${NT.mudo ? 'Ligar' : 'Desligar'} os sons" aria-pressed="${!NT.mudo}">${ic(NT.mudo ? 'mudo' : 'som')}</button>` : ''}<span class="sync ${aberto ? 'nuvem' : 'local'}">${aberto ? 'Aberto para pedidos' : natalEncerrado() ? 'Pedidos de Natal encerrados' : 'Pedidos pausados'}</span>` : '';
 }
 /* abas embaixo, no mesmo estilo do painel */
 function renderNav() {
@@ -1592,7 +1623,7 @@ function renderNav() {
 }
 function barraCarrinho() {
   const b = $('#barra'); const t = C.loja ? totais() : { n: 0 };
-  if (C.tela !== 'cardapio' || !t.n || !C.loja || !C.loja.aberto) { b.classList.remove('on'); return; }
+  if (C.tela !== 'cardapio' || !t.n || !C.loja || !podePedir()) { b.classList.remove('on'); return; }
   const imgs = [...Object.keys(cart.s).map(id => (sabPub(id) || {}).nome), ...cart.c.map(l => { const c = comboPub(l.comboId); return c ? imgsCombo(c)[0] : ''; })].filter(n => n !== undefined).slice(0, 3);
   b.innerHTML = `<button class="barra3" data-act="ir" data-t="carrinho"><span class="th" aria-hidden="true">${imgs.map(n => `<img src="${srcSab(n)}" alt="">`).join('')}</span><span class="tx"><b>${fmt(t.total - t.taxa)}</b><small>${plural(t.n, 'cookie')}${t.desconto ? ' · 5% off' : ''}</small></span><span class="go">Ver carrinho ${ic('arrow')}</span></button>`;
   b.classList.add('on');
@@ -1653,16 +1684,16 @@ function sheetSabor(id) {
     <div class="row" style="justify-content:space-between;align-items:center;gap:10px"><span class="pc3">${desc ? `<s>${fmt(s.preco)}</s> ` : ''}${fmt(desc ? round2(s.preco * .95) : s.preco)}</span>${dispHtml(s, resta, q > 0)}</div>
     ${ficha ? `<h3>Ingredientes</h3><p>${esc(ficha)}</p>` : ''}
   </div>
-  <footer class="sh-foot">${esg ? '<button class="btn" data-act="fechar">Voltar ao cardápio</button>' : `<div class="btns" style="width:100%">${q ? `<div class="step3 big"><button data-act="sq" data-id="${id}" data-d="-1" data-ficha="1" aria-label="Tirar um">${ic('minus')}</button><b>${q}</b><button data-act="sq" data-id="${id}" data-d="1" data-ficha="1" aria-label="Mais um" ${resta <= 0 || !L.aberto ? 'disabled' : ''}>${ic('plus')}</button></div><button class="btn primary" data-act="fechar" style="flex:1">Continuar escolhendo</button>`
-    : `<button class="btn primary" data-act="sq" data-id="${id}" data-d="1" data-ficha="1" style="flex:1" ${resta <= 0 || !L.aberto ? 'disabled' : ''}>${ic('plus')} Adicionar · ${fmt(desc ? round2(s.preco * .95) : s.preco)}</button>`}</div>`}</footer>`;
+  <footer class="sh-foot">${esg ? '<button class="btn" data-act="fechar">Voltar ao cardápio</button>' : `<div class="btns" style="width:100%">${q ? `<div class="step3 big"><button data-act="sq" data-id="${id}" data-d="-1" data-ficha="1" aria-label="Tirar um">${ic('minus')}</button><b>${q}</b><button data-act="sq" data-id="${id}" data-d="1" data-ficha="1" aria-label="Mais um" ${resta <= 0 || !podePedir() ? 'disabled' : ''}>${ic('plus')}</button></div><button class="btn primary" data-act="fechar" style="flex:1">Continuar escolhendo</button>`
+    : `<button class="btn primary" data-act="sq" data-id="${id}" data-d="1" data-ficha="1" style="flex:1" ${resta <= 0 || !podePedir() ? 'disabled' : ''}>${ic('plus')} Adicionar · ${fmt(desc ? round2(s.preco * .95) : s.preco)}</button>`}</div>`}</footer>`;
   if (sheetEl && sheetEl._sab === id) $('.sheet', sheetEl).innerHTML = html; else { abrirSheet(html); sheetEl._sab = id; }
 }
 function heroHtml() {
-  const L = C.loja; const aberto = !!(L && L.aberto);
+  const L = C.loja; const aberto = podePedir();
   const nt = natalOn();
   return `<section class="hero3">${nt ? CAPA_NEVE : ''}<div class="glow" aria-hidden="true"></div>${nt ? `<span class="hk3" aria-hidden="true"><img src="${BRAND.hero}" alt="">${GORRAO}</span>` : `<img class="hero-ck" src="${BRAND.hero}" alt="" aria-hidden="true">`}
-    <span class="live ${aberto ? '' : 'off'}">${aberto ? 'Aberto para pedidos' : 'Pedidos pausados'}</span>
-    ${emSemanaAniv() ? `<h1>Feliz aniversário<span>${esc(primNome())}!</span></h1><p>Esta semana é sua.</p><button class="ouvir3" data-act="parabens">${ic('nota')} Ouvir os parabéns</button>${BALOES}` : nt ? `<h1>Natal Dona Liz<span>feito para presentear</span></h1><p>Entregas e retiradas de quinta a sábado</p>` : `<h1>Cookies da semana<span>saindo do forno</span></h1><p>Entregas e retiradas de quinta a sábado</p>`}</section>`;
+    <span class="live ${aberto ? '' : 'off'}">${aberto ? 'Aberto para pedidos' : natalEncerrado() ? 'Pedidos de Natal encerrados' : 'Pedidos pausados'}</span>
+    ${emSemanaAniv() ? `<h1>Feliz aniversário<span>${esc(primNome())}!</span></h1><p>Esta semana é sua.</p><button class="ouvir3" data-act="parabens">${ic('nota')} Ouvir os parabéns</button>${BALOES}` : nt ? `<h1>Natal Dona Liz<span>feito para presentear</span></h1><p>${natalAviso()}</p>` : `<h1>Cookies da semana<span>saindo do forno</span></h1><p>Entregas e retiradas de quinta a sábado</p>`}</section>`;
 }
 function tCardapio() {
   if (C.erroLoja) return `${heroHtml()}<div class="card empty"><strong>Ops!</strong>${esc(C.erroLoja)}</div>`;
@@ -1678,7 +1709,7 @@ function tCardapio() {
       const qn = cart.c.filter(l => l.comboId === c.id).reduce((a, l) => a + l.qtd, 0);
       const ok = c.tipo === 'livre' ? mx >= c.qtdLivre : mx > 0;
       const tag = c.tipo === 'livre' ? `Monte a sua · ${c.qtdLivre}` : plural(c.itens.reduce((a, x) => a + x.qtd, 0), 'cookie');
-      return `<button class="combo3 c${i % 3}${ok ? '' : ' esg'}" data-act="combo" data-id="${c.id}" ${ok && L.aberto ? '' : 'disabled'} aria-label="${esc(c.nome)}, ${fmt(c.preco)}">
+      return `<button class="combo3 c${i % 3}${ok ? '' : ' esg'}" data-act="combo" data-id="${c.id}" ${ok && podePedir() ? '' : 'disabled'} aria-label="${esc(c.nome)}, ${fmt(c.preco)}">
         ${capaCombo(c) ? `<span class="st capa" aria-hidden="true"><img src="${capaCombo(c)}" alt=""></span>` : `<span class="st" aria-hidden="true">${imgsCombo(c).map(n => `<img src="${srcSab(n)}" alt="">`).join('')}</span>`}
         <small>${esc(tag)}</small><b>${esc(c.nome)}</b>${c.descricao ? `<em>${esc(c.descricao)}</em>` : ''}
         <span class="pr">${ok ? fmt(c.preco) : 'Esgotado'}</span>${qn ? `<span class="qn">${qn}</span>` : ''}</button>`;
@@ -1686,8 +1717,8 @@ function tCardapio() {
   const cardSab = s => {
       const q = cart.s[s.id] || 0; const resta = s.max - (uso[s.id] || 0); const esg = s.max <= 0;
       const selo = esg ? '<span class="selo">ESGOTADO</span>' : s.max <= 3 ? `<span class="selo low">${s.max === 1 ? 'ÚLTIMO' : 'ÚLTIMOS ' + s.max}</span>` : '';
-      const ctl = esg ? '' : q ? `<div class="step3"><button data-act="sq" data-id="${s.id}" data-d="-1" aria-label="Tirar um ${esc(s.nome)}">${ic('minus')}</button><b aria-label="Quantidade">${q}</b><button data-act="sq" data-id="${s.id}" data-d="1" aria-label="Mais um ${esc(s.nome)}" ${resta <= 0 || !L.aberto ? 'disabled' : ''}>${ic('plus')}</button></div>`
-        : `<button class="add3" data-act="sq" data-id="${s.id}" data-d="1" ${resta <= 0 || !L.aberto ? 'disabled' : ''} aria-label="Adicionar ${esc(s.nome)}">${ic('plus')}</button>`;
+      const ctl = esg ? '' : q ? `<div class="step3"><button data-act="sq" data-id="${s.id}" data-d="-1" aria-label="Tirar um ${esc(s.nome)}">${ic('minus')}</button><b aria-label="Quantidade">${q}</b><button data-act="sq" data-id="${s.id}" data-d="1" aria-label="Mais um ${esc(s.nome)}" ${resta <= 0 || !podePedir() ? 'disabled' : ''}>${ic('plus')}</button></div>`
+        : `<button class="add3" data-act="sq" data-id="${s.id}" data-d="1" ${resta <= 0 || !podePedir() ? 'disabled' : ''} aria-label="Adicionar ${esc(s.nome)}">${ic('plus')}</button>`;
       return `<article class="sab3${q ? ' tem' : ''}${esg ? ' esg' : ''}" data-sab="${s.id}">${fotoSab(s.nome) ? `<div class="ph foto" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}<img class="foto3" src="${fotoSab(s.nome)}"${fgAttr(s.nome)} alt="Cookie ${esc(s.nome)}" loading="lazy" decoding="async"></div>` : `<div class="ph" data-act="ficha" data-id="${s.id}" role="button" tabindex="0" aria-label="Ver ingredientes de ${esc(s.nome)}">${selo}${imgSab(s.nome)}</div>`}
         <button class="nm" data-act="ficha" data-id="${s.id}">${esc(s.nome)}</button>${fichaSab(s) ? `<button class="ds" data-act="ficha" data-id="${s.id}">${esc(fichaSab(s))}</button><button class="mais3" data-act="ficha" data-id="${s.id}">Ver ingredientes</button>` : ''}
         ${dispHtml(s, resta, q > 0)}<div class="rw"><span class="pc">${desc ? `<s>${fmt(s.preco)}</s>${fmt(round2(s.preco * .95))}` : fmt(s.preco)}</span>${ctl}</div></article>`;
@@ -1699,7 +1730,7 @@ function tCardapio() {
   return `${heroHtml()}
   ${avisoBrinde()}
   <div class="perks3"><span>${ic('cal')}${datas.length ? `Próxima: ${wdShort(datas[0])} ${ddmm(datas[0])}` : 'Sem datas agora'}</span><span class="${desc ? 'on' : ''}">${ic('tag')}5% off seg e ter</span><span>${ic('clock')}Pedidos até 18h</span></div>
-  ${!L.aberto ? `<div class="banner"><div style="flex:1"><b>Pedidos pausados no momento.</b> Fale com a gente no WhatsApp.</div>${L.whatsapp ? `<a class="btn sm" href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">${ic('wa')} WhatsApp</a>` : ''}</div>` : ''}
+  ${!podePedir() ? `<div class="banner"><div style="flex:1">${natalEncerrado() ? `<b>Os pedidos de Natal foram até ${ddmmISO(natalRegra().ate)}.</b> Quem já pediu retira de ${ddmmISO(natalRegra().de)} a ${ddmmISO(natalRegra().fim)}. Dúvidas? Fale com a gente no WhatsApp.` : '<b>Pedidos pausados no momento.</b> Fale com a gente no WhatsApp.'}</div>${L.whatsapp ? `<a class="btn sm" href="https://wa.me/55${L.whatsapp}" target="_blank" rel="noopener">${ic('wa')} WhatsApp</a>` : ''}</div>` : ''}
   ${desc ? `<div class="banner info">${ic('tag')}<div><b>5% de desconto</b> em todos os sabores para pedidos feitos hoje (segunda e terça). Os combos entram a partir de quarta.</div></div>` : ''}
   ${areaNatal(SN.map(cardSab), CN.map(cardCombo), !liberados)}
   ${combos}${sabores}
@@ -1749,8 +1780,8 @@ function sheetComboInfo(id) {
       : `<h3>O que vem</h3><div class="fs" style="gap:0">${c.itens.map(i => { const s = sabPub(i.saborId) || i; return `<div class="cat-row"><div class="sab-ico sm">${imgSab(s.nome, 'sm')}</div><div class="main"><div class="t">${esc(s.nome)}</div></div><b class="qx3">${i.qtd}×</b></div>`; }).join('')}</div>`}
   </div>
   <footer class="sh-foot">${esg ? '<button class="btn" data-act="fechar">Esgotado · voltar ao cardápio</button>'
-    : livre ? `<button class="btn primary" data-act="combo-montar" data-id="${id}" style="flex:1" ${L.aberto ? '' : 'disabled'}>Montar minha caixa · ${fmt(c.preco)}</button>`
-    : `<button class="btn primary" data-act="combo-add" data-id="${id}" style="flex:1" ${L.aberto ? '' : 'disabled'}>${ic('plus')} Adicionar · ${fmt(c.preco)}</button>`}</footer>`;
+    : livre ? `<button class="btn primary" data-act="combo-montar" data-id="${id}" style="flex:1" ${podePedir() ? '' : 'disabled'}>Montar minha caixa · ${fmt(c.preco)}</button>`
+    : `<button class="btn primary" data-act="combo-add" data-id="${id}" style="flex:1" ${podePedir() ? '' : 'disabled'}>${ic('plus')} Adicionar · ${fmt(c.preco)}</button>`}</footer>`;
   abrirSheet(html);
   const g = $('#gal3', sheetEl); if (g && fotos.length > 1) g.addEventListener('scroll', () => { const i = Math.round(g.scrollLeft / g.clientWidth); sheetEl.querySelectorAll('.dots3 i').forEach((d, k) => d.classList.toggle('on', k === i)); const ct = $('#cont3', sheetEl); if (ct) ct.textContent = `${i + 1}/${fotos.length}`; }, { passive: true });
 }
@@ -1780,6 +1811,7 @@ function linhasCarrinho() {
 function tCarrinho() {
   const L = C.loja; const linhas = linhasCarrinho(); const t = totais();
   if (!linhas.length) return `${voltar()}<div class="card empty"><strong>Seu carrinho está vazio</strong>Escolha seus cookies no cardápio.<div><button class="btn primary" data-act="ir" data-t="cardapio">Ver cardápio</button></div></div>`;
+  if (natalOnCedo() && ck.tipo !== 'retirada') { ck.tipo = 'retirada'; ck.faixa = null; }
   const datas = datasDisponiveis(); if (ck.data && !datas.includes(ck.data)) { ck.data = null; ck.faixa = null; }
   if (!ck.data && datas.length) ck.data = datas[0];
   const fx = faixasDe(ck.data); if (ck.faixa && !fx.includes(ck.faixa)) ck.faixa = null; if (!ck.faixa && fx.length === 1) ck.faixa = fx[0];
@@ -1795,7 +1827,8 @@ function tCarrinho() {
     <label class="fld"><span>WhatsApp</span><input id="d-telefone" value="${esc(dados.telefone)}" inputmode="tel" autocomplete="tel" placeholder="(11) 90000-0000"></label></div></section>
 
   <section class="fs"><h3>Como quer receber?</h3>
-    <div class="opcoes2"><button class="opt ${ck.tipo === 'retirada' ? 'on' : ''}" data-act="tipo" data-v="retirada">${ic('store')}<b>Retirar</b><span>sem taxa</span></button><button class="opt ${ck.tipo === 'entrega' ? 'on' : ''}" data-act="tipo" data-v="entrega">${ic('truck')}<b>Entrega</b><span>taxa por bairro</span></button></div>
+    ${natalOnCedo() ? `<div class="natal-ret3">${ic('store')}<div><b>No Natal é só retirada</b><span>Pedidos até ${ddmmISO(natalRegra().ate)} · retirada de ${ddmmISO(natalRegra().de)} a ${ddmmISO(natalRegra().fim)}</span></div></div>`
+      : `<div class="opcoes2"><button class="opt ${ck.tipo === 'retirada' ? 'on' : ''}" data-act="tipo" data-v="retirada">${ic('store')}<b>Retirar</b><span>sem taxa</span></button><button class="opt ${ck.tipo === 'entrega' ? 'on' : ''}" data-act="tipo" data-v="entrega">${ic('truck')}<b>Entrega</b><span>taxa por bairro</span></button></div>`}
     ${ck.tipo === 'retirada' && L.enderecoRetirada ? `<p class="hint">Retirada em: <b>${esc(L.enderecoRetirada)}</b></p>` : ''}
     <div class="fld"><span>Dia</span></div>
     ${datas.length ? `<div class="dias3">${datas.map(d => `<button class="dia3" data-act="data" data-v="${d}" aria-pressed="${ck.data === d}"><small>${ehHoje(d) ? 'hoje' : wdShort(d)}</small><b>${d.slice(8)}</b><span>${new Date(d + 'T12:00').toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</span></button>`).join('')}</div>` : `<p class="hint">Sem datas de ${ck.tipo} disponíveis agora. Fale com a gente no WhatsApp.</p>`}
@@ -1816,7 +1849,7 @@ function tCarrinho() {
     <div class="sum-tot total"><span>Total</span><span class="money">${fmt(t.total)}${t.taxaPendente ? ' + taxa' : ''}</span></div></section>
   <p class="hint" style="text-align:center">Depois de enviado, para mudar data, horário ou endereço é só chamar no WhatsApp.</p>
   <p class="hint priv-nota">Usamos seus dados só para preparar e entregar o pedido. <a href="#privacidade" data-act="privacidade">Como cuidamos deles</a></p>
-  <button class="btn primary enviar" data-act="enviar" ${C.enviando || !L.aberto ? 'disabled' : ''}>${C.enviando ? 'Enviando…' : `${ic('check')} Enviar pedido · ${fmt(t.total)}`}</button>`;
+  <button class="btn primary enviar" data-act="enviar" ${C.enviando || !podePedir() ? 'disabled' : ''}>${C.enviando ? 'Enviando…' : `${ic('check')} Enviar pedido · ${fmt(t.total)}`}</button>`;
 }
 const voltar = () => `<button class="btn sm ghost voltar" data-act="ir" data-t="cardapio">${ic('back')} Cardápio</button>`;
 function lerCampos() {
@@ -1831,7 +1864,8 @@ function lerCampos() {
 async function enviar() {
   lerCampos(); const L = C.loja; const t = totais();
   const erro = (m, foco) => { toast(m); if (foco && $('#' + foco)) $('#' + foco).focus(); };
-  if (!L.aberto) return erro('Os pedidos estão pausados no momento.');
+  if (natalOnCedo()) ck.tipo = 'retirada';
+  if (!podePedir()) return erro(natalEncerrado() ? `Os pedidos de Natal foram até ${ddmmISO(natalRegra().ate)}.` : 'Os pedidos estão pausados no momento.');
   if (!t.n) return erro('Seu carrinho está vazio.');
   if (dados.nome.length < 2) return erro('Digite seu nome.', 'd-nome');
   if (digits(dados.telefone).length < 10) return erro('Digite seu WhatsApp com DDD.', 'd-telefone');
@@ -1994,7 +2028,7 @@ document.addEventListener('click', async e => {
     case 'crm': cart.c = cart.c.filter(x => x.key !== id); salvar(); render(); break;
     case 'pk': { const c = comboPub(PK.comboId); const tot = Object.values(PK.escolha).reduce((x, y) => x + y, 0); const d = +b.dataset.d; if (d > 0 && tot >= c.qtdLivre) break; PK.escolha[id] = Math.max(0, (PK.escolha[id] || 0) + d); sheetCombo(); break; }
     case 'pk-ok': { const c = comboPub(PK.comboId); cart.c.push({ key: uid(), comboId: c.id, qtd: 1, escolha: { ...PK.escolha } }); salvar(); fecharSheet(); toast(`${c.nome} no carrinho.`); render(); break; }
-    case 'tipo': ck.tipo = b.dataset.v; ck.faixa = null; render(); break;
+    case 'tipo': ck.tipo = natalOnCedo() ? 'retirada' : b.dataset.v; ck.faixa = null; render(); break;
     case 'data': ck.data = b.dataset.v; ck.faixa = null; render(); break;
     case 'faixa': ck.faixa = b.dataset.v; render(); break;
     case 'pag': ck.pagamento = b.dataset.v; render(); break;
